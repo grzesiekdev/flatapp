@@ -7,6 +7,7 @@
     --secondary: #14161C;
     --light: #6C7293;
     --dark: #000000;
+    --fc-daygrid-event-dot-width: 81px;
 }
 
 body {
@@ -53,6 +54,9 @@ a {
     z-index: 99;
 }
 
+.border-bottom {
+    border-bottom: 1px solid var(--dark) !important;
+}
 
 /*** Spinner ***/
 #spinner {
