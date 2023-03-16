@@ -21,6 +21,7 @@
 
 
 /.idea
+/mysql
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
