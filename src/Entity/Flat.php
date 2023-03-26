@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Entity\User\Landlord;
-use App\Entity\User\Tenant;
+use App\Entity\User\Type\Landlord;
+use App\Entity\User\Type\Tenant;
 use App\Repository\FlatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

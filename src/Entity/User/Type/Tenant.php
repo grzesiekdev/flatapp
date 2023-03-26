@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\User\Type;
 
+use App\Entity\Flat;
 use App\Entity\User\User;
 use App\Repository\TenantRepository;
 use Doctrine\ORM\Mapping as ORM;

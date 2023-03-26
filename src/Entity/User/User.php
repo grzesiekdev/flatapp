@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity\Usera;
+namespace App\Entity\User;
 
-use App\Entity\Landlord;
-use App\Entity\Tenant;
+use App\Entity\User\Type\Landlord;
+use App\Entity\User\Type\Tenant;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
