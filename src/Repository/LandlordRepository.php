@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\User\LandLord;
+use App\Entity\User\Landlord;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<LandLord>
+ * @extends ServiceEntityRepository<Landlord>
  *
- * @method LandLord|null find($id, $lockMode = null, $lockVersion = null)
- * @method LandLord|null findOneBy(array $criteria, array $orderBy = null)
- * @method LandLord[]    findAll()
- * @method LandLord[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Landlord|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Landlord|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Landlord[]    findAll()
+ * @method Landlord[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LandLordRepository extends ServiceEntityRepository
+class LandlordRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, LandLord::class);
+        parent::__construct($registry, Landlord::class);
     }
 
-    public function save(LandLord $entity, bool $flush = false): void
+    public function save(Landlord $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class LandLordRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(LandLord $entity, bool $flush = false): void
+    public function remove(Landlord $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class LandLordRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return LandLord[] Returns an array of LandLord objects
+//     * @return Landlord[] Returns an array of Landlord objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class LandLordRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?LandLord
+//    public function findOneBySomeField($value): ?Landlord
 //    {
 //        return $this->createQueryBuilder('l')
 //            ->andWhere('l.exampleField = :val')

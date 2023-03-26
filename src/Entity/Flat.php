@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\User\LandLord;
+use App\Entity\User\Landlord;
 use App\Entity\User\Tenant;
 use App\Repository\FlatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -53,13 +53,13 @@ class Flat
     #[ORM\OneToMany(mappedBy: 'flat_id', targetEntity: Tenant::class)]
     private Collection $tenants;
 
-    #[ORM\OneToMany(mappedBy: 'flats', targetEntity: LandLord::class)]
-    private Collection $landlords;
+    #[ORM\ManyToOne(inversedBy: 'flats')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Landlord $landlord = null;
 
     public function __construct()
     {
         $this->tenants = new ArrayCollection();
-        $this->landlords = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -229,32 +229,14 @@ class Flat
         return $this;
     }
 
-    /**
-     * @return Collection<int, LandLord>
-     */
-    public function getLandlords(): Collection
+    public function getLandlord(): ?Landlord
     {
-        return $this->landlords;
+        return $this->landlord;
     }
 
-    public function addLandlord(LandLord $landlord): self
+    public function setLandlord(?Landlord $landlord): self
     {
-        if (!$this->landlords->contains($landlord)) {
-            $this->landlords->add($landlord);
-            $landlord->setFlats($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLandlord(LandLord $landlord): self
-    {
-        if ($this->landlords->removeElement($landlord)) {
-            // set the owning side to null (unless already changed)
-            if ($landlord->getFlats() === $this) {
-                $landlord->setFlats(null);
-            }
-        }
+        $this->landlord = $landlord;
 
         return $this;
     }
