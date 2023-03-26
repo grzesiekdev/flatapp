@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity\User;
+namespace App\Entity;
 
-use App\Entity\Flat;
+use App\Entity\User\User;
 use App\Repository\LandlordRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
