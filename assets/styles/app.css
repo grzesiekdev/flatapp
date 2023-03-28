@@ -4,6 +4,7 @@
 /********** Template CSS **********/
 :root {
     --primary: #2DB82D;
+    --primary-darker: #28A528;
     --secondary: #14161C;
     --light: #6C7293;
     --dark: #000000;
@@ -330,3 +331,83 @@ a {
     border-color: var(--primary);
 }
 
+label.required:after {
+    color: var(--primary);
+    content: ' *';
+    display: inline;
+    position: absolute;
+    margin-left: 5px;
+}
+
+.single-role label:after {
+    content: '' !important;
+}
+
+.single-role {
+    background: var(--secondary);
+    border-radius: 5px;
+}
+
+.single-role input[type='radio'] {
+    accent-color: var(--primary);
+    position: relative;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--light);
+    background-color: #000;
+    background-clip: padding-box;
+    border: 1px solid #000;
+    appearance: none;
+    border-radius: 5px;
+    transition: border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+}
+.form-control:focus {
+    color: var(--light);
+    background-color: #000;
+    border-color: var(--primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.125rem var(--primary-darker);
+}
+
+#registration_form_dateOfBirth select {
+    background: var(--bs-black);
+    color: white;
+    margin-right: 15px;
+    border: none;
+}
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px black inset !important;
+    -webkit-text-fill-color: var(--light) !important;
+    caret-color: var(--light);
+}
+
+#registration_form_dateOfBirth select {
+    width: 20%;
+}
+
+select::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+select::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+select::-webkit-scrollbar-thumb {
+    background-color: var(--light);
+    border-radius: 10px;
+}
+
+small {
+    font-size: 0.80rem;
+}
