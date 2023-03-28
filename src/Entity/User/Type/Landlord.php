@@ -12,22 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: LandlordRepository::class)]
 class Landlord extends User
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\OneToMany(mappedBy: 'landlord', targetEntity: Flat::class, orphanRemoval: true)]
     private Collection $flats;
 
     public function __construct()
     {
         $this->flats = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Flat;
+use App\Entity\User\Type\Landlord;
+use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
 use App\Entity\User\UserRegistration;
 use App\Form\RegistrationFormType;
@@ -30,20 +33,32 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class, new User());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userRegistration = new UserRegistration();
-            $userRegistration->setUser($user);
-            // encode the plain password
+            $userType = $form->get('roles')->getData();
+            if ($userType[0] == 'landlord') {
+                $user = new Landlord();
+            } else if ($userType[0] == 'tenant') {
+                $user = new Tenant();
+            } else {
+                $user = new User();
+            }
+
+            $user->setName($form->get('name')->getData());
+            $user->setEmail($form->get('email')->getData());
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setDateOfBirth($form->get('dateOfBirth')->getData());
+            $user->setAddress($form->get('address')->getData());
+            $user->setImage($form->get('image')->getData());
+            $user->setPhone($form->get('phone')->getData());
+            $user->setRoles($userType);
 
             $entityManager->persist($user);
             $entityManager->flush();
