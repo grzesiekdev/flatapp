@@ -6,7 +6,7 @@ use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
-use App\Entity\User\UserRegistration;
+use App\Utils\UserRole;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
@@ -38,13 +38,11 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $userType = $form->get('roles')->getData();
-            if ($userType[0] == 'landlord') {
-                $user = new Landlord();
-            } else if ($userType[0] == 'tenant') {
-                $user = new Tenant();
-            } else {
-                $user = new User();
-            }
+            $user = match (current($userType)) {
+                UserRole::LANDLORD => new Landlord(),
+                UserRole::TENANT => new Tenant(),
+                UserRole::DEFAULT => new User(),
+            };
 
             $user->setName($form->get('name')->getData());
             $user->setEmail($form->get('email')->getData());
