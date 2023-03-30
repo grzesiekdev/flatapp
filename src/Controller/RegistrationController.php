@@ -44,19 +44,19 @@ class RegistrationController extends AbstractController
                 UserRole::DEFAULT => new User(),
             };
 
-            $user->setName($form->get('name')->getData());
-            $user->setEmail($form->get('email')->getData());
-            $user->setPassword(
+            $user->setName($form->get('name')->getData())
+            ->setEmail($form->get('email')->getData())
+            ->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
-            );
-            $user->setDateOfBirth($form->get('dateOfBirth')->getData());
-            $user->setAddress($form->get('address')->getData());
-            $user->setImage($form->get('image')->getData());
-            $user->setPhone($form->get('phone')->getData());
-            $user->setRoles($userType);
+            )
+            ->setDateOfBirth($form->get('dateOfBirth')->getData())
+            ->setAddress($form->get('address')->getData())
+            ->setImage($form->get('image')->getData())
+            ->setPhone($form->get('phone')->getData())
+            ->setRoles($userType);
 
             $entityManager->persist($user);
             $entityManager->flush();

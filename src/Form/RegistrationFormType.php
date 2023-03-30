@@ -4,9 +4,12 @@ namespace App\Form;
 
 use App\Entity\User\User;
 use App\Entity\User\UserRegistration;
+use DateTime;
+use DateTimeImmutable;
 use SebastianBergmann\CodeCoverage\Report\Text;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -62,6 +65,9 @@ class RegistrationFormType extends AbstractType
                 'attr' => ['class' => '
                 form-control',
                 ],
+                'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'format' => 'yyyy-MM-dd',
                 'years' => range(date('Y')-80, date('Y')),
             ])
             ->add('address', TextType::class, [
@@ -107,6 +113,7 @@ class RegistrationFormType extends AbstractType
                     return [$rolesString];
                 }
             ));
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
