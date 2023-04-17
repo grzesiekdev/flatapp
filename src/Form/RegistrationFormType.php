@@ -66,7 +66,6 @@ class RegistrationFormType extends AbstractType
                 form-control',
                 ],
                 'widget' => 'single_text',
-                'input' => 'datetime_immutable',
                 'format' => 'yyyy-MM-dd',
                 'years' => range(date('Y')-80, date('Y')),
             ])
