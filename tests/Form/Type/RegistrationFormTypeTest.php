@@ -100,4 +100,19 @@ class RegistrationFormTypeTest extends KernelTestCase
         # Because password hash is always different, we only check if submitted password is not null
         $this->assertNotNull($model->getPassword());
     }
+
+    public function testSubmitInvalidNameData()
+    {
+        $model = new Landlord();
+        $form = $this->formFactory->create(RegistrationFormType::class, $model, [
+            'csrf_protection' => false,
+        ]);
+
+        $this->formData['name'] = 'Jan Kowlski';
+        $form->submit($this->formData);
+
+        $this->assertTrue($form->isSynchronized());
+        $this->assertNotEquals($this->expected->getName(), $model->getName());
+    }
+
 }
