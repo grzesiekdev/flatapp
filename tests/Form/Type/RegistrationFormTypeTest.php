@@ -111,4 +111,37 @@ class RegistrationFormTypeTest extends KernelTestCase
         $this->assertNotEquals($this->expected->getName(), $this->model->getName());
     }
 
+    public function testSubmitShortPassword()
+    {
+        $this->formData['plainPassword'] = [
+            'first' => 'test',
+            'second' => 'test'
+        ];
+        $this->form->submit($this->formData);
+
+        $errors = $this->form->getErrors(true);
+        $errorMessages = [];
+        foreach ($errors as $error) {
+            $errorMessages[] = $error->getMessage();
+        }
+
+        $this->assertTrue($this->form->isSynchronized());
+        $this->assertEquals('Your password should be at least 6 characters', $errorMessages[0]);
+    }
+
+    public function testSubmitInvalidDateFormat()
+    {
+        $this->formData['dateOfBirth'] = '01-01-2000';
+        $this->form->submit($this->formData);
+
+        $errors = $this->form->getErrors(true);
+        $errorMessages = [];
+        foreach ($errors as $error) {
+            $errorMessages[] = $error->getMessage();
+        }
+
+        $this->assertTrue($this->form->isSynchronized());
+        $this->assertEquals('Please enter a valid date.', $errorMessages[0]);
+    }
+
 }
