@@ -16,8 +16,9 @@ class RegistrationFormTypeTest extends KernelTestCase
     private EntityManager $entityManager;
     private array $formData = [];
     private ?object $formFactory;
-    private Landlord $expected;
+    private Landlord $expected, $model;
     private $projectDir;
+    private $form;
     protected function setUp(): void
     {
         $kernel = self::bootKernel([
@@ -27,6 +28,7 @@ class RegistrationFormTypeTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
         $this->userPasswordHasher = $container->get(UserPasswordHasherInterface::class);
         $this->projectDir = $container->getParameter('kernel.project_dir');
 
@@ -55,6 +57,7 @@ class RegistrationFormTypeTest extends KernelTestCase
 
         # Preparing expected Landlord model
         $this->expected = new Landlord();
+        $this->model = new Landlord();
         $this->expected->setName($this->formData['name'])
             ->setEmail($this->formData['email'])
             ->setPassword(
@@ -68,51 +71,44 @@ class RegistrationFormTypeTest extends KernelTestCase
             ->setImage($this->formData['image'])
             ->setPhone($this->formData['phone'])
             ->setRoles(['landlord']);
-    }
 
-    public function testSubmitValidData()
-    {
-        $model = new Landlord();
-        $form = $this->formFactory->create(RegistrationFormType::class, $model, [
+        $this->form = $this->formFactory->create(RegistrationFormType::class, $this->model, [
             'csrf_protection' => false,
         ]);
 
         # It is necessary to set these values manually due to form constrains
         $this->formData['dateOfBirth'] = $this->formData['dateOfBirth']->format('Y-m-d');
-        $model->setPassword(
+        $this->model->setPassword(
             $this->userPasswordHasher->hashPassword(
-                $model,
+                $this->model,
                 $this->formData['plainPassword']['first']
             )
         );
+    }
 
-        $form->submit($this->formData);
-
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($this->expected->getName(), $model->getName());
-        $this->assertEquals($this->expected->getEmail(), $model->getEmail());
-        $this->assertEquals($this->expected->getDateOfBirth(), $model->getDateOfBirth());
-        $this->assertEquals($this->expected->getAddress(), $model->getAddress());
-        $this->assertEquals($this->expected->getImage(), $model->getImage());
-        $this->assertEquals($this->expected->getPhone(), $model->getPhone());
-        $this->assertEquals($this->expected->getRoles(), $model->getRoles());
+    public function testSubmitValidData()
+    {
+        $this->form->submit($this->formData);
+        $this->assertTrue($this->form->isSynchronized());
+        $this->assertEquals($this->expected->getName(), $this->model->getName());
+        $this->assertEquals($this->expected->getEmail(), $this->model->getEmail());
+        $this->assertEquals($this->expected->getDateOfBirth(), $this->model->getDateOfBirth());
+        $this->assertEquals($this->expected->getAddress(), $this->model->getAddress());
+        $this->assertEquals($this->expected->getImage(), $this->model->getImage());
+        $this->assertEquals($this->expected->getPhone(), $this->model->getPhone());
+        $this->assertEquals($this->expected->getRoles(), $this->model->getRoles());
 
         # Because password hash is always different, we only check if submitted password is not null
-        $this->assertNotNull($model->getPassword());
+        $this->assertNotNull($this->model->getPassword());
     }
 
     public function testSubmitInvalidNameData()
     {
-        $model = new Landlord();
-        $form = $this->formFactory->create(RegistrationFormType::class, $model, [
-            'csrf_protection' => false,
-        ]);
-
         $this->formData['name'] = 'Jan Kowlski';
-        $form->submit($this->formData);
+        $this->form->submit($this->formData);
 
-        $this->assertTrue($form->isSynchronized());
-        $this->assertNotEquals($this->expected->getName(), $model->getName());
+        $this->assertTrue($this->form->isSynchronized());
+        $this->assertNotEquals($this->expected->getName(), $this->model->getName());
     }
 
 }
