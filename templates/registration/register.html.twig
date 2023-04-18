@@ -90,7 +90,7 @@
                         {{ form_label(registrationForm.roles) }}
                     </div>
                 </div>
-                <div class="row mt-2 form-control d-flex">
+                <div class="row mt-2 form-control d-flex mb-3">
                     {% for child in registrationForm.roles %}
                         <div class="col-sm-5 m-2 p-2 single-role">
                             {{ form_widget(child) }}
@@ -98,7 +98,7 @@
                         </div>
                     {% endfor %}
                 </div>
-
+                <small>Have an account? <a href="{{ path('app_login') }}">Login now!</a></small><br>
                 <button type="submit" class="btn btn-primary mt-4">Register</button>
                 {{ form_end(registrationForm) }}
             </div>

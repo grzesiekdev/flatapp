@@ -4,4 +4,9 @@
 Witamy na testowej stronie!
     <a href="/panel">Panel</a>
     <a href="/register">Rejestracja</a>
+    {% if app.user %}
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/login">Login</a>
+    {% endif %}
 {% endblock %}

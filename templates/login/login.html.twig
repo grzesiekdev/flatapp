@@ -1,0 +1,50 @@
+{% extends 'layouts/layout-base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid position-relative d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+
+        <!-- Content Start -->
+        <div class="content m-0 w-100">
+            <div class="registration-form-box col-sm-12 col-xl-6 m-auto mt-5">
+                <div class="bg-secondary rounded h-100 p-4">
+                    <h1 class="mb-4">Login</h1>
+                    {% if error %}
+                        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+                    <form action="{{ path('app_login') }}" method="post">
+                        <div class="row mt-3">
+                            <div class="col-2">
+                                <label for="username">Email:</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" id="username" name="_username" class="form-control" value="{{ last_username }}">
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-2">
+                                <label for="password">Password:</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="password" id="password" name="_password" class="form-control">
+                            </div>
+                        </div>
+                        <small>Don't have an account yet? <a href="{{ path('app_register') }}">Register now!</a></small><br>
+                        <button type="submit" class="btn btn-primary mt-4">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Content End -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa-solid fa-arrow-up"></i></a>
+    </div>
+{% endblock %}
