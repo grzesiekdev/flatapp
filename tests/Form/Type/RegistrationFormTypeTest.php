@@ -144,4 +144,19 @@ class RegistrationFormTypeTest extends KernelTestCase
         $this->assertEquals('Please enter a valid date.', $errorMessages[0]);
     }
 
+    public function testEmptyPassword()
+    {
+        $this->formData['plainPassword'] = '';
+        $this->form->submit($this->formData);
+
+        $errors = $this->form->getErrors(true);
+        $errorMessages = [];
+        foreach ($errors as $error) {
+            $errorMessages[] = $error->getMessage();
+        }
+
+        $this->assertTrue($this->form->isSynchronized());
+        $this->assertEquals('The password fields must match.', $errorMessages[0]);
+    }
+
 }
