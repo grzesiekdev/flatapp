@@ -15,12 +15,4 @@ class PanelController extends AbstractController
             'controller_name' => 'PanelController',
         ]);
     }
-
-    #[Route('/panel/flats', name: 'app_flats')]
-    public function flats(): Response
-    {
-        return $this->render('panel/flats.html.twig', [
-            'controller_name' => 'PanelController',
-        ]);
-    }
 }

@@ -27,6 +27,44 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 (function ($) {
     "use strict";
 
+    var index = 0;
+    let newFlatFormFees = $('[id^="new_flat_form_fees_"]')
+    let count = newFlatFormFees.length;
+
+    if (count > 0) {
+        index = count / 3;
+    }
+
+    $('input[id^="new_flat_form_fees_"]').each(function(i){
+        $(this).addClass('form-control');
+        i += 2;
+        if (i % 2 === 0) {
+            $(this).parent().prepend('Fee ' + i / 2 + '<br>');
+        }
+    });
+
+    newFlatFormFees.each(function(){
+        if (this.id.match(/^new_flat_form_fees_\d$/)) {
+            $(this).addClass('mt-2 col-sm-3');
+        }
+    });
+
+    $('#add-more').click(function() {
+        var prototype = $('#new_flat_form_fees').data('prototype');
+        var newForm = prototype.replace(/__name__/g, index);
+        $(newForm).appendTo('#fees-container');
+        $('#new_flat_form_fees_' + index + '_name').addClass('form-control');
+        $('#new_flat_form_fees_' + index + '_value').addClass('form-control');
+        $('#new_flat_form_fees_' + index).prepend('<label>Fee ' + parseInt(index + 1) + '</label>').addClass('mt-2 col-sm-3');
+        index++;
+
+        // $('[id]').each(function(){
+        //     var ids = $('[id="'+this.id+'"]');
+        //     if(ids.length>1 && ids[0]==this)
+        //         console.warn('Multiple IDs #'+this.id);
+        // });
+    });
+
     // Spinner
     var spinner = function () {
         setTimeout(function () {

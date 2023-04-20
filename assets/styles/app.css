@@ -3,7 +3,7 @@
 
 /********** Template CSS **********/
 :root {
-    --primary: #2DB82D;
+    --primary: #198754;
     --primary-darker: #28A528;
     --secondary: #14161C;
     --light: #6C7293;
@@ -410,4 +410,26 @@ select::-webkit-scrollbar-thumb {
 
 small {
     font-size: 0.80rem;
+}
+
+.craue_formflow_buttons {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+.craue_formflow_buttons button:not(.craue-btn-reset) {
+    margin-left: 20px;
+}
+
+
+.craue_formflow_buttons .craue-btn-next {
+    order: 3;
+}
+
+.craue_formflow_buttons .craue-btn-back {
+    order: 2;
+}
+
+.craue_formflow_buttons .craue-btn-reset {
+    order: 1;
 }
