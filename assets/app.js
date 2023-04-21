@@ -52,12 +52,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
     $('#add-more').click(function() {
         var prototype = $('#new_flat_form_fees').data('prototype');
         var newForm = prototype.replace(/__name__/g, index);
-        let currentNumber = $('#fees-container > div').length;
-        console.log(currentNumber);
+        let currentNumber = $('#fees-container > div').length + $('#new_flat_form_fees > div').length;
         $(newForm).appendTo('#fees-container');
         $('#new_flat_form_fees_' + index + '_name').addClass('form-control');
         $('#new_flat_form_fees_' + index + '_value').addClass('form-control');
-        $('#new_flat_form_fees_' + index).prepend('<label>Fee <span class="fee-number">' + (currentNumber + 1) + '</span></label> <span class="remove-fee text-danger"><i class="fas fa-trash-alt"></i></span>').addClass('mt-3 col-sm-3');
+        $('#new_flat_form_fees_' + index).prepend('<label>Fee <span class="fee-number">' + currentNumber + '</span></label> <span class="remove-fee text-danger"><i class="fas fa-trash-alt"></i></span>').addClass('mt-3 col-sm-3');
         index++;
     });
 
