@@ -433,3 +433,8 @@ small {
 .craue_formflow_buttons .craue-btn-reset {
     order: 1;
 }
+
+.remove-fee {
+    float: right;
+    cursor: pointer;
+}
