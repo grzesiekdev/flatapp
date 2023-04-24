@@ -103,6 +103,31 @@
                     {{ form_widget(form.furnishing) }}
                 </div>
             </div>
+        {% elseif flow.getCurrentStepNumber() == 5 %}
+            <div class="row">
+                <div class="col-sm-6">
+                    Please make sure that following data is correct:
+                    <ol>
+                        <li><strong>Flat area:</strong> {{ form_data.area }} m<sup>2</sup></li>
+                        <li><strong>Number of rooms:</strong> {{ form_data.numberOfRooms }}</li>
+                        <li><strong>Rent:</strong> {{ form_data.rent }} zł</li>
+                        <li><strong>Fees:</strong>
+                            {% for fee in form_data.fees %}
+                            <ul>
+                                <li><strong>{{ fee.name }}: </strong>{{ fee.value }} zł</li>
+                            </ul>
+                            {% endfor %}
+                        </li>
+                        <li><strong>Deposit:</strong> {{ form_data.deposit }} zł</li>
+                        <li><strong>Pictures:</strong></li>
+                        <li><strong>Pictures taken with tenant:</strong></li>
+                        <li><strong>Description:</strong> {{ form_data.description }}</li>
+                        <li><strong>Address:</strong> {{ form_data.address }}</li>
+                        <li><strong>Rent agreement:</strong></li>
+                        <li><strong>Furnishing:</strong></li>
+                    </ol>
+                </div>
+            </div>
         {% endif %}
 
         {{ form_rest(form) }}

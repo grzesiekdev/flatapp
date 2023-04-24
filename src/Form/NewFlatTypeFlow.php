@@ -8,6 +8,7 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 class NewFlatTypeFlow extends FormFlow {
     protected $allowDynamicStepNavigation = true;
+    protected $handleFileUploads = false;
 	protected function loadStepsConfig(): array
     {
 		return [
