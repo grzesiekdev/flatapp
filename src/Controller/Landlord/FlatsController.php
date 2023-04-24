@@ -77,9 +77,6 @@ class FlatsController extends AbstractController
                 $pictures = $this->picturesUploader->getPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory'));
                 $picturesForTenant = $this->picturesUploader->getPictures($this->requestStack->getSession()->get('specificPicturesForTenantTempDirectory'));
 
-                $this->requestStack->getSession()->remove('specificPicturesTempDirectory');
-                $this->requestStack->getSession()->remove('specificPicturesForTenantTempDirectory');
-
                 $flat->setLandlord($landlord);
                 $flat->setPictures($pictures);
                 $flat->setPicturesForTenant($picturesForTenant);
@@ -95,6 +92,7 @@ class FlatsController extends AbstractController
             'form' => $form->createView(),
             'flow' => $flow,
             'form_data' => $formData,
+            'pictures' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory'))
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Service;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use function PHPUnit\Framework\directoryExists;
 
 class PicturesUploader
 {
@@ -70,6 +71,15 @@ class PicturesUploader
         }
         $this->moveTempPictures($oldPath, $newPath, $pictures);
         $this->removeTempPictures($oldPath);
+        return $pictures;
+    }
+
+    public function getTempPictures($path): array
+    {
+        $pictures = [];
+        if (is_dir($path)) {
+            $pictures = array_diff(scandir($path), array('.', '..'));
+        }
         return $pictures;
     }
 }
