@@ -356,9 +356,9 @@ label.required:after {
 }
 
 .form-control {
-    display: block;
-    width: 100%;
+    display: inline-block;
     padding: 0.375rem 0.75rem;
+    width: 75%;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
@@ -376,6 +376,15 @@ label.required:after {
     border-color: var(--primary);
     outline: 0;
     box-shadow: 0 0 0 0.125rem var(--primary-darker);
+}
+
+.form-control+span {
+    display: inline-block;
+}
+
+#fees-container .form-control {
+    display: inline-block !important;
+    width: 50% !important;
 }
 
 #registration_form_dateOfBirth select {
@@ -437,6 +446,12 @@ small {
 .remove-fee {
     float: right;
     cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    .remove-fee {
+        margin-right: 30%;
+    }
 }
 
 input[type=number]::-webkit-inner-spin-button,

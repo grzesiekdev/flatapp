@@ -45,8 +45,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 
     newFlatFormFees.each(function(){
         if (this.id.match(/^new_flat_form_fees_\d$/)) {
-            $(this).addClass('mt-3 col-sm-3');
+            $(this).addClass('mt-3 col-sm-5 mb-3');
+            $(this).find('div').addClass('mb-3');
+            $(this).find('input').addClass('mx-2');
         }
+        $(this).find( 'input[type=number]').after('<span> zł</span>');
     });
 
     $('#add-more').click(function() {
@@ -56,7 +59,10 @@ import dayGridPlugin from '@fullcalendar/daygrid';
         $(newForm).appendTo('#fees-container');
         $('#new_flat_form_fees_' + index + '_name').addClass('form-control');
         $('#new_flat_form_fees_' + index + '_value').addClass('form-control');
-        $('#new_flat_form_fees_' + index).prepend('<label>Fee <span class="fee-number">' + currentNumber + '</span></label> <span class="remove-fee text-danger"><i class="fas fa-trash-alt"></i></span>').addClass('mt-3 col-sm-3');
+        $('#new_flat_form_fees_' + index).prepend('<label>Fee <span class="fee-number">' + currentNumber + '</span></label> <span class="remove-fee text-danger"><i class="fas fa-trash-alt"></i></span>').addClass('mt-3 col-sm-5');
+        $('#new_flat_form_fees_' + index).find('div').addClass('mb-3');
+        $('#new_flat_form_fees_' + index).find('input').addClass('mx-2');
+        $('#new_flat_form_fees_' + index).find( 'input[type=number]').after('<span> zł</span>');
         index++;
     });
 

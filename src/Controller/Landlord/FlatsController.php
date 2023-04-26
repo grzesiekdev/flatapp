@@ -120,6 +120,7 @@ class FlatsController extends AbstractController
             'form_data' => $formData,
             'pictures' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory')),
             'pictures_for_tenant' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesForTenantTempDirectory')),
+            'rent_agreement' => $this->requestStack->getSession()->get('agreementNewName'),
         ]);
     }
 }
