@@ -118,7 +118,8 @@ class FlatsController extends AbstractController
             'form' => $form->createView(),
             'flow' => $flow,
             'form_data' => $formData,
-            'pictures' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory'))
+            'pictures' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory')),
+            'pictures_for_tenant' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesForTenantTempDirectory')),
         ]);
     }
 }

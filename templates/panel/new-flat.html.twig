@@ -1,154 +1,167 @@
 {% extends './panel/page.html.twig' %}
 
 {% block content %}
-    <div class="bg-secondary rounded m-4 p-3">
-        <div>
+    <div class="bg-secondary rounded m-4 p-3 row">
+        <div class="col-lg-2" style="line-height: 4; border-right: 1px solid #6C7293;">
             Steps:
             {% include '@CraueFormFlow/FormFlow/stepList.html.twig' %}
         </div>
-        {{ form_start(form, {'attr': {'id': 'new_flat_form'}}) }}
-        {{ form_errors(form) }}
+        <div class="col-lg-10 mt-2 px-5">
+            {{ form_start(form, {'attr': {'id': 'new_flat_form'}}) }}
+            {{ form_errors(form) }}
 
-        {% if flow.getCurrentStepNumber() == 1 %}
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.area) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.area) }}
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.numberOfRooms) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.numberOfRooms) }}
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.address) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.address) }}
-                </div>
-            </div>
-        {% elseif flow.getCurrentStepNumber() == 2 %}
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.rent) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.rent) }}
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.deposit) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.deposit) }}
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.fees) }}
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary mt-2" id="add-more" data-form-id="{{ form.vars.id }}">Add fee</button>
-            <ul id="fees-container" style="padding-left: 0;">
-                {{ form_widget(form.fees) }}
-            </ul>
-
-        {% elseif flow.getCurrentStepNumber() == 3 %}
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.pictures) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.pictures) }}
-                </div>
-            </div>
-            <div class="row">
-                {% for picture in pictures %}
-                <div class="col-sm-2 mb-4 mb-lg-0 mt-3">
-                        <img
-                                src="/uploads/flats/tmp/pictures/user{{ app.user.id }}/{{ picture }}"
-                                class="shadow-1-strong rounded mb-4 float-left"
-                                style="max-width: 100%;"
-                        />
+            {% if flow.getCurrentStepNumber() == 1 %}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.area) }}
                     </div>
-                {% endfor %}
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.picturesForTenant) }}
+                    <div class="col-sm-3">
+                        {{ form_widget(form.area) }}
+                    </div>
                 </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.picturesForTenant) }}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.numberOfRooms) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.numberOfRooms) }}
+                    </div>
                 </div>
-            </div>
-        {% elseif flow.getCurrentStepNumber() == 4 %}
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.description) }}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.address) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.address) }}
+                    </div>
                 </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.description) }}
+            {% elseif flow.getCurrentStepNumber() == 2 %}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.rent) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.rent) }}
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.rentAgreement) }}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.deposit) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.deposit) }}
+                    </div>
                 </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.rentAgreement) }}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.fees) }}
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    {{ form_label(form.furnishing) }}
-                </div>
-                <div class="col-sm-2">
-                    {{ form_widget(form.furnishing) }}
-                </div>
-            </div>
-        {% elseif flow.getCurrentStepNumber() == 5 %}
-            <div class="row">
-                <div class="col-sm-6">
-                    Please make sure that following data is correct:
-                    <ol>
-                        <li><strong>Flat area:</strong> {{ form_data.area }} m<sup>2</sup></li>
-                        <li><strong>Number of rooms:</strong> {{ form_data.numberOfRooms }}</li>
-                        <li><strong>Rent:</strong> {{ form_data.rent }} zł</li>
-                        <li><strong>Fees:</strong>
-                            {% for fee in form_data.fees %}
-                            <ul>
-                                <li><strong>{{ fee.name }}: </strong>{{ fee.value }} zł</li>
-                            </ul>
-                            {% endfor %}
-                        </li>
-                        <li><strong>Deposit:</strong> {{ form_data.deposit }} zł</li>
-                        <li><strong>Pictures:</strong></li>
-                        <li><strong>Pictures taken with tenant:</strong></li>
-                        <li><strong>Description:</strong> {{ form_data.description }}</li>
-                        <li><strong>Address:</strong> {{ form_data.address }}</li>
-                        <li><strong>Rent agreement:</strong></li>
-                        <li><strong>Furnishing:</strong></li>
-                    </ol>
-                </div>
-            </div>
-        {% endif %}
+                <button type="button" class="btn btn-primary mt-2" id="add-more" data-form-id="{{ form.vars.id }}">Add fee</button>
+                <ul id="fees-container" style="padding-left: 0;">
+                    {{ form_widget(form.fees) }}
+                </ul>
 
-        {{ form_rest(form) }}
+            {% elseif flow.getCurrentStepNumber() == 3 %}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.pictures) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.pictures) }}
+                    </div>
+                </div>
+                <div class="row">
+                    {% for picture in pictures %}
+                    <div class="col-sm-3 mb-4 mb-lg-0 mt-3">
+                            <img
+                                    src="/uploads/flats/tmp/pictures/user{{ app.user.id }}/{{ picture }}"
+                                    class="shadow-1-strong rounded mb-4 float-left"
+                                    style="max-width: 100%;"
+                            />
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.picturesForTenant) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.picturesForTenant) }}
+                    </div>
+                </div>
+                <div class="row">
+                    {% for picture in pictures_for_tenant %}
+                        <div class="col-sm-3 mb-4 mb-lg-0 mt-3">
+                            <img
+                                    src="/uploads/flats/tmp/pictures_for_tenant/user{{ app.user.id }}/{{ picture }}"
+                                    class="shadow-1-strong rounded mb-4 float-left"
+                                    style="max-width: 100%;"
+                            />
+                        </div>
+                    {% endfor %}
+                </div>
+            {% elseif flow.getCurrentStepNumber() == 4 %}
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.description) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.description) }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.rentAgreement) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.rentAgreement) }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.furnishing) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.furnishing) }}
+                    </div>
+                </div>
+            {% elseif flow.getCurrentStepNumber() == 5 %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        Please make sure that following data is correct:
+                        <ol>
+                            <li><strong>Flat area:</strong> {{ form_data.area }} m<sup>2</sup></li>
+                            <li><strong>Number of rooms:</strong> {{ form_data.numberOfRooms }}</li>
+                            <li><strong>Rent:</strong> {{ form_data.rent }} zł</li>
+                            <li><strong>Fees:</strong>
+                                {% for fee in form_data.fees %}
+                                <ul>
+                                    <li><strong>{{ fee.name }}: </strong>{{ fee.value }} zł</li>
+                                </ul>
+                                {% endfor %}
+                            </li>
+                            <li><strong>Deposit:</strong> {{ form_data.deposit }} zł</li>
+                            <li><strong>Pictures:</strong></li>
+                            <li><strong>Pictures taken with tenant:</strong></li>
+                            <li><strong>Description:</strong> {{ form_data.description }}</li>
+                            <li><strong>Address:</strong> {{ form_data.address }}</li>
+                            <li><strong>Rent agreement:</strong></li>
+                            <li><strong>Furnishing:</strong></li>
+                        </ol>
+                    </div>
+                </div>
+            {% endif %}
 
-        {% include '@CraueFormFlow/FormFlow/buttons.html.twig' with {
-            craue_formflow_button_class_back: 'btn btn-secondary craue-btn-back',
-            craue_formflow_button_class_last: 'btn btn-success craue-btn-next',
-            craue_formflow_button_class_reset: 'btn btn-danger craue-btn-reset',
-        } %}
-        {{ form_end(form) }}
+            {{ form_rest(form) }}
+
+            {% include '@CraueFormFlow/FormFlow/buttons.html.twig' with {
+                craue_formflow_button_class_back: 'btn btn-secondary craue-btn-back',
+                craue_formflow_button_class_last: 'btn btn-success craue-btn-next',
+                craue_formflow_button_class_reset: 'btn btn-danger craue-btn-reset',
+            } %}
+            {{ form_end(form) }}
+        </div>
     </div>
 
 {% endblock %}
