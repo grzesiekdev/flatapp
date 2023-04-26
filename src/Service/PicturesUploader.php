@@ -82,4 +82,11 @@ class PicturesUploader
         }
         return $pictures;
     }
+
+    public function getAgreement($path, $fileName): string
+    {
+        $agreements = array_diff(scandir($path), array('.', '..'));
+        $index = array_search($fileName, $agreements);
+        return $agreements[$index];
+    }
 }

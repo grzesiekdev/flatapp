@@ -6,7 +6,7 @@
 parameters:
     temp_pictures: '%kernel.project_dir%/public/uploads/flats/tmp/pictures'
     temp_pictures_for_tenant: '%kernel.project_dir%/public/uploads/flats/tmp/pictures_for_tenant'
-
+    agreements: '%kernel.project_dir%/public/uploads/flats/agreements'
 services:
     # default configuration for services in *this* file
     _defaults:

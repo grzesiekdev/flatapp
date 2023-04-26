@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -53,11 +54,13 @@ class NewFlatFormType extends AbstractType
                             'label' => false,
                         ],
                         'prototype' => true,
+                        'required' => false
                     ])
                     ->add('deposit', IntegerType::class, [
                         'attr' => ['class' => '
                         form-control',
-                        ]
+                        ],
+                        'required' => false
                     ]);
                 break;
             case 3:
@@ -74,20 +77,24 @@ class NewFlatFormType extends AbstractType
                         'attr'     => [
                             'accept' => 'image/*',
                             'multiple' => 'multiple'
-                        ]
+                        ],
+                        'required' => false
                     ]);
                 break;
             case 4:
                 $builder
-                    ->add('description', TextType::class, [
+                    ->add('description', TextareaType::class, [
                         'attr' => ['class' => '
                         form-control',
-                        ]
+                        ],
+                        'required' => false
                     ])
                     ->add('rentAgreement', FileType::class, [
-                        'attr' => ['class' => '
-                        form-control',
-                        ]
+                        'attr' => [
+                            'class' => 'form-control',
+                            'accept' => 'pdf/*'
+                        ],
+                        'required' => false
                     ])
                     ->add('furnishing', CollectionType::class, [
                         'allow_add' => true,
@@ -99,7 +106,8 @@ class NewFlatFormType extends AbstractType
                         'prototype' => true,
                         'attr' => ['class' => '
                         form-control',
-                        ]
+                        ],
+                        'required' => false
                     ]);
                 break;
         }

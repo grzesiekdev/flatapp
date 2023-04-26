@@ -47,7 +47,7 @@ class Flat
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $rentAgreement = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private array $furnishing = [];
 
     #[ORM\OneToMany(mappedBy: 'flat_id', targetEntity: Tenant::class)]

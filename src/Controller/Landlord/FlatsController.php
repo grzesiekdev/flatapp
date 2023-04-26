@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 
 class FlatsController extends AbstractController
@@ -38,7 +39,7 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats/new', name: 'app_flats_new')]
-    public function newFlat(EntityManagerInterface $entityManager, UserInterface $user): Response
+    public function newFlat(EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $flat = new Flat();
         $landlord = $this->getUser();
@@ -70,17 +71,42 @@ class FlatsController extends AbstractController
                 foreach ($picturesForTenant as $picture) {
                     $this->picturesUploader->upload($picture, $specificPicturesForTenantTempDirectory);
                 }
+            } elseif ($flow->getCurrentStep() == 4) {
+                $agreement = $form->get('rentAgreement')->getData();
+                if ($agreement) {
+                    $originalFileName = pathinfo($agreement->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFileName);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$agreement->guessExtension();
+
+                    $agreementDirectory = $this->picturesUploader->createTempDir($this->getParameter('agreements'), $this->getUser()->getId());
+                    try {
+                        $agreement->move(
+                            $agreementDirectory,
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        dd($e);
+                    }
+                    $this->requestStack->getSession()->set('agreementDirectory', $agreementDirectory);
+                    $this->requestStack->getSession()->set('agreementNewName', $newFilename);
+                } else {
+                    $this->requestStack->getSession()->remove('agreementDirectory');
+                    $this->requestStack->getSession()->remove('agreementNewName');
+                }
             }
             if ($flow->nextStep()) {
                 $form = $flow->createForm();
             } else {
                 $pictures = $this->picturesUploader->getPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory'));
                 $picturesForTenant = $this->picturesUploader->getPictures($this->requestStack->getSession()->get('specificPicturesForTenantTempDirectory'));
+                if($this->requestStack->getSession()->get('agreementDirectory')) {
+                    $agreement = $this->picturesUploader->getAgreement($this->requestStack->getSession()->get('agreementDirectory'), $this->requestStack->getSession()->get('agreementNewName'));
+                    $flat->setRentAgreement($agreement);
+                }
 
                 $flat->setLandlord($landlord);
                 $flat->setPictures($pictures);
                 $flat->setPicturesForTenant($picturesForTenant);
-
                 $entityManager->persist($flat);
                 $entityManager->flush();
                 $flow->reset();
