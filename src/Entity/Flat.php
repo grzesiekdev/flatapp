@@ -57,6 +57,9 @@ class Flat
     #[ORM\JoinColumn(nullable: false)]
     private ?Landlord $landlord = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $additional_furnishing = null;
+
     public function __construct()
     {
         $this->tenants = new ArrayCollection();
@@ -237,6 +240,18 @@ class Flat
     public function setLandlord(?Landlord $landlord): self
     {
         $this->landlord = $landlord;
+
+        return $this;
+    }
+
+    public function getAdditionalFurnishing(): ?string
+    {
+        return $this->additional_furnishing;
+    }
+
+    public function setAdditionalFurnishing(?string $additional_furnishing): self
+    {
+        $this->additional_furnishing = $additional_furnishing;
 
         return $this;
     }

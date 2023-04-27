@@ -122,13 +122,21 @@
                     <div class="col-sm-2">
                         {{ form_label(form.furnishing) }}
                     </div>
-                    <div class="col-sm-10 form-control">
+                    <div class="col-sm-10 form-control" style="margin-left: 10px;">
                         {% for child in form.furnishing %}
                             <div>
                                 {{ form_widget(child) }}
                                 {{ form_label(child) }}
                             </div>
                         {% endfor %}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.additionalFurnishing) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.additionalFurnishing) }}
                     </div>
                 </div>
 
@@ -186,7 +194,7 @@
                                     </ul>
                                 </div>
                             </li>
-                            <li>Additional furniture:</li>
+                            <li><strong>Additional furnishing:</strong> {{ form_data.additionalFurnishing }}</li>
                         </ol>
                     </div>
                 </div>

@@ -118,6 +118,13 @@ class NewFlatFormType extends AbstractType
                         'expanded' => true,
                         'multiple' => true,
                         'label_html' => true
+                    ])
+                    ->add('additionalFurnishing', TextType::class, [
+                        'attr' => ['class' => '
+                        form-control',
+                        ],
+                        'label_html' => true,
+                        'label' => 'Additional furniture <small>(add here anything that isn\'t listed above)</small>'
                     ]);
                 $builder->get('furnishing')
                     ->addModelTransformer(new CallbackTransformer(
