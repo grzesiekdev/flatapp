@@ -4,6 +4,7 @@ namespace App\Controller\Landlord;
 
 use App\Entity\Flat;
 use App\Form\NewFlatTypeFlow;
+use App\Repository\FlatRepository;
 use App\Service\PicturesUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -22,7 +23,6 @@ class FlatsController extends AbstractController
     private NewFlatTypeFlow $newFlatTypeFlow;
     private PicturesUploader $picturesUploader;
     private RequestStack $requestStack;
-
     public function __construct(NewFlatTypeFlow $newFlatTypeFlow, PicturesUploader $picturesUploader, RequestStack $session)
     {
         $this->newFlatTypeFlow = $newFlatTypeFlow;
@@ -31,11 +31,23 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats', name: 'app_flats')]
-    public function flats(): Response
+    public function flats(FlatRepository $flatRepository): Response
     {
+        $flats = $flatRepository->findBy(['landlord' => $this->getUser()->getId()]);
+
         return $this->render('panel/flats.html.twig', [
-            'controller_name' => 'PanelController',
+            'flats' => $flats,
         ]);
+    }
+
+    #[Route('/panel/flats/delete/{id}', name: 'app_flats_delete')]
+    public function deleteFlat(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $flat = $flatRepository->findOneBy(['id' => $id]);
+        $entityManager->remove($flat);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_flats');
     }
 
     #[Route('/panel/flats/new', name: 'app_flats_new')]
