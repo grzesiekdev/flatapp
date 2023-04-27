@@ -465,3 +465,31 @@ input[type=number] {
     appearance: textfield;
     margin: 0;
 }
+
+.add-flat-steps {
+    line-height: 4;
+}
+
+@media (max-width: 991px) {
+    .add-flat-steps {
+        border-bottom: 1px solid #6C7293;
+    }
+}
+
+@media (min-width: 992px) {
+    .add-flat-steps {
+        border-right: 1px solid #6C7293;
+    }
+}
+
+#new_flat_form_furnishing .form-control label {
+    padding: 10px;
+}
+#new_flat_form_furnishing i {
+    color: var(--primary);
+}
+#new_flat_form_furnishing input[disabled], #new_flat_form_furnishing input[disabled] + label {
+    cursor: not-allowed;
+}
+
+

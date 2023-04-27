@@ -7,6 +7,8 @@ use phpDocumentor\Reflection\Types\Integer;
 use PHPUnit\Util\TextTestListRenderer;
 use SebastianBergmann\CodeCoverage\Report\Text;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -96,19 +98,36 @@ class NewFlatFormType extends AbstractType
                         ],
                         'required' => false
                     ])
-                    ->add('furnishing', CollectionType::class, [
-                        'allow_add' => true,
-                        'allow_delete' => true,
-                        'entry_type' => FeeType::class,
-                        'entry_options' => [
-                            'label' => false
-                        ],
-                        'prototype' => true,
+                    ->add('furnishing', ChoiceType::class, [
                         'attr' => ['class' => '
                         form-control',
                         ],
-                        'required' => false
+                        'required' => false,
+                        'label' => 'Furnishing',
+                        'choices' => [
+                            '<i class="fa-regular text-danger fa-circle-xmark"></i> No furniture' => false,
+                            '<i class="fas fa-couch fa-lg"></i> Furnished <small>(wardrobes, kitchen furniture, etc)</small>' => 'furnished',
+                            '<i class="fa-solid fa-fire-burner fa-lg"></i> Stove' => 'stove',
+                            '<i class="fa-solid fa-utensils fa-lg"></i> Utensils' => 'utensils',
+                            '<i class="fa-solid fa-kitchen-set fa-lg"></i> Kitchen set' => 'kitchen set',
+                            '<i class="fa-solid fa-bath fa-lg"></i> Bath' => 'bath',
+                            '<i class="fa-solid fa-shower fa-lg"></i> Shower' => 'shower',
+                            '<i class="fa-solid fa-bed fa-lg"></i> Bed' => 'bed',
+                            '<i class="fa-solid fa-tv fa-lg"></i> TV' => 'tv',
+                        ],
+                        'expanded' => true,
+                        'multiple' => true,
+                        'label_html' => true
                     ]);
+                $builder->get('furnishing')
+                    ->addModelTransformer(new CallbackTransformer(
+                        function ($furnishingArray) {
+                            return count($furnishingArray)? $furnishingArray[0]: null;
+                        },
+                        function ($furnishingString) {
+                            return [$furnishingString];
+                        }
+                    ));
                 break;
         }
     }

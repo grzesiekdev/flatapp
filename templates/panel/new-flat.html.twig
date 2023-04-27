@@ -2,11 +2,11 @@
 
 {% block content %}
     <div class="bg-secondary rounded m-4 p-3 row">
-        <div class="col-lg-2" style="line-height: 4; border-right: 1px solid #6C7293;">
+        <div class="col-lg-3 add-flat-steps">
             Steps:
             {% include '@CraueFormFlow/FormFlow/stepList.html.twig' %}
         </div>
-        <div class="col-lg-10 mt-2 px-5">
+        <div class="col-lg-9 mt-2 px-5">
             {{ form_start(form, {'attr': {'id': 'new_flat_form'}}) }}
             {{ form_errors(form) }}
 
@@ -15,7 +15,7 @@
                     <div class="col-2">
                         {{ form_label(form.area) }}
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-sm-3">
                         {{ form_widget(form.area) }} <span>m<sup>2</sup></span>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                     <div class="col-2">
                         {{ form_label(form.description) }}
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         {{ form_widget(form.description) }}
                     </div>
                 </div>
@@ -114,18 +114,24 @@
                     <div class="col-2">
                         {{ form_label(form.rentAgreement) }}
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         {{ form_widget(form.rentAgreement) }}
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col-2">
+                <div class="row mt-2" id="new_flat_form_furnishing">
+                    <div class="col-sm-2">
                         {{ form_label(form.furnishing) }}
                     </div>
-                    <div class="col-sm-3">
-                        {{ form_widget(form.furnishing) }}
+                    <div class="col-sm-10 form-control">
+                        {% for child in form.furnishing %}
+                            <div>
+                                {{ form_widget(child) }}
+                                {{ form_label(child) }}
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
+
             {% elseif flow.getCurrentStepNumber() == 5 %}
                 <div class="row">
                     <div class="col-sm-6">
@@ -171,7 +177,16 @@
                             <li><strong>Description:</strong> {{ form_data.description }}</li>
                             <li><strong>Address:</strong> {{ form_data.address }}</li>
                             <li><strong>Rent agreement:</strong> {{ rent_agreement }}</li>
-                            <li><strong>Furnishing:</strong></li>
+                            <li><strong>Furnishing:</strong>
+                                <div class="row">
+                                    <ul>
+                                    {% for furniture in form_data.furnishing[0] %}
+                                    <li>{{ furniture }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>Additional furniture:</li>
                         </ol>
                     </div>
                 </div>
