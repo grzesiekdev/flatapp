@@ -35,7 +35,7 @@ class FlatsController extends AbstractController
     {
         $flats = $flatRepository->findBy(['landlord' => $this->getUser()->getId()]);
 
-        return $this->render('panel/flats.html.twig', [
+        return $this->render('panel/flats/flats.html.twig', [
             'flats' => $flats,
         ]);
     }
@@ -126,13 +126,23 @@ class FlatsController extends AbstractController
                 return $this->redirectToRoute('app_flats');
             }
         }
-        return $this->render('panel/new-flat.html.twig', [
+        return $this->render('panel/flats/new-flat.html.twig', [
             'form' => $form->createView(),
             'flow' => $flow,
             'form_data' => $formData,
             'pictures' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesTempDirectory')),
             'pictures_for_tenant' => $this->picturesUploader->getTempPictures($this->requestStack->getSession()->get('specificPicturesForTenantTempDirectory')),
             'rent_agreement' => $this->requestStack->getSession()->get('agreementNewName'),
+        ]);
+    }
+
+    #[Route('/panel/flats/{id}', name: 'app_flats_view')]
+    public function viewFlat(FlatRepository $flatRepository, int $id): Response
+    {
+        $flat = $flatRepository->findOneBy(['id' => $id]);
+
+        return $this->render('panel/flats/flat.html.twig', [
+            'flat' => $flat,
         ]);
     }
 }

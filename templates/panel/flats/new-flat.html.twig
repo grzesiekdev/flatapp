@@ -1,4 +1,4 @@
-{% extends './panel/page.html.twig' %}
+{% extends '/panel/page.html.twig' %}
 
 {% block content %}
     <div class="bg-secondary rounded m-4 p-3 row">
@@ -33,6 +33,22 @@
                     </div>
                     <div class="col-sm-3">
                         {{ form_widget(form.address) }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.floor) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.floor) }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        {{ form_label(form.maxFloor) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_widget(form.maxFloor) }}
                     </div>
                 </div>
             {% elseif flow.getCurrentStepNumber() == 2 %}

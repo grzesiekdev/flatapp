@@ -1,0 +1,142 @@
+{% extends '/panel/page.html.twig' %}
+
+{% block content %}
+    <div class="m-4">
+        <h1>Your flat</h1>
+        <div class="row">
+            <div class="card col-8 m-3 p-0 border-0">
+                <div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        {% for picture in flat.pictures %}
+                            <div class="carousel-item {{ (loop.index == 1) ? 'active' : '' }}">
+                                <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.id }}/{{ picture }}" alt="{{ flat.address }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-secondary">{{ flat.address }}</h5>
+                    <p class="card-text">
+                    <div class="row">
+                        <div class="">
+                            <table class="table table-striped table-flat-info">
+                                <tbody>
+                                <tr>
+                                    <td><strong>Area</strong></td>
+                                    <td>{{ flat.area }} m<sup>2</sup></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>Number of rooms</strong></td>
+                                    <td>{{ flat.numberOfRooms }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Rent</strong></td>
+                                    <td>{{ flat.rent }} zł</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>Deposit</strong></td>
+                                    <td>{{ flat.deposit }} zł</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Floor</strong></td>
+                                    <td>{{ flat.floor }} / {{ flat.maxFloor }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    {% if flat.rentAgreement %}
+                                    <td><strong>Agreement</strong></td>
+                                    <td>
+                                        <a href="/uploads/flats/agreements/user{{ app.user.id }}/{{ flat.rentAgreement }}" download>
+                                            {{ flat.rentAgreement|length > 10 ? flat.rentAgreement|slice(0, 10) ~ '...': flat.rentAgreement }} <i class="fa-solid fa-download"></i>
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                </tbody>
+                            </table>
+                            {% if flat.fees %}
+                                <h5 class="text-secondary">Fees</h5>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for fee in flat.fees %}
+                                        <tr>
+                                            <th scope="row">{{ loop.index }}</th>
+                                            <td>{{ fee.name }}</td>
+                                            <td>{{ fee.value }} zł</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                            {% if flat.furnishing[0] or flat.additionalFurnishing %}
+                            <h5 class="text-secondary">Furnishing</h5>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Furnishing</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% set counter = 0 %}
+                                {% for furnishing in flat.furnishing[0] %}
+                                    {% set counter = loop.index %}
+                                    <tr>
+                                        <th scope="row">{{ counter }}</th>
+                                        <td>{{ furnishing | capitalize }}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th scope="row">{{ counter + 1 }}</th>
+                                    <td>{{ flat.additionalFurnishing }}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if flat.description %}
+                        <h5 class="text-secondary">Description</h5>
+                    <p class="flat-description">
+                        {{ flat.description }}
+                    </p>
+                    {% endif %}
+                    {% if flat.picturesForTenant %}
+                    <h5 class="text-secondary">Pictures taken with tenant</h5>
+                    <!-- Gallery -->
+                    <div class="row">
+                        {% for picture in flat.picturesForTenant %}
+                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                            <img
+                                    src="/uploads/flats/pictures_for_tenant/user{{ app.user.id }}/{{ picture }}"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                    alt="{{ flat.address }}"
+                            />
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <!-- Gallery -->
+                    <a href="{{ path('app_flats_view', {id: flat.id}) }}" class="btn btn-primary">Edit</a>
+                    <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

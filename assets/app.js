@@ -23,11 +23,14 @@ require('owlcarousel/owl-carousel/owl.carousel');
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import {handle_fees} from "./js/fees";
+import {handle_floor_select} from "./js/floors";
 
 (function ($) {
     "use strict";
 
     handle_fees();
+    handle_floor_select();
+
     $('#new_flat_form_furnishing_0').change(function() {
         if($(this).is(":checked")) {
             $('input[name="new_flat_form[furnishing][]"]').not('#new_flat_form_furnishing_0').prop('checked', false).attr('disabled', 'disabled');
@@ -35,6 +38,8 @@ import {handle_fees} from "./js/fees";
             $('input[name="new_flat_form[furnishing][]"]').removeAttr('disabled');
         }
     });
+
+
     // Spinner
     var spinner = function () {
         setTimeout(function () {

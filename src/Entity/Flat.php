@@ -60,6 +60,12 @@ class Flat
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $additional_furnishing = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $floor = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $max_floor = null;
+
     public function __construct()
     {
         $this->tenants = new ArrayCollection();
@@ -252,6 +258,30 @@ class Flat
     public function setAdditionalFurnishing(?string $additional_furnishing): self
     {
         $this->additional_furnishing = $additional_furnishing;
+
+        return $this;
+    }
+
+    public function getFloor(): ?string
+    {
+        return $this->floor;
+    }
+
+    public function setFloor(string $floor): self
+    {
+        $this->floor = $floor;
+
+        return $this;
+    }
+
+    public function getMaxFloor(): ?string
+    {
+        return $this->max_floor;
+    }
+
+    public function setMaxFloor(string $max_floor): self
+    {
+        $this->max_floor = $max_floor;
 
         return $this;
     }
