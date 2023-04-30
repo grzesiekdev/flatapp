@@ -83,16 +83,20 @@ class NewFlatFormHandler
         }
     }
 
-    public function handleFlatForm(Flat $flat, $flow, $landlord, $userId): RedirectResponse|Response
+    public function handleFlatForm(Flat $flat, $flow, $landlord, $userId, bool $isEdit = false, Flat $flatCopy = null): RedirectResponse|Response
     {
         $form = $flow->createForm();
         $formData = $form->getData();
         $this->userId = $userId;
 
+        $previousPictures = $flat->getPictures();
+        $previousPicturesForTenant = $flat->getPicturesForTenant();
+
         if ($flow->isValid($form)) {
             $flow->saveCurrentStepData($form);
 
             if ($flow->getCurrentStep() == 3) {
+
                 $pictures = $formData->getPictures();
                 $picturesForTenant = $formData->getPicturesForTenant();
 
@@ -114,9 +118,35 @@ class NewFlatFormHandler
                     $flat->setRentAgreement($agreement);
                 }
 
+                if ($isEdit) {
+                    $picturesPath = $this->filesUploader->getSpecificTempPath($this->tempPicturesDirectory, $userId);
+                    $picturesForTenantPath = $this->filesUploader->getSpecificTempPath($this->tempPicturesForTenantDirectory, $userId);
+
+                    $actualPictures = $this->filesUploader->getPreviousPictures($previousPictures, $picturesPath);
+                    $actualPicturesForTenant = $this->filesUploader->getPreviousPictures($previousPicturesForTenant, $picturesForTenantPath);
+
+                    $pictures = array_merge($actualPictures, $pictures);
+                    $picturesForTenant = array_merge($actualPicturesForTenant, $picturesForTenant);
+                }
+
                 $flat->setLandlord($landlord);
                 $flat->setPictures($pictures);
                 $flat->setPicturesForTenant($picturesForTenant);
+
+                if ($isEdit) {
+                    // TODO: export to copy() func
+                    $flat->setArea($flatCopy->getArea());
+                    $flat->setAddress($flatCopy->getAddress());
+                    $flat->setFloor($flatCopy->getFloor());
+                    $flat->setMaxFloor($flatCopy->getMaxFloor());
+                    $flat->setRent($flatCopy->getRent());
+                    $flat->setDeposit($flatCopy->getDeposit());
+                    $flat->setFees($flatCopy->getFees());
+                    $flat->setDescription($flatCopy->getDescription());
+                    $flat->setFurnishing($flatCopy->getFurnishing());
+                    $flat->setAdditionalFurnishing($flatCopy->getAdditionalFurnishing());
+                }
+
 
                 $this->entityManger->persist($flat);
                 $this->entityManger->flush();
@@ -126,13 +156,31 @@ class NewFlatFormHandler
 
             }
         }
+
+        $twigPictures = [];
+        $twigPicturesForTenant = [];
+
+        if ($flat->getPictures()) {
+            $twigPictures = $flat->getPictures();
+        }
+        $twigPreviousPictures = $this->filesUploader->getTempPictures($this->getSessionVariable('specificPicturesTempDirectory'));
+
+        if ($flat->getPicturesForTenant()) {
+            $twigPicturesForTenant = $flat->getPicturesForTenant();
+        }
+        $twigPreviousPicturesForTenant = $this->filesUploader->getTempPictures($this->getSessionVariable('specificPicturesForTenantTempDirectory'));
+
         return new Response($this->twig->render('panel/flats/new-flat.html.twig', [
             'form' => $form->createView(),
             'flow' => $flow,
             'form_data' => $formData,
-            'pictures' => $this->filesUploader->getTempPictures($this->getSessionVariable('specificPicturesTempDirectory')),
-            'pictures_for_tenant' => $this->filesUploader->getTempPictures($this->getSessionVariable('specificPicturesForTenantTempDirectory')),
+            'pictures' => $twigPictures,
+            'pictures_for_tenant' => $twigPicturesForTenant,
+            'previous_pictures' => $twigPreviousPictures,
+            'previous_pictures_for_tenant' => $twigPreviousPicturesForTenant,
             'rent_agreement' => $this->getSessionVariable('agreementNewName'),
+            'is_edit' => $isEdit,
+            'flat_id' => $flat->getId(),
         ]));
     }
 

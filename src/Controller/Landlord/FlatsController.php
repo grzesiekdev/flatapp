@@ -10,10 +10,12 @@ use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -48,16 +50,18 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats/edit/{id}', name: 'app_flats_edit')]
-    public function editFlat(NewFlatFormHandler $newFlatFormHandler, int $id, FlatRepository $flatRepository): Response
+    public function editFlat(NewFlatFormHandler $newFlatFormHandler, int $id, FlatRepository $flatRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $landlord = $this->getUser();
 
-        $flow = $this->newFlatTypeFlow;
-        $flow->bind($flat);
-
+        $flatCopy = clone $flat;
         $userId = $this->getUser()->getId();
-        return $newFlatFormHandler->handleFlatForm($flat, $flow, $landlord, $userId);
+
+        $flow = $this->newFlatTypeFlow;
+        $flow->bind($flatCopy);
+
+        return $newFlatFormHandler->handleFlatForm($flat, $flow, $landlord, $userId, true, $flatCopy);
     }
 
     #[Route('/panel/flats/new', name: 'app_flats_new')]

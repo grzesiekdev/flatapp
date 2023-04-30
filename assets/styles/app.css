@@ -502,3 +502,25 @@ input[type=number] {
     font-size: 1.1rem;
     text-align: justify;
 }
+
+.delete-picture {
+    position: absolute;
+    cursor: pointer;
+    right: 25px;
+    visibility: hidden;
+    z-index: 1;
+}
+
+.flat-picture-box:hover .delete-picture {
+    visibility: visible;
+}
+
+.flat-picture-box:hover .flat-picture {
+    filter: brightness(30%);
+}
+
+.flat-picture {
+    max-width: 100%;
+    transition: filter 0.2s ease-in-out;
+    z-index: 0;
+}

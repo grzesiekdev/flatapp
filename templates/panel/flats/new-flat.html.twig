@@ -89,10 +89,21 @@
                 </div>
                 <div class="row">
                     {% for picture in pictures %}
-                    <div class="col-sm-3 mb-4 mb-lg-0 mt-3">
+                    <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
+                        <a class="delete-picture position-absolute" data-flat-id="{{ flat_id }}" ><i class="fa-solid fa-x text-danger"></i></a>
+                        <img
+                                src="/uploads/flats/pictures/user{{ app.user.id }}/{{ picture }}"
+                                class="shadow-1-strong rounded mb-4 float-left flat-picture"
+                                style="max-width: 100%;"
+                        />
+                        </div>
+                    {% endfor %}
+                    {% for picture in previous_pictures %}
+                        <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
+                            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id }}"><i class="fa-solid fa-x text-danger"></i></a>
                             <img
                                     src="/uploads/flats/tmp/pictures/user{{ app.user.id }}/{{ picture }}"
-                                    class="shadow-1-strong rounded mb-4 float-left"
+                                    class="shadow-1-strong rounded mb-4 float-left flat-picture"
                                     style="max-width: 100%;"
                             />
                         </div>
@@ -108,10 +119,21 @@
                 </div>
                 <div class="row">
                     {% for picture in pictures_for_tenant %}
-                        <div class="col-sm-3 mb-4 mb-lg-0 mt-3">
+                        <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
+                            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id }}"><i class="fa-solid fa-x text-danger"></i></a>
+                            <img
+                                    src="/uploads/flats/pictures_for_tenant/user{{ app.user.id }}/{{ picture }}"
+                                    class="shadow-1-strong rounded mb-4 float-left flat-picture"
+                                    style="max-width: 100%;"
+                            />
+                        </div>
+                    {% endfor %}
+                    {% for picture in previous_pictures_for_tenant %}
+                        <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
+                            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id }}"><i class="fa-solid fa-x text-danger"></i></a>
                             <img
                                     src="/uploads/flats/tmp/pictures_for_tenant/user{{ app.user.id }}/{{ picture }}"
-                                    class="shadow-1-strong rounded mb-4 float-left"
+                                    class="shadow-1-strong rounded mb-4 float-left flat-picture"
                                     style="max-width: 100%;"
                             />
                         </div>

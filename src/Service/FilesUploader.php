@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -16,13 +17,13 @@ class FilesUploader
         $this->slugger = $slugger;
     }
 
-    public function createSpecificTempPath ($dir, $userId): string
+    public function getSpecificTempPath ($dir, $userId): string
     {
         return $dir . '/user' . $userId;
     }
     public function createTempDir ($path, $userId): string
     {
-        $specificTempDirectory = $this->createSpecificTempPath($path, $userId);
+        $specificTempDirectory = $this->getSpecificTempPath($path, $userId);
         if (!file_exists($specificTempDirectory)) {
             mkdir($specificTempDirectory, 0777, true);
         }
@@ -63,6 +64,21 @@ class FilesUploader
             }
         }
         rmdir($path);
+
+    }
+
+    public function deleteFile($file): int
+    {
+        $response = Response::HTTP_ACCEPTED;
+        if (file_exists($file)) {
+            if (unlink($file)) {
+                $response = Response::HTTP_OK;
+            } else {
+                $response = Response::HTTP_INTERNAL_SERVER_ERROR;
+            }
+        }
+
+        return $response;
     }
     public function getPictures($oldPath): array
     {
@@ -90,5 +106,21 @@ class FilesUploader
         $agreements = array_diff(scandir($path), array('.', '..'));
         $index = array_search($fileName, $agreements);
         return $agreements[$index];
+    }
+
+    public function getPreviousPictures($previousPictures, $path): array
+    {
+        $pictures = [];
+        $newPath = str_replace('/tmp', '', $path);
+        if (is_dir($newPath)) {
+            $allPictures = array_diff(scandir($newPath), array('.', '..'));
+            foreach ($previousPictures as $picture) {
+                if (in_array($picture, $allPictures)) {
+                    $pictures[] = $picture;
+                }
+            }
+        }
+
+        return $pictures;
     }
 }

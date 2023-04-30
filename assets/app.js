@@ -39,6 +39,23 @@ import {handle_floor_select} from "./js/floors";
         }
     });
 
+    $('.delete-picture').click(function() {
+       let file = $(this).siblings('img');
+       let fileName = file.attr('src');
+       let flatId = $(this).attr('data-flat-id');
+       $.ajax({
+           url: '/panel/flats/delete-picture/'+flatId,
+           method: 'POST',
+           data: {file_name: fileName},
+           success: function(result) {
+               file.parent().remove();
+           },
+           error: function(xhr, status, error) {
+               console.log(xhr.responseText);
+           }
+       });
+    });
+
 
     // Spinner
     var spinner = function () {
