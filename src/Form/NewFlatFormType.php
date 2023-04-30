@@ -144,7 +144,8 @@ class NewFlatFormType extends AbstractType
                             'class' => 'form-control',
                             'accept' => 'pdf/*'
                         ],
-                        'required' => false
+                        'required' => false,
+                        'data_class' => null
                     ])
                     ->add('furnishing', ChoiceType::class, [
                         'attr' => ['class' => '

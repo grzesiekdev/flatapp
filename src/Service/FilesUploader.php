@@ -7,7 +7,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use function PHPUnit\Framework\directoryExists;
 
-class PicturesUploader
+class FilesUploader
 {
     private SluggerInterface $slugger;
 
@@ -30,20 +30,22 @@ class PicturesUploader
         return $specificTempDirectory;
     }
 
-    public function upload($picture, $tempDirectory): void
+    public function upload($file, $tempDirectory): string
     {
-        $originalFilename = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFileName = $this->slugger->slug($originalFilename);
-        $newFileName = $safeFileName.'-'.uniqid().'.'.$picture->guessExtension();
+        $newFileName = $safeFileName.'-'.uniqid().'.'.$file->guessExtension();
 
         try {
-            $picture->move(
+            $file->move(
                 $tempDirectory,
                 $newFileName
             );
         } catch (FileException $e) {
             dd($e);
         }
+
+        return $newFileName;
     }
 
     public function moveTempPictures($oldPath, $newPath, $pictures): void
