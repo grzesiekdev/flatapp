@@ -9,7 +9,9 @@
             {% for flat in flats %}
                 <div class="card col-3 m-3 p-0 border-0">
                     <figure>
+                        {% if flat.pictures %}
                         <img class="card-img-top" src="/uploads/flats/pictures/user{{ app.user.id }}/{{ flat.pictures|first }}" alt="{{ flat.address }}">
+                        {% endif %}
                     </figure>
                     <div class="card-body">
                         <h5 class="card-title text-secondary">{{ flat.address }}, {{ flat.area }} m<sup>2</sup>, {{ flat.rent }}zł</h5>

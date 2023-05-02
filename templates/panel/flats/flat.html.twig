@@ -5,6 +5,7 @@
         <h1>Your flat</h1>
         <div class="row">
             <div class="card col-8 m-3 p-0 border-0">
+                {% if flat.pictures %}
                 <div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
                     <div class="carousel-inner">
                         {% for picture in flat.pictures %}
@@ -22,6 +23,7 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title text-secondary">{{ flat.address }}</h5>
                     <p class="card-text">

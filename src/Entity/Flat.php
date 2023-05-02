@@ -32,7 +32,7 @@ class Flat
     #[ORM\Column(nullable: true)]
     private ?int $deposit = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private array $pictures = [];
 
     #[ORM\Column(nullable: true)]

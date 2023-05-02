@@ -120,7 +120,8 @@ class NewFlatFormType extends AbstractType
                         'attr'     => [
                             'accept' => 'image/*',
                             'multiple' => 'multiple'
-                        ]
+                        ],
+                        'required' => false
                     ])
                     ->add('picturesForTenant', FileType::class, [
                         'multiple' => true,

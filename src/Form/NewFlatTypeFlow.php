@@ -34,4 +34,16 @@ class NewFlatTypeFlow extends FormFlow {
 		];
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    public function isStepDone($stepNumber)
+    {
+        if ($this->getFormData() != null && $this->getFormData()->getId()) {
+            return true;
+        }
+
+        return parent::isStepDone($stepNumber);
+    }
+
 }

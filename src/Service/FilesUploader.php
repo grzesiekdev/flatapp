@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -63,7 +64,10 @@ class FilesUploader
                 unlink($file);
             }
         }
-        rmdir($path);
+        if (is_dir($path)) {
+            rmdir($path);
+        }
+
 
     }
 
@@ -82,7 +86,12 @@ class FilesUploader
     }
     public function getPictures($oldPath): array
     {
-        $pictures = array_diff(scandir($oldPath), array('.', '..'));
+        if (is_dir($oldPath)) {
+            $pictures = array_diff(scandir($oldPath), array('.', '..'));
+        } else {
+            $pictures = [];
+        }
+
         $newPath = str_replace('/tmp', '', $oldPath);
         if (!file_exists($newPath)) {
             mkdir($newPath, 0755, true);
