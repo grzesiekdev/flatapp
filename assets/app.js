@@ -31,6 +31,10 @@ import {handle_floor_select} from "./js/floors";
     handle_fees();
     handle_floor_select();
 
+    if ($('#new_flat_form_furnishing_0').is(":checked")) {
+        $('input[name="new_flat_form[furnishing][]"]').not('#new_flat_form_furnishing_0').prop('checked', false).attr('disabled', 'disabled');
+    }
+
     $('#new_flat_form_furnishing_0').change(function() {
         if($(this).is(":checked")) {
             $('input[name="new_flat_form[furnishing][]"]').not('#new_flat_form_furnishing_0').prop('checked', false).attr('disabled', 'disabled');
