@@ -127,26 +127,14 @@ class NewFlatFormHandler
 
                     $pictures = array_merge($actualPictures, $pictures);
                     $picturesForTenant = array_merge($actualPicturesForTenant, $picturesForTenant);
+
+                    // set all properties for current flat
+                    $flat->copy($flatCopy);
                 }
 
                 $flat->setLandlord($landlord);
                 $flat->setPictures($pictures);
                 $flat->setPicturesForTenant($picturesForTenant);
-
-                if ($isEdit) {
-                    // TODO: export to copy() func
-                    $flat->setArea($flatCopy->getArea());
-                    $flat->setAddress($flatCopy->getAddress());
-                    $flat->setFloor($flatCopy->getFloor());
-                    $flat->setMaxFloor($flatCopy->getMaxFloor());
-                    $flat->setRent($flatCopy->getRent());
-                    $flat->setDeposit($flatCopy->getDeposit());
-                    $flat->setFees($flatCopy->getFees());
-                    $flat->setDescription($flatCopy->getDescription());
-                    $flat->setFurnishing($flatCopy->getFurnishing());
-                    $flat->setAdditionalFurnishing($flatCopy->getAdditionalFurnishing());
-                }
-
 
                 $this->entityManger->persist($flat);
                 $this->entityManger->flush();
@@ -157,18 +145,22 @@ class NewFlatFormHandler
             }
         }
 
-        $twigPictures = [];
-        $twigPicturesForTenant = [];
+        $tempPicturesDir = $this->getSessionVariable('specificPicturesTempDirectory');
+        $tempPicturesForTenantDir = $this->getSessionVariable('specificPicturesForTenantTempDirectory');
 
-        if ($flat->getPictures()) {
-            $twigPictures = $flat->getPictures();
-        }
-        $twigPreviousPictures = $this->filesUploader->getTempPictures($this->getSessionVariable('specificPicturesTempDirectory'));
+        // merging previous images and those uploaded by user in this session
+        $twigPictures = array_merge(
+            $this->filesUploader->appendPath(
+                $flat->getPictures(),
+                $tempPicturesDir
+            ),
+            $this->filesUploader->getTempPictures($tempPicturesDir));
 
-        if ($flat->getPicturesForTenant()) {
-            $twigPicturesForTenant = $flat->getPicturesForTenant();
-        }
-        $twigPreviousPicturesForTenant = $this->filesUploader->getTempPictures($this->getSessionVariable('specificPicturesForTenantTempDirectory'));
+        $twigPicturesForTenant = array_merge(
+            $this->filesUploader->appendPath(
+                $flat->getPicturesForTenant(),
+                $tempPicturesForTenantDir),
+            $this->filesUploader->getTempPictures($tempPicturesForTenantDir));
 
         return new Response($this->twig->render('panel/flats/new-flat.html.twig', [
             'form' => $form->createView(),
@@ -176,8 +168,6 @@ class NewFlatFormHandler
             'form_data' => $formData,
             'pictures' => $twigPictures,
             'pictures_for_tenant' => $twigPicturesForTenant,
-            'previous_pictures' => $twigPreviousPictures,
-            'previous_pictures_for_tenant' => $twigPreviousPicturesForTenant,
             'rent_agreement' => $this->getSessionVariable('agreementNewName'),
             'is_edit' => $isEdit,
             'flat_id' => $flat->getId(),

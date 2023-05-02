@@ -97,7 +97,29 @@ class FilesUploader
         $pictures = [];
         if (is_dir($path)) {
             $pictures = array_diff(scandir($path), array('.', '..'));
+            foreach ($pictures as $picture) {
+                if (!file_exists($path . '/' . $picture)) {
+                    $pictures = array_diff($pictures, [$picture]);
+                } else {
+                    $index = array_search($picture, $pictures);
+                    $replacedPath = preg_replace('/(.*)\/public/', '', $path);
+                    $pictures[$index] = $replacedPath . '/' . $picture;
+                }
+            }
         }
+
+        return $pictures;
+    }
+
+    public function appendPath($pictures, $path): array
+    {
+        $path = str_replace('tmp/', '', $path);
+        foreach ($pictures as $picture) {
+            $index = array_search($picture, $pictures);
+            $replacedPath = preg_replace('/(.*)\/public/', '', $path);
+            $pictures[$index] = $replacedPath . '/' . $picture;
+        }
+
         return $pictures;
     }
 

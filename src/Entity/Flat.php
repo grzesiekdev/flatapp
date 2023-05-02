@@ -285,4 +285,18 @@ class Flat
 
         return $this;
     }
+
+    public function copy(Flat $flat): void
+    {
+        $this->setArea($flat->getArea());
+        $this->setAddress($flat->getAddress());
+        $this->setFloor($flat->getFloor());
+        $this->setMaxFloor($flat->getMaxFloor());
+        $this->setRent($flat->getRent());
+        $this->setDeposit($flat->getDeposit());
+        $this->setFees($flat->getFees());
+        $this->setDescription($flat->getDescription());
+        $this->setFurnishing($flat->getFurnishing());
+        $this->setAdditionalFurnishing($flat->getAdditionalFurnishing());
+    }
 }
