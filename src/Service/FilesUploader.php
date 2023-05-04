@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use function PHPUnit\Framework\directoryExists;
 
 class FilesUploader
 {
@@ -67,7 +66,6 @@ class FilesUploader
         if (is_dir($path)) {
             rmdir($path);
         }
-
 
     }
 

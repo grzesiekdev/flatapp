@@ -148,19 +148,28 @@ class NewFlatFormHandler
         $tempPicturesDir = $this->getSessionVariable('specificPicturesTempDirectory');
         $tempPicturesForTenantDir = $this->getSessionVariable('specificPicturesForTenantTempDirectory');
 
-        // merging previous images and those uploaded by user in this session
-        $twigPictures = array_merge(
-            $this->filesUploader->appendPath(
-                $flat->getPictures(),
-                $tempPicturesDir
-            ),
-            $this->filesUploader->getTempPictures($tempPicturesDir));
+        if ($isEdit) {
+            // merging previous images and those uploaded by user in this session
+            $twigPictures = array_merge(
+                $this->filesUploader->appendPath(
+                    $flat->getPictures(),
+                    $tempPicturesDir
+                ),
+                $this->filesUploader->getTempPictures($tempPicturesDir)
+            );
 
-        $twigPicturesForTenant = array_merge(
-            $this->filesUploader->appendPath(
-                $flat->getPicturesForTenant(),
-                $tempPicturesForTenantDir),
-            $this->filesUploader->getTempPictures($tempPicturesForTenantDir));
+            $twigPicturesForTenant = array_merge(
+                $this->filesUploader->appendPath(
+                    $flat->getPicturesForTenant(),
+                    $tempPicturesForTenantDir),
+                $this->filesUploader->getTempPictures($tempPicturesForTenantDir)
+            );
+        } else {
+            $twigPictures = $this->filesUploader->getTempPictures($tempPicturesDir);
+            $twigPicturesForTenant = $this->filesUploader->getTempPictures($tempPicturesForTenantDir);
+        }
+
+
 
         return new Response($this->twig->render('panel/flats/new-flat.html.twig', [
             'form' => $form->createView(),
