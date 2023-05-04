@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use function PHPUnit\Framework\throwException;
 
 class FilesUploader
 {
@@ -30,7 +31,7 @@ class FilesUploader
     {
         $specificTempDirectory = $this->getSpecificTempPath($path, $userId);
         if (!file_exists($specificTempDirectory)) {
-            mkdir($specificTempDirectory, 0777, true);
+            mkdir($specificTempDirectory, 0755, true);
         }
 
         return $specificTempDirectory;
@@ -48,7 +49,7 @@ class FilesUploader
                 $newFileName
             );
         } catch (FileException $e) {
-            dd($e);
+            throwException($e);
         }
 
         return $newFileName;

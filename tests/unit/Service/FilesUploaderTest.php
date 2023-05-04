@@ -4,16 +4,29 @@ namespace App\Tests\unit\Service;
 
 use App\Service\FilesUploader;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FilesUploaderTest extends KernelTestCase
 {
 
     private FilesUploader $filesUploader;
+    private ParameterBagInterface $parameterBag;
     public function setUp(): void
     {
         $kernel = self::bootKernel();
         $container = static::getContainer();
+
         $this->filesUploader = $container->get(FilesUploader::class);
+        $this->parameterBag =  $container->get(ParameterBagInterface::class);
+    }
+
+    public function moveAndDeleteImage($file) : void
+    {
+        $newName = preg_replace('/-(.*)/', '', $file);
+        copy($this->parameterBag->get('test_images') . '/uploaded/' . $file, $this->parameterBag->get('test_images') . '/' . $newName . '.png');
+        unlink($this->parameterBag->get('test_images') . '/uploaded/' . $file);
     }
 
     public function testGetSpecificTempPathForValidInput()
@@ -69,6 +82,78 @@ class FilesUploaderTest extends KernelTestCase
         $actual = $this->filesUploader->getSpecificTempPath($dir, $userId);
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testCreateTempDirForValidInput()
+    {
+        $dir = '/uploads/flats/tmp/pictures/';
+        $userId = 1;
+
+        $expected = '/uploads/flats/tmp/pictures/user1';
+        $actual = $this->filesUploader->getSpecificTempPath($dir, $userId);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testCreateTempDirForDirectoryExists()
+    {
+        $dir = $this->parameterBag->get('temp_pictures');
+        $userId = 0;
+
+        $actual = $this->filesUploader->createTempDir($dir, $userId);
+
+        $this->assertDirectoryExists($actual);
+        rmdir($actual);
+    }
+
+    public function testCreateTempDirForSettingPermissions()
+    {
+        $dir = $this->parameterBag->get('temp_pictures');
+        $userId = 0;
+
+        $actual = $this->filesUploader->createTempDir($dir, $userId);
+
+        $this->assertEquals('755', decoct(fileperms($actual) & 0777));
+        rmdir($actual);
+    }
+
+    public function testCreateTempDirForReturningString()
+    {
+        $dir = $this->parameterBag->get('temp_pictures');
+        $userId = 0;
+
+        $actual = $this->filesUploader->createTempDir($dir, $userId);
+
+        $this->assertIsString($actual);
+        rmdir($actual);
+    }
+
+    public function testUploadForNotEmptyString()
+    {
+        $file = new UploadedFile($this->parameterBag->get('test_images') . '/logo.png', 'logo.png', 'image/png', null, true);
+        $actual = $this->filesUploader->upload($file, $this->parameterBag->get('test_images') . '/uploaded');
+
+        $this->assertNotEmpty($actual);
+        $this->moveAndDeleteImage($actual);
+    }
+
+    public function testUploadForCorrectFileName()
+    {
+        $file = new UploadedFile($this->parameterBag->get('test_images') . '/logo.png', 'logo.png', 'image/png', null, true);
+        $actual = $this->filesUploader->upload($file, $this->parameterBag->get('test_images') . '/uploaded');
+
+        $this->assertMatchesRegularExpression('/^[a-z0-9]+-[a-z0-9]+\.png$/', $actual);
+        $this->moveAndDeleteImage($actual);
+    }
+
+    public function testUploadForInvalidDirectory()
+    {
+        $file = new UploadedFile($this->parameterBag->get('test_images') . '/logo.png', 'logo.png', 'image/png', null, true);
+        $actual = $this->filesUploader->upload($file, $this->parameterBag->get('test_images') . '/non_existent');
+
+        $this->expectException(FileException::class);
+        $this->assertMatchesRegularExpression('/^[a-z0-9]+-[a-z0-9]+\.png$/', $actual);
+        $this->moveAndDeleteImage($actual);
     }
 
 }
