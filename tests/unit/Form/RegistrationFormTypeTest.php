@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Form\Type;
+namespace App\Tests\unit\Form;
 
-use App\Form\RegistrationFormType;
 use App\Entity\User\Type\Landlord;
+use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -12,10 +12,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class RegistrationFormTypeTest extends KernelTestCase
 {
 
-    private UserPasswordHasherInterface $userPasswordHasher;
     private EntityManager $entityManager;
     private array $formData = [];
-    private ?object $formFactory;
     private Landlord $expected, $model;
     private $projectDir;
     private $form;
@@ -29,7 +27,7 @@ class RegistrationFormTypeTest extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userPasswordHasher = $container->get(UserPasswordHasherInterface::class);
+        $userPasswordHasher = $container->get(UserPasswordHasherInterface::class);
         $this->projectDir = $container->getParameter('kernel.project_dir');
 
         # Data on which we will run tests and assertions
@@ -53,7 +51,7 @@ class RegistrationFormTypeTest extends KernelTestCase
             'roles' => 'landlord'
         ];
 
-        $this->formFactory = $container->get('form.factory');
+        $formFactory = $container->get('form.factory');
 
         # Preparing expected Landlord model
         $this->expected = new Landlord();
@@ -61,7 +59,7 @@ class RegistrationFormTypeTest extends KernelTestCase
         $this->expected->setName($this->formData['name'])
             ->setEmail($this->formData['email'])
             ->setPassword(
-                $this->userPasswordHasher->hashPassword(
+                $userPasswordHasher->hashPassword(
                     $this->expected,
                     $this->formData['plainPassword']['first']
                 )
@@ -72,14 +70,14 @@ class RegistrationFormTypeTest extends KernelTestCase
             ->setPhone($this->formData['phone'])
             ->setRoles(['landlord']);
 
-        $this->form = $this->formFactory->create(RegistrationFormType::class, $this->model, [
+        $this->form = $formFactory->create(RegistrationFormType::class, $this->model, [
             'csrf_protection' => false,
         ]);
 
         # It is necessary to set these values manually due to form constrains
         $this->formData['dateOfBirth'] = $this->formData['dateOfBirth']->format('Y-m-d');
         $this->model->setPassword(
-            $this->userPasswordHasher->hashPassword(
+            $userPasswordHasher->hashPassword(
                 $this->model,
                 $this->formData['plainPassword']['first']
             )
