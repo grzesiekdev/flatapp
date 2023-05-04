@@ -91,7 +91,7 @@ class FilesUploader
         }
 
         $newPath = str_replace('/tmp', '', $oldPath);
-        if (!file_exists($newPath)) {
+        if (!file_exists($newPath) && $newPath !== '') {
             mkdir($newPath, 0755, true);
         }
         $this->moveTempPictures($oldPath, $newPath, $pictures);

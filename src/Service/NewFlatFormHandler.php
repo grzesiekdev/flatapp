@@ -149,6 +149,11 @@ class NewFlatFormHandler
         $tempPicturesForTenantDir = $this->getSessionVariable('specificPicturesForTenantTempDirectory');
 
         if ($isEdit) {
+            if ($tempPicturesDir == '' || $tempPicturesForTenantDir == '') {
+                $tempPicturesDir = $this->filesUploader->getSpecificTempPath($this->tempPicturesDirectory, $userId);
+                $tempPicturesForTenantDir = $this->filesUploader->getSpecificTempPath($this->tempPicturesForTenantDirectory, $userId);
+            }
+
             // merging previous images and those uploaded by user in this session
             $twigPictures = array_merge(
                 $this->filesUploader->appendPath(

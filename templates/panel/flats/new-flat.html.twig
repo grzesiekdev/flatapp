@@ -90,7 +90,7 @@
                 <div class="row">
                     {% for picture in pictures %}
                     <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
-                        <a class="delete-picture position-absolute" data-flat-id="{{ flat_id }}" ><i class="fa-solid fa-x text-danger"></i></a>
+                        <a class="delete-picture position-absolute" data-flat-id="{{ flat_id ? flat_id : 0 }}" ><i class="fa-solid fa-x text-danger"></i></a>
                         <img
                                 src="{{ picture }}"
                                 class="shadow-1-strong rounded mb-4 float-left flat-picture"
@@ -110,7 +110,7 @@
                 <div class="row">
                     {% for picture in pictures_for_tenant %}
                         <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
-                            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id }}"><i class="fa-solid fa-x text-danger"></i></a>
+                            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id ? flat_id : 0 }}"><i class="fa-solid fa-x text-danger"></i></a>
                             <img
                                     src="{{ picture }}"
                                     class="shadow-1-strong rounded mb-4 float-left flat-picture"

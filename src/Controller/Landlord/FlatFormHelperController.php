@@ -19,15 +19,18 @@ class FlatFormHelperController extends AbstractController
     {
         $fileName = $request->request->get('file_name');
         $fileToRemove = preg_replace('/\/(.*)\//', '', $fileName);
-        $flat = $flatRepository->findOneBy(['id' => $id]);
 
-        if (str_contains($fileName, '/pictures_for_tenant/')) {
-            $flat->setPicturesForTenant(array_diff($flat->getPicturesForTenant(), [$fileToRemove]));
-        } else {
-            $flat->setPictures(array_diff($flat->getPictures(), [$fileToRemove]));
+        if ($id != 0) {
+            $flat = $flatRepository->findOneBy(['id' => $id]);
+
+            if (str_contains($fileName, '/pictures_for_tenant/')) {
+                $flat->setPicturesForTenant(array_diff($flat->getPicturesForTenant(), [$fileToRemove]));
+            } else {
+                $flat->setPictures(array_diff($flat->getPictures(), [$fileToRemove]));
+            }
+            $entityManager->persist($flat);
+            $entityManager->flush();
         }
-        $entityManager->persist($flat);
-        $entityManager->flush();
 
         $fileName = $kernel->getProjectDir() . '/public' . $fileName;
 
