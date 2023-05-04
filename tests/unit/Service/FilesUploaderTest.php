@@ -146,14 +146,29 @@ class FilesUploaderTest extends KernelTestCase
         $this->moveAndDeleteImage($actual);
     }
 
-    public function testUploadForInvalidDirectory()
+    public function testMoveTempPicturesForValidData()
     {
-        $file = new UploadedFile($this->parameterBag->get('test_images') . '/logo.png', 'logo.png', 'image/png', null, true);
-        $actual = $this->filesUploader->upload($file, $this->parameterBag->get('test_images') . '/non_existent');
+        $pictures = [];
+        for ($i = 0; $i < 3; $i++) {
+            $file = new UploadedFile($this->parameterBag->get('test_images') . '/picture' . $i . '.png', $this->parameterBag->get('test_images') . '/picture' . $i . '.png', 'image/png', null, true);
+            $pictures[] = $file->getClientOriginalName();
+        }
 
-        $this->expectException(FileException::class);
-        $this->assertMatchesRegularExpression('/^[a-z0-9]+-[a-z0-9]+\.png$/', $actual);
-        $this->moveAndDeleteImage($actual);
+        $oldPath = $this->parameterBag->get('test_images');
+        $newPath = $this->parameterBag->get('test_images') . '/uploaded/';
+
+        $this->filesUploader->moveTempPictures($oldPath, $newPath, $pictures);
+        $actual = array_diff(scandir($newPath), array('.', '..'));
+        $expected = [
+            2 => $pictures[0],
+            3 => $pictures[1],
+            4 => $pictures[2]
+        ];
+
+        $this->assertEquals($expected, $actual);
+
+        // moving files back to desired location, due to future tests
+        $this->filesUploader->moveTempPictures($newPath, $oldPath, $pictures);
     }
 
 }

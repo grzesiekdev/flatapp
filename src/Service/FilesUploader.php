@@ -100,8 +100,10 @@ class FilesUploader
         if (!file_exists($newPath) && $newPath !== '') {
             mkdir($newPath, 0755, true);
         }
+        dd($pictures);
         $this->moveTempPictures($oldPath, $newPath, $pictures);
         $this->removeTempPictures($oldPath);
+
         return $pictures;
     }
 
