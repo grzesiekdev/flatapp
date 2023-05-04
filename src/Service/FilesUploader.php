@@ -19,7 +19,12 @@ class FilesUploader
 
     public function getSpecificTempPath ($dir, $userId): string
     {
-        return $dir . '/user' . $userId;
+        $path = $dir . '/user' . $userId;
+        if (str_ends_with($dir, '/')) {
+            $path = $dir . 'user' . $userId;
+        }
+
+        return $path;
     }
     public function createTempDir ($path, $userId): string
     {

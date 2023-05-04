@@ -16,7 +16,7 @@ class FilesUploaderTest extends KernelTestCase
         $this->filesUploader = $container->get(FilesUploader::class);
     }
 
-    public function testGetSpecificTempPathForValidData()
+    public function testGetSpecificTempPathForValidInput()
     {
         $dir = '/uploads/flats/tmp/pictures';
         $userId = 1;
@@ -52,6 +52,17 @@ class FilesUploaderTest extends KernelTestCase
     public function testGetSpecificTempPathForZeroUserId()
     {
         $dir = '/uploads/flats/tmp/pictures';
+        $userId = 0;
+
+        $expected = '/uploads/flats/tmp/pictures/user0';
+        $actual = $this->filesUploader->getSpecificTempPath($dir, $userId);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetSpecificTempPathForDirEndedWithSlash()
+    {
+        $dir = '/uploads/flats/tmp/pictures/';
         $userId = 0;
 
         $expected = '/uploads/flats/tmp/pictures/user0';
