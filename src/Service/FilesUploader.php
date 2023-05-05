@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use function PHPUnit\Framework\directoryExists;
 use function PHPUnit\Framework\throwException;
 
 class FilesUploader
@@ -61,17 +62,23 @@ class FilesUploader
             rename($oldPath . '/' . $picture, $newPath . '/' . $picture);
         }
     }
+
     public function removeTempPictures($path): void
     {
-        $files = glob($path);
-        foreach ($files as $file) {
-            if(is_file($file)) {
-                unlink($file);
+        if (file_exists($path)) {
+            $files = array_diff(scandir($path), array('.', '..'));
+            foreach ($files as $file) {
+                if(is_file($path . $file)) {
+                    unlink($path . $file);
+                }
             }
+            if (is_dir($path)) {
+                rmdir($path);
+            }
+        } else {
+            throw new Exception('Path does not exists');
         }
-        if (is_dir($path)) {
-            rmdir($path);
-        }
+
 
     }
 
@@ -100,7 +107,7 @@ class FilesUploader
         if (!file_exists($newPath) && $newPath !== '') {
             mkdir($newPath, 0755, true);
         }
-        dd($pictures);
+
         $this->moveTempPictures($oldPath, $newPath, $pictures);
         $this->removeTempPictures($oldPath);
 

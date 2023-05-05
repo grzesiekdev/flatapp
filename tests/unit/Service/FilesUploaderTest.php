@@ -3,6 +3,7 @@
 namespace App\Tests\unit\Service;
 
 use App\Service\FilesUploader;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -169,6 +170,44 @@ class FilesUploaderTest extends KernelTestCase
 
         // moving files back to desired location, due to future tests
         $this->filesUploader->moveTempPictures($newPath, $oldPath, $pictures);
+    }
+
+    public function testMoveTempPicturesForEmptyArray()
+    {
+        $pictures = [];
+
+        $oldPath = $this->parameterBag->get('test_images');
+        $newPath = $this->parameterBag->get('test_images') . '/uploaded/';
+
+        $this->filesUploader->moveTempPictures($oldPath, $newPath, $pictures);
+        $actual = array_diff(scandir($newPath), array('.', '..'));
+        $expected = [];
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testRemoveTempPicturesForValidData()
+    {
+        $path = $this->parameterBag->get('test_images') . '/to_remove/';
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+
+        for ($i = 0; $i < 5; $i++) {
+            fopen($path . 'file' . $i . '.txt', 'w');
+        }
+
+        $this->filesUploader->removeTempPictures($path);
+        $this->assertDirectoryDoesNotExist($path);
+        $this->assertFileDoesNotExist($path . 'file0.txt');
+    }
+
+    public function testRemoveTempPicturesForInvalidPath()
+    {
+        $path = $this->parameterBag->get('test_images') . '/to_remove_not_real/';
+
+        $this->expectExceptionMessage('Path does not exists');
+        $this->filesUploader->removeTempPictures($path);
     }
 
 }
