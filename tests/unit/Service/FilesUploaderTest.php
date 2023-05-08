@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use function PHPUnit\Framework\assertEquals;
 
 class FilesUploaderTest extends KernelTestCase
 {
@@ -315,5 +316,81 @@ class FilesUploaderTest extends KernelTestCase
         $actual = $this->filesUploader->getTempPictures($this->parameterBag->get('test_images') . '/tmp1/');
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetTempPicturesForNumbersAsPath()
+    {
+        $expected = [];
+        $actual = $this->filesUploader->getTempPictures(123);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testAppendPathForValidData()
+    {
+        $path = '/var/www/docker/public/uploads/flats/tmp/pictures/user8';
+        $pictures = [
+            "picture0.png",
+            "picture1.png",
+            "picture2.png",
+        ];
+
+        $expected = [
+            "/uploads/flats/pictures/user8/picture0.png",
+            "/uploads/flats/pictures/user8/picture1.png",
+            "/uploads/flats/pictures/user8/picture2.png"
+        ];
+
+        $actual = $this->filesUploader->appendPath($pictures, $path);
+        assertEquals($expected, $actual);
+    }
+
+    public function testAppendPathForEmptyPictures()
+    {
+        $path = '/var/www/docker/public/uploads/flats/tmp/pictures/user8';
+        $pictures = [];
+
+        $expected = [];
+
+        $actual = $this->filesUploader->appendPath($pictures, $path);
+        assertEquals($expected, $actual);
+    }
+
+    public function testAppendPathForEmptyPath()
+    {
+        $path = '';
+        $pictures = [
+            "picture0.png",
+            "picture1.png",
+            "picture2.png",
+        ];
+
+        $expected = [
+            "/picture0.png",
+            "/picture1.png",
+            "/picture2.png",
+        ];
+
+        $actual = $this->filesUploader->appendPath($pictures, $path);
+        assertEquals($expected, $actual);
+    }
+
+    public function testAppendPathForNoTmpInPath()
+    {
+        $path = '/var/www/docker/public/uploads/flats/pictures/user8';
+        $pictures = [
+            "picture0.png",
+            "picture1.png",
+            "picture2.png",
+        ];
+
+        $expected = [
+            "/uploads/flats/pictures/user8/picture0.png",
+            "/uploads/flats/pictures/user8/picture1.png",
+            "/uploads/flats/pictures/user8/picture2.png"
+        ];
+
+        $actual = $this->filesUploader->appendPath($pictures, $path);
+        assertEquals($expected, $actual);
     }
 }
