@@ -207,7 +207,7 @@ class FilesUploaderTest extends KernelTestCase
     {
         $path = $this->parameterBag->get('test_images') . '/to_remove_not_real/';
 
-        $this->expectExceptionMessage('Path does not exists');
+        $this->expectExceptionMessage('Path does not exist');
         $this->filesUploader->removeTempPictures($path);
     }
 
@@ -392,5 +392,34 @@ class FilesUploaderTest extends KernelTestCase
 
         $actual = $this->filesUploader->appendPath($pictures, $path);
         assertEquals($expected, $actual);
+    }
+
+    public function testGetAgreementForValidData()
+    {
+        $path = $this->parameterBag->get('test_images');
+        if (!file_exists($path . '/agreement.txt')) {
+            fopen($path . '/agreement.txt', 'w');
+        }
+
+        $expected = 'agreement.txt';
+        $actual = $this->filesUploader->getAgreement($path, 'agreement.txt');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetAgreementForEmptyPath()
+    {
+        $path = $this->parameterBag->get('test_images') . '/0';
+        $this->expectExceptionMessage('Path ' . $path . ' does not exist');
+
+        $this->filesUploader->getAgreement($path, 'agreement.txt');
+    }
+
+    public function testGetAgreementForNotExistingFile()
+    {
+        $path = $this->parameterBag->get('test_images') . '/public';
+        $this->expectExceptionMessage('File agreement.txt does not exist');
+
+        $this->filesUploader->getAgreement($path, 'agreement.txt');
     }
 }

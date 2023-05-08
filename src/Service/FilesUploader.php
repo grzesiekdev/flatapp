@@ -63,6 +63,9 @@ class FilesUploader
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeTempPictures($path): void
     {
         if (file_exists($path)) {
@@ -76,7 +79,7 @@ class FilesUploader
                 rmdir($path);
             }
         } else {
-            throw new Exception('Path does not exists');
+            throw new Exception('Path does not exist');
         }
     }
 
@@ -145,11 +148,23 @@ class FilesUploader
         return $pictures;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAgreement($path, $fileName): string
     {
-        $agreements = array_diff(scandir($path), array('.', '..'));
+        try {
+            $agreements = array_diff(scandir($path), array('.', '..'));
+        } catch (Exception $e) {
+            throw new Exception('Path ' . $path . ' does not exist');
+        }
+
         $index = array_search($fileName, $agreements);
-        return $agreements[$index];
+        if ($index == '') {
+            throw new Exception('File ' . $fileName . ' does not exist');
+        } else {
+            return $agreements[$index];
+        }
     }
 
     public function getPreviousPictures($previousPictures, $path): array
