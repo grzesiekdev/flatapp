@@ -99,17 +99,17 @@ class FilesUploader
     {
         if (is_dir($oldPath)) {
             $pictures = array_diff(scandir($oldPath), array('.', '..'));
+            $newPath = str_replace('/tmp', '', $oldPath);
+
+            if (!file_exists($newPath) && $newPath !== '') {
+                mkdir($newPath, 0755, true);
+            }
+
+            $this->moveTempPictures($oldPath, $newPath, $pictures);
+            $this->removeTempPictures($oldPath);
         } else {
             $pictures = [];
         }
-
-        $newPath = str_replace('/tmp', '', $oldPath);
-        if (!file_exists($newPath) && $newPath !== '') {
-            mkdir($newPath, 0755, true);
-        }
-
-        $this->moveTempPictures($oldPath, $newPath, $pictures);
-        $this->removeTempPictures($oldPath);
 
         return $pictures;
     }

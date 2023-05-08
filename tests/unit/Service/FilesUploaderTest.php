@@ -250,4 +250,70 @@ class FilesUploaderTest extends KernelTestCase
         $this->assertEquals($excepted, $actual);
     }
 
+    public function testGetPicturesForValidData()
+    {
+        $pictures = [];
+        $path = $this->parameterBag->get('test_images') . '/tmp/';
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+
+        for ($i = 0; $i < 3; $i++) {
+            copy($this->parameterBag->get('test_images') . '/picture' . $i . '.png', $path . 'picture' . $i . '.png');
+            $file = new UploadedFile($path . 'picture' . $i . '.png', $path . 'picture' . $i . '.png', 'image/png', null, true);
+            $pictures[] = $file->getClientOriginalName();
+        }
+
+        $expected = [
+            2 => $pictures[0],
+            3 => $pictures[1],
+            4 => $pictures[2]
+        ];
+        $actual = $this->filesUploader->getPictures($this->parameterBag->get('test_images') . '/tmp/');
+        $newPath = str_replace('/tmp', '', $path);
+
+        $this->assertEquals($expected, $actual);
+        $this->assertDirectoryDoesNotExist($path);
+        $this->assertDirectoryExists($newPath);
+    }
+
+    public function testGetPicturesForInvalidPath()
+    {
+        $expected = [];
+        $actual = $this->filesUploader->getPictures($this->parameterBag->get('test_images') . '/tmp1/');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetTempPicturesForValidData()
+    {
+        $pictures = [];
+        $path = $this->parameterBag->get('test_images') . '/public';
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+
+        for ($i = 0; $i < 3; $i++) {
+            copy($this->parameterBag->get('test_images') . '/picture' . $i . '.png', $path . '/picture' . $i . '.png');
+            $file = new UploadedFile($path . '/picture' . $i . '.png', $path . '/picture' . $i . '.png', 'image/png', null, true);
+            $pictures[] = '/' . $file->getClientOriginalName();
+        }
+
+        $expected = [
+            2 => $pictures[0],
+            3 => $pictures[1],
+            4 => $pictures[2]
+        ];
+        $actual = $this->filesUploader->getTempPictures($path);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetTempPicturesForInvalidPath()
+    {
+        $expected = [];
+        $actual = $this->filesUploader->getTempPictures($this->parameterBag->get('test_images') . '/tmp1/');
+
+        $this->assertEquals($expected, $actual);
+    }
 }
