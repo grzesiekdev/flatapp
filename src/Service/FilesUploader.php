@@ -78,18 +78,18 @@ class FilesUploader
         } else {
             throw new Exception('Path does not exists');
         }
-
-
     }
 
     public function deleteFile($file): int
     {
-        $response = Response::HTTP_ACCEPTED;
-        if (file_exists($file)) {
-            if (unlink($file)) {
-                $response = Response::HTTP_OK;
-            } else {
+        try {
+            unlink($file);
+            $response = Response::HTTP_OK;
+        } catch (Exception $e) {
+            if (file_exists($file)) {
                 $response = Response::HTTP_INTERNAL_SERVER_ERROR;
+            } else {
+                $response = Response::HTTP_NOT_FOUND;
             }
         }
 

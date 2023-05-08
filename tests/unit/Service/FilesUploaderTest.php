@@ -210,4 +210,44 @@ class FilesUploaderTest extends KernelTestCase
         $this->filesUploader->removeTempPictures($path);
     }
 
+    public function testDeleteFileForValidFile()
+    {
+        $path = $this->parameterBag->get('test_images') . '/to_remove/';
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+        fopen($path . 'file1.txt', 'w');
+
+        $excepted = 200;
+        $actual = $this->filesUploader->deleteFile($path . 'file1.txt');
+
+        $this->assertEquals($excepted, $actual);
+    }
+
+    public function testDeleteFileForNotExistingFile()
+    {
+        $path = $this->parameterBag->get('test_images') . '/to_remove/';
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+
+        $excepted = 404;
+        $actual = $this->filesUploader->deleteFile($path . 'file1.txt');
+
+        $this->assertEquals($excepted, $actual);
+    }
+
+    public function testDeleteFileForInvalidFile()
+    {
+        $path = $this->parameterBag->get('test_images') . '/to_remove/';
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+
+        $excepted = 500;
+        $actual = $this->filesUploader->deleteFile($path);
+
+        $this->assertEquals($excepted, $actual);
+    }
+
 }
