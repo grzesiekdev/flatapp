@@ -422,4 +422,78 @@ class FilesUploaderTest extends KernelTestCase
 
         $this->filesUploader->getAgreement($path, 'agreement.txt');
     }
+
+    public function testGetPreviousPicturesForValidData()
+    {
+        $path = $this->parameterBag->get('test_images') . '/public';
+        $previousPictures = [
+            'picture0.png',
+            'picture1.png',
+            'picture2.png',
+        ];
+
+        $expected = $previousPictures;
+        $actual = $this->filesUploader->getPreviousPictures($previousPictures, $path);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetPreviousPicturesForTwoImages()
+    {
+        $path = $this->parameterBag->get('test_images') . '/public';
+        $previousPictures = [
+            'picture0.png',
+            'picture1.png',
+        ];
+
+        $expected = $previousPictures;
+        $actual = $this->filesUploader->getPreviousPictures($previousPictures, $path);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetPreviousPicturesForZeroImagess()
+    {
+        $path = $this->parameterBag->get('test_images') . '/public';
+        $previousPictures = [];
+
+        $expected = $previousPictures;
+        $actual = $this->filesUploader->getPreviousPictures($previousPictures, $path);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetPreviousPicturesForInvalidPath()
+    {
+        $path = $this->parameterBag->get('test_images') . '/public/picture0.png';
+        $previousPictures = [
+            'picture0.png',
+            'picture1.png',
+        ];
+
+        $expected = [];
+        $actual = $this->filesUploader->getPreviousPictures($previousPictures, $path);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetPreviousPicturesForTooManyImages()
+    {
+        $path = $this->parameterBag->get('test_images') . '/public';
+        $previousPictures = [
+            'picture0.png',
+            'picture1.png',
+            'picture2.png',
+            'picture3.png', // This file doesn't exist
+        ];
+
+        $expected = [
+            'picture0.png',
+            'picture1.png',
+            'picture2.png',
+        ];
+        $actual = $this->filesUploader->getPreviousPictures($previousPictures, $path);
+
+        $this->assertEquals($expected, $actual);
+    }
 }
