@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\unit\Form;
+namespace App\Tests\functional\Form;
 
 use App\Entity\User\Type\Landlord;
 use App\Form\RegistrationFormType;
