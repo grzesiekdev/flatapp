@@ -120,7 +120,7 @@ class FilesUploader
     public function getTempPictures($path): array
     {
         $pictures = [];
-        if (is_dir($path)) {
+        if ($path !== null && is_dir($path)) {
             $pictures = array_diff(scandir($path), array('.', '..'));
             foreach ($pictures as $picture) {
                 if (!file_exists($path . '/' . $picture)) {

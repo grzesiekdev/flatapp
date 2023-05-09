@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Tests\SessionHelper;
 
 
 class NewFlatFormHandlerTest extends WebTestCase
@@ -18,23 +19,35 @@ class NewFlatFormHandlerTest extends WebTestCase
     private ParameterBagInterface $parameterBag;
     private NewFlatFormHandler $newFlatFormHandler;
     private RequestStack $requestStack;
+
+    use SessionHelper;
     public function setUp(): void
     {
         $this->client = static::createClient();
         $container = static::getContainer();
-        $userRepository = $container->get(UserRepository::class);
 
-        $testUser = $userRepository->findOneByEmail('')
+        $userRepository = $container->get(UserRepository::class);
+        $testUser = $userRepository->findOneByEmail('test@test.pl');
+        $this->client->loginUser($testUser);
+
         $this->parameterBag =  $container->get(ParameterBagInterface::class);
         $this->newFlatFormHandler = $container->get(NewFlatFormHandler::class);
         $this->requestStack = $container->get(RequestStack::class);
     }
 
+    public function testUserLoggedInCorrectly()
+    {
+        $this->client->request('GET', '/panel/flats/new');
+        $this->assertResponseIsSuccessful();
+    }
+
     public function testGetSessionVariable()
     {
-        $crawler = $this->client->request('GET', '/login');
-        $this->requestStack->getSession()->set('test', 'value');
-        $actual = $this->newFlatFormHandler->getSessionVariable('test');
+        $session = $this->createSession($this->client);
+        $crawler = $this->client->request('GET', '/panel/flats/new');
+
+        $session->set('test', 'value');
+        $actual = $session->get('test');
 
         $this->assertEquals('value', $actual);
     }
