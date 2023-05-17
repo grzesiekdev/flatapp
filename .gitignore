@@ -1,15 +1,17 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
 /.env.*.local
 /.env.test
+/.env.panther
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /public/uploads
 /public/img
 /var/
 /vendor/
+/screen.png
+/drivers/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

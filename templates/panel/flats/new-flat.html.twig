@@ -53,6 +53,7 @@
                 </div>
             {% elseif flow.getCurrentStepNumber() == 2 %}
                 <div class="row mt-2">
+                    {{ form_errors(form.rent) }}
                     <div class="col-2">
                         {{ form_label(form.rent) }}
                     </div>

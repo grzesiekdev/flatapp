@@ -17,6 +17,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class NewFlatFormType extends AbstractType
 {
@@ -28,12 +30,12 @@ class NewFlatFormType extends AbstractType
                     ->add('area', IntegerType::class, [
                         'attr' => ['class' => '
                         form-control',
-                        ]
+                        ],
                     ])
                     ->add('numberOfRooms', IntegerType::class, [
                         'attr' => ['class' => '
                         form-control',
-                        ]
+                        ],
                     ])
                     ->add('address', TextType::class, [
                         'attr' => ['class' => '
@@ -94,6 +96,11 @@ class NewFlatFormType extends AbstractType
                     ->add('rent', IntegerType::class, [
                         'attr' => ['class' => '
                         form-control',
+                        ],
+                        'constraints' => [
+                            new Assert\NotBlank(
+                                message: 'Rent cannot be 0'
+                            )
                         ]
                     ])
                     ->add('fees', CollectionType::class, [

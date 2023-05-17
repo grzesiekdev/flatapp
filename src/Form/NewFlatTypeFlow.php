@@ -15,22 +15,35 @@ class NewFlatTypeFlow extends FormFlow {
 			[
 				'label' => 'Basic flat info',
 				'form_type' => NewFlatFormType::class,
+                'form_options' => [
+                    'validation_groups' => ['Default'],
+                ],
 			],
 			[
 				'label' => 'Fees',
 				'form_type' => NewFlatFormType::class,
+                'form_options' => [
+                    'validation_groups' => ['Default'],
+                ],
 			],
             [
                 'label' => 'Pictures',
                 'form_type' => NewFlatFormType::class,
+                'form_options' => [
+                    'validation_groups' => ['Default'],
+                ],
             ],
             [
                 'label' => 'Additional info',
                 'form_type' => NewFlatFormType::class,
+                'form_options' => [
+                    'validation_groups' => ['Default'],
+                ],
             ],
 			[
 				'label' => 'Confirmation',
 			],
+
 		];
 	}
 
