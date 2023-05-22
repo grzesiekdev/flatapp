@@ -7,6 +7,7 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-posix": "*",
         "craue/formflow-bundle": "^3.6",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.8",
@@ -45,8 +46,7 @@
         "symfony/yaml": "6.2.*",
         "symfonycasts/verify-email-bundle": "^1.13",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-      "ext-posix": "*"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
@@ -109,6 +109,7 @@
         "symfony/panther": "^2.0",
         "symfony/phpunit-bridge": "^6.2",
         "symfony/stopwatch": "6.2.*",
-        "symfony/web-profiler-bundle": "6.2.*"
+        "symfony/web-profiler-bundle": "6.2.*",
+        "zenstruck/foundry": "^1.32"
     }
 }
