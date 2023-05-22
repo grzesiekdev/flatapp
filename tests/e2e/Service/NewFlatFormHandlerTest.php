@@ -3,6 +3,8 @@
 namespace App\Tests\e2e\Service;
 
 
+use App\Entity\Flat;
+use Doctrine\ORM\EntityManagerInterface;
 use Facebook\WebDriver\WebDriverDimension;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Panther\Client;
@@ -12,6 +14,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 {
     private Client $client;
     private KernelInterface $appKernel;
+    private EntityManagerInterface $entityManager;
 
     public function setUp(): void
     {
@@ -19,6 +22,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $size = new WebDriverDimension(1920, 2980);
 
         $this->appKernel = $container->get(KernelInterface::class);
+        $this->entityManager = $this->appKernel->getContainer()->get('doctrine')->getManager();
         $this->client = static::createPantherClient(['browser' => static::FIREFOX]);
         $this->client->manage()->window()->setSize($size);
     }
@@ -29,7 +33,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         // authenticating user
         $crawler = $this->client->request('GET', '/login');
         $crawler = $this->client->submitForm('Login', [
-            '_username' => 'testowyuser@test.pl',
+            '_username' => 'test_env_user@test.pl',
             '_password' => 'test12'
         ]);
 
@@ -108,8 +112,8 @@ class NewFlatFormHandlerTest extends PantherTestCase
         );
 
         $crawler = $this->client->submit($form, [
-            'new_flat_form[pictures][]' => $this->appKernel->getProjectDir() . '/tests/e2e/data/screen.png',
-            'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/data/screen.png',
+            'new_flat_form[pictures][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/screen.png',
+            'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/screen.png',
         ]);
 
         // check for redirecting to step 4 after filling step 3 with correct data
@@ -140,7 +144,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
                 'bed',
                 'tv'
             ],
-            'new_flat_form[rentAgreement]' => $this->appKernel->getProjectDir() . '/tests/e2e/data/agreement.pdf',
+            'new_flat_form[rentAgreement]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/agreement.pdf',
         ]);
 
         // check for redirecting to step 5 after filling step 4 with correct data
@@ -181,7 +185,13 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals('tv', $furnishing3);
         $this->assertEquals('Additional furnishing: 2 beds, 4 chairs', $additionalFurnishing);
 
-        $this->client->takeScreenshot('screen.png');
         $crawler = $this->client->submit($form);
+        $this->client->takeScreenshot('screen.png');
+
+        // after successfully creating new flat, it is worth to check if the object was persisted into DB
+        $flatRepository = $this->entityManager->getRepository(Flat::class);
+        $flat = $flatRepository->findAll();
+
+
     }
 }

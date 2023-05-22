@@ -22,7 +22,7 @@ class NewFlatFormHandlerTest extends WebTestCase
         $container = static::getContainer();
 
         $userRepository = $container->get(UserRepository::class);
-        $testUser = $userRepository->findOneByEmail('test@test.pl');
+        $testUser = $userRepository->findOneByEmail('test_env_user@test.pl');
         $this->client->loginUser($testUser);
 
         $this->parameterBag =  $container->get(ParameterBagInterface::class);
