@@ -168,11 +168,11 @@
                             <li><strong>Number of rooms:</strong> {{ form_data.numberOfRooms }}</li>
                             <li><strong>Rent:</strong> {{ form_data.rent }} zł</li>
                             <li><strong>Fees:</strong>
-                                {% for fee in form_data.fees %}
                                 <ul>
+                                {% for fee in form_data.fees %}
                                     <li><strong>{{ fee.name }}: </strong>{{ fee.value }} zł</li>
-                                </ul>
                                 {% endfor %}
+                                </ul>
                             </li>
                             <li><strong>Deposit:</strong> {{ form_data.deposit }} zł</li>
                             <li><strong>Pictures:</strong>
