@@ -32,7 +32,10 @@ class FilesUploader
     {
         $specificTempDirectory = $this->getSpecificTempPath($path, $userId);
         if (!file_exists($specificTempDirectory)) {
-            mkdir($specificTempDirectory, 0755, true);
+            mkdir($specificTempDirectory, 0777, true);
+        } else if (!is_writable($specificTempDirectory)) {
+            chown($specificTempDirectory, 'www-data');
+            chmod($specificTempDirectory, 0777);
         }
 
         return $specificTempDirectory;
@@ -105,7 +108,7 @@ class FilesUploader
             $newPath = str_replace('/tmp', '', $oldPath);
 
             if (!file_exists($newPath) && $newPath !== '') {
-                mkdir($newPath, 0755, true);
+                mkdir($newPath, 0777, true);
             }
 
             $this->moveTempPictures($oldPath, $newPath, $pictures);
