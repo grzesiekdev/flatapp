@@ -189,9 +189,30 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->client->takeScreenshot('screen.png');
 
         // after successfully creating new flat, it is worth to check if the object was persisted into DB
-        $flatRepository = $this->entityManager->getRepository(Flat::class);
-        $flat = $flatRepository->findAll();
+        $flats = $this->entityManager->getRepository(Flat::class)->findAll();
+        // since DB should be empty, the first returned flat is the one we've created in this test
+        $flat = $flats[0];
 
-
+        $this->assertEquals(55, $flat->getArea());
+        $this->assertEquals(3, $flat->getNumberOfRooms());
+        $this->assertEquals([
+            [
+                'name' => 'Gas',
+                'value' => 200
+            ],
+            [
+                'name' => 'Water',
+                'value' => 150
+            ]
+        ], $flat->getFees());
+        $this->assertEquals(3000, $flat->getDeposit());
+        $this->assertMatchesRegularExpression('/screen-(.{13})\.png/', $flat->getPictures()[2]);
+        $this->assertEquals('This is example description', $flat->getDescription());
+        $this->assertEquals('Test 12, 12-123 Tested', $flat->getAddress());
+        $this->assertMatchesRegularExpression('/agreement-(.{13})\.pdf/', $flat->getRentAgreement());
+        $this->assertEquals([["furnished","bed","tv"]], $flat->getFurnishing());
+        $this->assertEquals('2 beds, 4 chairs', $flat->getAdditionalFurnishing());
+        $this->assertEquals(5, $flat->getFloor());
+        $this->assertEquals(10, $flat->getMaxFloor());
     }
 }
