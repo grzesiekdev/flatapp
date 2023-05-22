@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User\User;
+use App\Entity\User\Type\Landlord;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -17,8 +17,8 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $user = new User();
-        $user->setEmail('test@test.pl');
+        $user = new Landlord();
+        $user->setEmail('test_env_user@test.pl');
         $user->setName('Test name');
         $user->setPassword(
             $this->userPasswordHasher->hashPassword(
@@ -27,7 +27,6 @@ class UserFixtures extends Fixture
             )
         );
         $user->setDateOfBirth(new \DateTime('1922-02-01'));
-
 
         $manager->persist($user);
         $manager->flush();
