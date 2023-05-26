@@ -607,4 +607,59 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(0, $flat->getFloor());
         $this->assertEquals(5, $flat->getMaxFloor());
     }
+
+    public function testAddNewFlatFlowForStartOver()
+    {
+        // check if user was logged in correctly and have access to /panel/flats/new
+        $crawler = $this->client->request('GET', '/panel/flats/new');
+        $this->assertSame(self::$baseUri . '/panel/flats/new', $crawler->getUri());
+
+        // check if user is on the step 1
+        $currentStep = $crawler->filter('#new_flat_form_flow_newFlatType_step')->attr('value');
+        $this->assertEquals(1, $currentStep);
+
+        $form = $crawler->selectButton('next')->form();
+        $crawler = $this->client->submit($form, [
+            'new_flat_form[area]' => '70',
+            'new_flat_form[numberOfRooms]' => '3',
+            'new_flat_form[address]' => 'Testowa 1, 90-432 Testowo',
+            'new_flat_form[floor]' => '0',
+            'new_flat_form[maxFloor]' => '3',
+        ]);
+
+        // check if user is on the step 2
+        $currentStep = $crawler->filter('#new_flat_form_flow_newFlatType_step')->attr('value');
+        $this->assertEquals(2, $currentStep);
+
+        $form = $crawler->selectButton('next')->form();
+        $crawler = $this->client->submit($form, [
+            'new_flat_form[rent]' => '3500',
+            'new_flat_form[deposit]' => '4000',
+        ]);
+
+        // check if user is on the step 3
+        $currentStep = $crawler->filter('#new_flat_form_flow_newFlatType_step')->attr('value');
+        $this->assertEquals(3, $currentStep);
+
+        // start over, check if form has been reseted
+        $form = $crawler->selectButton('start over')->form();
+        $crawler = $this->client->submit($form);
+
+        $form = $crawler->selectButton('next')->form();
+
+        $this->assertEquals('', $form->get('new_flat_form[area]')->getValue());
+        $this->assertEquals('', $form->get('new_flat_form[numberOfRooms]')->getValue());
+        $this->assertEquals('', $form->get('new_flat_form[address]')->getValue());
+        $this->assertEquals(0, $form->get('new_flat_form[floor]')->getValue());
+        $this->assertEquals(1, $form->get('new_flat_form[maxFloor]')->getValue());
+
+        $stepOne = $crawler->filter('.craue_formflow_steplist li:nth-child(1) a')->count();
+        $stepTwo = $crawler->filter('.craue_formflow_steplist li:nth-child(2) a')->count();
+        $stepThree = $crawler->filter('.craue_formflow_steplist li:nth-child(3) a')->count();
+
+        $this->assertEquals(0, $stepOne);
+        $this->assertEquals(0, $stepTwo);
+        $this->assertEquals(0, $stepThree);
+
+    }
 }
