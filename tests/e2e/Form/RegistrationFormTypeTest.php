@@ -24,6 +24,7 @@ class RegistrationFormTypeTest extends PantherTestCase
     public function testAddNewUser()
     {
         $crawler = $this->client->request('GET', '/register');
+        $this->client->waitForInvisibility('#spinner');
 
         $form = $crawler->selectButton('Register')->form();
 

@@ -34,6 +34,8 @@ class NewFlatFormHandlerTest extends PantherTestCase
     {
         // authenticating user
         $crawler = $this->client->request('GET', '/login');
+        $this->client->waitForInvisibility('#spinner');
+
         $crawler = $this->client->submitForm('Login', [
             '_username' => 'test_env_user@test.pl',
             '_password' => 'test12'
@@ -41,6 +43,8 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // check if user was logged in correctly and have access to /panel/flats/new
         $crawler = $this->client->request('GET', '/panel/flats/new');
+        $this->client->waitForInvisibility('#spinner');
+
         $this->assertSame(self::$baseUri . '/panel/flats/new', $crawler->getUri());
 
         // check if user is on the step 1
@@ -48,6 +52,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(1, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         // check if form is empty
         $this->assertEquals('', $form->get('new_flat_form[area]')->getValue());
@@ -69,6 +74,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(2, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         // check if form is empty
         $this->assertEquals('', $form->get('new_flat_form[rent]')->getValue());
@@ -92,6 +98,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(3, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         // check if form is empty
         $this->assertEquals([
@@ -123,6 +130,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(4, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         // check if form is empty
         $this->assertEquals('', $form->get('new_flat_form[description]')->getValue());
@@ -154,6 +162,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(5, $currentStep);
 
         $form = $crawler->selectButton('finish')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $flatArea =             $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
         $numberOfRooms =        $crawler->filter('#new_flat_form > .row > div ol li:nth-child(2)')->text();
@@ -222,6 +231,8 @@ class NewFlatFormHandlerTest extends PantherTestCase
     {
         // check if user was logged in correctly and have access to /panel/flats/new
         $crawler = $this->client->request('GET', '/panel/flats/new');
+        $this->client->waitForInvisibility('#spinner');
+
         $this->assertSame(self::$baseUri . '/panel/flats/new', $crawler->getUri());
 
         // check if user is on the step 1
@@ -229,6 +240,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(1, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form, [
             'new_flat_form[area]' => '33',
@@ -243,6 +255,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(2, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form, [
             'new_flat_form[rent]' => '2100',
@@ -253,6 +266,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(3, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form);
 
@@ -261,6 +275,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(4, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form);
 
@@ -269,6 +284,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(5, $currentStep);
 
         $form = $crawler->selectButton('finish')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $flatArea =      $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
         $numberOfRooms = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(2)')->text();
@@ -297,6 +313,8 @@ class NewFlatFormHandlerTest extends PantherTestCase
     {
         // check if user was logged in correctly and have access to /panel/flats/new
         $crawler = $this->client->request('GET', '/panel/flats/new');
+        $this->client->waitForInvisibility('#spinner');
+
         $this->assertSame(self::$baseUri . '/panel/flats/new', $crawler->getUri());
 
         // check if user is on the step 1
@@ -304,6 +322,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(1, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form, [
             'new_flat_form[area]' => '70',
@@ -319,6 +338,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // go back to the step 1
         $form = $crawler->selectButton('back')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         // check if user was redirected to the step 1
@@ -327,6 +347,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // check if data was not deleted
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $this->assertEquals('70', $form->get('new_flat_form[area]')->getValue());
         $this->assertEquals('3', $form->get('new_flat_form[numberOfRooms]')->getValue());
         $this->assertEquals('Testowa 1, 90-432 Testowo', $form->get('new_flat_form[address]')->getValue());
@@ -345,6 +366,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(2, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         // add new fees
         $this->client->executeScript('document.querySelector("#add-more").click()');
@@ -368,6 +390,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // go back to the step 2
         $form = $crawler->selectButton('back')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         // check if user was redirected to the step 2
@@ -375,6 +398,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(2, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         // check if data was not deleted
         $this->assertEquals('3500', $form->get('new_flat_form[rent]')->getValue());
@@ -404,6 +428,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(3, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[pictures][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures/img1.jpg',
             'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures_for_tenant/img1.jpeg',
@@ -411,6 +436,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // go back to the step 3
         $form = $crawler->selectButton('back')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         // check if user was redirected to the step 3
@@ -419,6 +445,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // upload more files
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[pictures][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures/img2.jpeg',
             'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures_for_tenant/img2.jpeg',
@@ -426,6 +453,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // go back to the step 3
         $form = $crawler->selectButton('back')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         // check if user was redirected to the step 3
@@ -437,9 +465,11 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // check if pictures were deleted after going back to the step 3
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         $form = $crawler->selectButton('back')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         $pictures = $crawler->filter('.pictures-container .flat-picture-box')->count();
@@ -450,6 +480,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // add 2 more pictures
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[pictures][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures/img3.jpg',
             'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures_for_tenant/img3.jpeg',
@@ -460,6 +491,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(4, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form, [
             'new_flat_form[description]' => 'This is example description',
@@ -512,17 +544,20 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals('Additional furnishing: 2 beds, 4 chairs', $additionalFurnishing);
 
         //go back to the first step using navigation, and change area
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Basic flat info');
 
         $currentStep = $crawler->filter('#new_flat_form_flow_newFlatType_step')->attr('value');
         $this->assertEquals(1, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[area]' => '67',
         ]);
 
         //go to step 3 and delete one picture for tenant, add another main picture
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Pictures');
 
         $currentStep = $crawler->filter('#new_flat_form_flow_newFlatType_step')->attr('value');
@@ -531,11 +566,13 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->client->executeScript('document.querySelector(".pictures-for-tenant-container .flat-picture-box:nth-child(1) .delete-picture").click()');
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[pictures][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures/img4.jpg',
         ]);
 
         //go to the summary again
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Confirmation');
 
         $flatArea =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
@@ -547,9 +584,11 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(1, $picturesForTenant);
 
         //go to step 2, add new fee and change deposit
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Fees');
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $this->client->executeScript('document.querySelector("#add-more").click()');
         $this->client->wait(10);
@@ -561,6 +600,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         ]);
 
         //go to the summary again
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Confirmation');
 
         $deposit = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(5)')->text();
@@ -570,6 +610,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals('Additional fee: 300 zł', $fee3);
 
         $form = $crawler->selectButton('finish')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         // after successfully creating new flat, it is worth to check if the object was persisted into DB
@@ -612,6 +653,8 @@ class NewFlatFormHandlerTest extends PantherTestCase
     {
         // check if user has access to /panel/flats
         $crawler = $this->client->request('GET', '/panel/flats');
+        $this->client->waitForInvisibility('#spinner');
+
         $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
 
         $crawler->filter('#flat-3 .card-body a[href="/panel/flats/3"]')->click();
@@ -667,11 +710,14 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals('1', $picturesForTenant);
 
         // edit flat
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Edit');
 
         // go to step 3 and update pictures
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Pictures');
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $this->client->executeScript('document.querySelector(".pictures-container .flat-picture-box:nth-child(1) .delete-picture").click()');
         $crawler = $this->client->submit($form, [
@@ -679,8 +725,10 @@ class NewFlatFormHandlerTest extends PantherTestCase
         ]);
 
         // go back to step 1 and change some data
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Basic flat info');
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form, [
             'new_flat_form[area]' => '87',
@@ -689,10 +737,13 @@ class NewFlatFormHandlerTest extends PantherTestCase
         ]);
 
         // go to summary and submit
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Confirmation');
         $form = $crawler->selectButton('finish')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler = $this->client->submit($form);
+        $this->client->waitForInvisibility('#spinner');
 
         $crawler->filter('#flat-3 .card-body a[href="/panel/flats/3"]')->click();
         $crawler = $this->client->refreshCrawler();
@@ -713,10 +764,11 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals('2', $picturesForTenant);
 
         // delete flat, check if user was redirected
+        $this->client->waitForInvisibility('#spinner');
         $crawler->filter('a[href="/panel/flats/delete/3"]')->click();
         $crawler = $this->client->refreshCrawler();
         $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
-        $this->client->takeScreenshot('screen.png');
+
         $flats = $crawler->filter('.flat-list > .card')->count();
         $this->assertEquals(2, $flats);
     }
@@ -725,6 +777,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
     {
         // check if user was logged in correctly and have access to /panel/flats/new
         $crawler = $this->client->request('GET', '/panel/flats/new');
+        $this->client->waitForInvisibility('#spinner');
         $this->assertSame(self::$baseUri . '/panel/flats/new', $crawler->getUri());
 
         // check if user is on the step 1
@@ -732,6 +785,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(1, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[area]' => '70',
             'new_flat_form[numberOfRooms]' => '3',
@@ -745,6 +799,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(2, $currentStep);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form, [
             'new_flat_form[rent]' => '3500',
             'new_flat_form[deposit]' => '4000',
@@ -756,9 +811,11 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // start over, check if form has been reseted
         $form = $crawler->selectButton('start over')->form();
+        $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
         $form = $crawler->selectButton('next')->form();
+        $this->client->waitForInvisibility('#spinner');
 
         $this->assertEquals('', $form->get('new_flat_form[area]')->getValue());
         $this->assertEquals('', $form->get('new_flat_form[numberOfRooms]')->getValue());
