@@ -7,7 +7,7 @@
             <h1>Your flats</h1>
             <div class="row">
             {% for flat in flats %}
-                <div class="card col-3 m-3 p-0 border-0">
+                <div class="card col-3 m-3 p-0 border-0" id="flat-{{ flat.id }}">
                     <figure>
                         {% if flat.pictures %}
                         <img class="card-img-top" src="/uploads/flats/pictures/user{{ app.user.id }}/{{ flat.pictures|first }}" alt="{{ flat.address }}">
