@@ -5,7 +5,7 @@
         <a href="{{ path('app_flats_new') }}" class="btn btn-primary mb-3">Add new flat</a><br>
         {% if flats %}
             <h1>Your flats</h1>
-            <div class="row">
+            <div class="row flat-list">
             {% for flat in flats %}
                 <div class="card col-3 m-3 p-0 border-0" id="flat-{{ flat.id }}">
                     <figure>
