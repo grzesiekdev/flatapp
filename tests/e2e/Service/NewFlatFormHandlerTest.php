@@ -562,7 +562,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         //go to the summary again
         $crawler = $this->client->clickLink('Confirmation');
-        $this->client->takeScreenshot('screen.png');
+
         $deposit = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(5)')->text();
         $fee3 =    $crawler->filter('#new_flat_form > .row > div ol li:nth-child(4) ul li:nth-child(3)')->text();
 
@@ -606,6 +606,119 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals('2 beds, 4 chairs', $flat->getAdditionalFurnishing());
         $this->assertEquals(0, $flat->getFloor());
         $this->assertEquals(5, $flat->getMaxFloor());
+    }
+
+    public function testAddNewFlatFlowForEditingExistingFlat()
+    {
+        // check if user has access to /panel/flats
+        $crawler = $this->client->request('GET', '/panel/flats');
+        $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
+
+        $crawler->filter('#flat-3 .card-body a[href="/panel/flats/3"]')->click();
+        $crawler = $this->client->refreshCrawler();
+        $this->client->waitFor('a[href="/panel/flats/edit/3"]');
+
+        // check if user was redirected to /panel/flats/3
+        $this->assertSame(self::$baseUri . '/panel/flats/3', $crawler->getUri());
+
+        // check if data on the card is correct
+        $address            = $crawler->filter('.card-title:nth-child(1)')->text();
+        $area               = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
+        $numberOfRooms      = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(6)')->text();
+        $rent               = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(2)')->text();
+        $deposit            = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(6)')->text();
+        $floor              = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(2)')->text();
+        $agreement          = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(6)')->text();
+        $fee1name           = $crawler->filter('.table-fees tbody tr:nth-child(1) td:nth-child(2)')->text();
+        $fee1value          = $crawler->filter('.table-fees tbody tr:nth-child(1) td:nth-child(3)')->text();
+        $fee2name           = $crawler->filter('.table-fees tbody tr:nth-child(2) td:nth-child(2)')->text();
+        $fee2value          = $crawler->filter('.table-fees tbody tr:nth-child(2) td:nth-child(3)')->text();
+        $fee3name           = $crawler->filter('.table-fees tbody tr:nth-child(3) td:nth-child(2)')->text();
+        $fee3value          = $crawler->filter('.table-fees tbody tr:nth-child(3) td:nth-child(3)')->text();
+        $furnishing1        = $crawler->filter('.table-furnishing tbody tr:nth-child(1) td:nth-child(2)')->text();
+        $furnishing2        = $crawler->filter('.table-furnishing tbody tr:nth-child(2) td:nth-child(2)')->text();
+        $furnishing3        = $crawler->filter('.table-furnishing tbody tr:nth-child(3) td:nth-child(2)')->text();
+        $furnishing4        = $crawler->filter('.table-furnishing tbody tr:nth-child(4) td:nth-child(2)')->text();
+        $furnishing5        = $crawler->filter('.table-furnishing tbody tr:nth-child(5) td:nth-child(2)')->text();
+        $description        = $crawler->filter('.flat-description')->text();
+        $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
+        $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
+
+        $this->assertEquals('Testowa 8, 90-432 Testowo', $address);
+        $this->assertEquals('67 m2', $area);
+        $this->assertEquals('3', $numberOfRooms);
+        $this->assertEquals('3700 zł', $rent);
+        $this->assertEquals('4500 zł', $deposit);
+        $this->assertEquals('0 / 5', $floor);
+        $this->assertEquals('agreement-...', $agreement);
+        $this->assertEquals('Gas', $fee1name);
+        $this->assertEquals('200 zł', $fee1value);
+        $this->assertEquals('Electricity', $fee2name);
+        $this->assertEquals('120 zł', $fee2value);
+        $this->assertEquals('Additional fee', $fee3name);
+        $this->assertEquals('300 zł', $fee3value);
+        $this->assertEquals('Furnished', $furnishing1);
+        $this->assertEquals('Utensils', $furnishing2);
+        $this->assertEquals('Kitchen set', $furnishing3);
+        $this->assertEquals('Tv', $furnishing4);
+        $this->assertEquals('2 beds, 4 chairs', $furnishing5);
+        $this->assertEquals('This is example description', $description);
+        $this->assertEquals('3', $pictures);
+        $this->assertEquals('1', $picturesForTenant);
+
+        // edit flat
+        $crawler = $this->client->clickLink('Edit');
+
+        // go to step 3 and update pictures
+        $crawler = $this->client->clickLink('Pictures');
+        $form = $crawler->selectButton('next')->form();
+
+        $this->client->executeScript('document.querySelector(".pictures-container .flat-picture-box:nth-child(1) .delete-picture").click()');
+        $crawler = $this->client->submit($form, [
+            'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures_for_tenant/img4.jpg',
+        ]);
+
+        // go back to step 1 and change some data
+        $crawler = $this->client->clickLink('Basic flat info');
+        $form = $crawler->selectButton('next')->form();
+
+        $crawler = $this->client->submit($form, [
+            'new_flat_form[area]' => '87',
+            'new_flat_form[floor]' => '2',
+            'new_flat_form[maxFloor]' => '9',
+        ]);
+
+        // go to summary and submit
+        $crawler = $this->client->clickLink('Confirmation');
+        $form = $crawler->selectButton('finish')->form();
+
+        $crawler = $this->client->submit($form);
+
+        $crawler->filter('#flat-3 .card-body a[href="/panel/flats/3"]')->click();
+        $crawler = $this->client->refreshCrawler();
+        $this->client->waitFor('a[href="/panel/flats/edit/3"]');
+
+        // check if user was redirected to /panel/flats/3
+        $this->assertSame(self::$baseUri . '/panel/flats/3', $crawler->getUri());
+
+        // check if data was successfully updated
+        $area               = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
+        $floor              = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(2)')->text();
+        $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
+        $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
+
+        $this->assertEquals('87 m2', $area);
+        $this->assertEquals('2 / 9', $floor);
+        $this->assertEquals('2', $pictures);
+        $this->assertEquals('2', $picturesForTenant);
+
+        // delete flat, check if user was redirected
+        $crawler->filter('a[href="/panel/flats/delete/3"]')->click();
+        $crawler = $this->client->refreshCrawler();
+        $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
+        $this->client->takeScreenshot('screen.png');
+        $flats = $crawler->filter('.flat-list > .card')->count();
+        $this->assertEquals(2, $flats);
     }
 
     public function testAddNewFlatFlowForStartOver()
