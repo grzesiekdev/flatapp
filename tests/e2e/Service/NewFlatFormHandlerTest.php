@@ -146,8 +146,10 @@ class NewFlatFormHandlerTest extends PantherTestCase
             $form->get('new_flat_form[rentAgreement]')->getValue()
         );
 
+        // we have to add text dynamically with JS to CKEditor since it's textarea is hidden
+        $this->client->executeScript('CKEDITOR.instances["new_flat_form_description"].setData("This is example description");');
+
         $crawler = $this->client->submit($form, [
-            'new_flat_form[description]' => 'This is example description',
             'new_flat_form[additionalFurnishing]' => '2 beds, 4 chairs',
             'new_flat_form[furnishing]' => [
                 'furnished',
@@ -182,7 +184,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $description        = $crawler->filter('.flat-description')->text();
         $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
         $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
-
+        $this->client->takeScreenshot('screen.png');
         $this->assertEquals('55 m2', $area);
         $this->assertEquals('3', $numberOfRooms);
         $this->assertEquals('2600 zł', $rent);
@@ -224,7 +226,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertEquals(2600, $flat->getRent());
         $this->assertEquals(3000, $flat->getDeposit());
         $this->assertMatchesRegularExpression('/screen-(.{13})\.png/', $flat->getPictures()[2]);
-        $this->assertEquals('This is example description', $flat->getDescription());
+        $this->assertEquals('<p>This is example description</p>', $flat->getDescription());
         $this->assertEquals('Test 12, 12-123 Tested', $flat->getAddress());
         $this->assertEquals('agreement-...', $agreement);
         $this->assertEquals([["furnished","bed","tv"]], $flat->getFurnishing());
@@ -499,8 +501,9 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $form = $crawler->selectButton('next')->form();
         $this->client->waitForInvisibility('#spinner');
 
+        // we have to add text dynamically with JS to CKEditor since it's textarea is hidden
+        $this->client->executeScript('CKEDITOR.instances["new_flat_form_description"].setData("This is example description");');
         $crawler = $this->client->submit($form, [
-            'new_flat_form[description]' => 'This is example description',
             'new_flat_form[additionalFurnishing]' => '2 beds, 4 chairs',
             'new_flat_form[furnishing]' => [
                 'furnished',
@@ -650,7 +653,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertMatchesRegularExpression('/img3-(.{13})\.webp/', $flat->getPictures()[3]);
         $this->assertMatchesRegularExpression('/img4-(.{13})\.jpg/', $flat->getPictures()[4]);
         $this->assertMatchesRegularExpression('/img3-(.{13})\.jpg/', $flat->getPicturesForTenant()[2]);
-        $this->assertEquals('This is example description', $flat->getDescription());
+        $this->assertEquals('<p>This is example description</p>', $flat->getDescription());
         $this->assertEquals('Testowa 8, 90-432 Testowo', $flat->getAddress());
         $this->assertEquals('agreement-...', $agreement);
         $this->assertEquals([["furnished", "utensils", "kitchen set", "tv"]], $flat->getFurnishing());
