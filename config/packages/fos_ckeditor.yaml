@@ -14,4 +14,4 @@ fos_ck_editor:
         items:
             full.insert: ['Table']
             full.links: ['Link', 'Unlink']
-            full.document: ['-', 'NewPage', 'Preview', 'Print', '-', 'Templates']
+            full.document: ['NewPage', 'Preview', 'Print', 'Templates']

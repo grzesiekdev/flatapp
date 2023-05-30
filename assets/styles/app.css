@@ -524,3 +524,11 @@ input[type=number] {
     transition: filter 0.2s ease-in-out;
     z-index: 0;
 }
+
+.cke_top {
+    background: var(--bs-border-color) !important;
+}
+
+#cke_new_flat_form_description {
+    border-radius: 5px;
+}
