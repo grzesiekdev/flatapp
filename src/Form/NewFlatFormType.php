@@ -152,7 +152,8 @@ class NewFlatFormType extends AbstractType
                             'height' => '300px',
                             'toolbar' => 'full'
                         ],
-                        'required' => false
+                        'required' => false,
+                        'sanitize_html' => true
                     ])
                     ->add('rentAgreement', FileType::class, [
                         'attr' => [
