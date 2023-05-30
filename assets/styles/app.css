@@ -532,3 +532,19 @@ input[type=number] {
 #cke_new_flat_form_description {
     border-radius: 5px;
 }
+
+.flat-description h1, .flat-description h2, .flat-description h3, .flat-description h4, .flat-description h5, .flat-description h6 {
+    color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important;
+}
+
+.flat-description h1 {
+    font-size: 1.4rem;
+}
+
+.flat-description h2 {
+    font-size: 1.2rem;
+}
+
+.flat-description h3 {
+    font-size: 1rem;
+}
