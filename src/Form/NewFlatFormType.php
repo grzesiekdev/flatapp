@@ -150,7 +150,7 @@ class NewFlatFormType extends AbstractType
                         'config' => [
                             'resize_enabled' => false,
                             'height' => '300px',
-                            'toolbar' => 'full'
+                            'toolbar' => 'flat_toolbar'
                         ],
                         'required' => false,
                         'sanitize_html' => true

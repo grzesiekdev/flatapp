@@ -9,9 +9,11 @@ fos_ck_editor:
     js_path:   "build/ckeditor/ckeditor.js"
     configs:
         flat_config:
-            toolbar: 'full'
+            toolbar: 'flat_toolbar'
     toolbars:
+        configs:
+            flat_toolbar: ['@full.clipboard', '@full.basic_styles', '@full.insert', '@full.links', '@full.document', '@full.editing', '@full.paragraph', '@full.styles', '@full.tools', '@full.about']
         items:
-            full.insert: ['Table']
-            full.links: ['Link', 'Unlink']
-            full.document: ['NewPage', 'Preview', 'Print', 'Templates']
+            full.insert: [ 'Table' ]
+            full.links: [ 'Link', 'Unlink' ]
+            full.document: [ '-', 'NewPage', 'Preview', 'Print', '-', 'Templates' ]
