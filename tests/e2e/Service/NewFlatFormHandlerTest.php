@@ -164,37 +164,43 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $form = $crawler->selectButton('finish')->form();
         $this->client->waitForInvisibility('#spinner');
 
-        $flatArea =             $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
-        $numberOfRooms =        $crawler->filter('#new_flat_form > .row > div ol li:nth-child(2)')->text();
-        $rent =                 $crawler->filter('#new_flat_form > .row > div ol li:nth-child(3)')->text();
-        $fee1 =                 $crawler->filter('#new_flat_form > .row > div ol li:nth-child(4) ul li:nth-child(1)')->text();
-        $fee2 =                 $crawler->filter('#new_flat_form > .row > div ol li:nth-child(4) ul li:nth-child(2)')->text();
-        $deposit =              $crawler->filter('#new_flat_form > .row > div ol li:nth-child(5)')->text();
-        $pictures =             $crawler->filter('#new_flat_form > .row > div ol li:nth-child(6) div div')->count();
-        $picturesForTenant =    $crawler->filter('#new_flat_form > .row > div ol li:nth-child(7) div div')->count();
-        $description =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(8)')->text();
-        $address =              $crawler->filter('#new_flat_form > .row > div ol li:nth-child(9)')->text();
-        $rentAgreement =        $crawler->filter('#new_flat_form > .row > div ol li:nth-child(10)')->text();
-        $furnishing1 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(1)')->text();
-        $furnishing2 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(2)')->text();
-        $furnishing3 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(3)')->text();
-        $additionalFurnishing = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(12)')->text();
+        $address            = $crawler->filter('.card-title:nth-child(1)')->text();
+        $area               = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
+        $numberOfRooms      = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(6)')->text();
+        $rent               = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(2)')->text();
+        $deposit            = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(6)')->text();
+        $floor              = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(2)')->text();
+        $agreement          = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(6)')->text();
+        $fee1name           = $crawler->filter('.table-fees tbody tr:nth-child(1) td:nth-child(2)')->text();
+        $fee1value          = $crawler->filter('.table-fees tbody tr:nth-child(1) td:nth-child(3)')->text();
+        $fee2name           = $crawler->filter('.table-fees tbody tr:nth-child(2) td:nth-child(2)')->text();
+        $fee2value          = $crawler->filter('.table-fees tbody tr:nth-child(2) td:nth-child(3)')->text();
+        $furnishing1        = $crawler->filter('.table-furnishing tbody tr:nth-child(1) td:nth-child(2)')->text();
+        $furnishing2        = $crawler->filter('.table-furnishing tbody tr:nth-child(2) td:nth-child(2)')->text();
+        $furnishing3        = $crawler->filter('.table-furnishing tbody tr:nth-child(3) td:nth-child(2)')->text();
+        $furnishing4        = $crawler->filter('.table-furnishing tbody tr:nth-child(4) td:nth-child(2)')->text();
+        $description        = $crawler->filter('.flat-description')->text();
+        $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
+        $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
 
-        $this->assertEquals('Flat area: 55 m2', $flatArea);
-        $this->assertEquals('Number of rooms: 3', $numberOfRooms);
-        $this->assertEquals('Rent: 2600 zł', $rent);
-        $this->assertEquals('Gas: 200 zł', $fee1);
-        $this->assertEquals('Water: 150 zł', $fee2);
-        $this->assertEquals('Deposit: 3000 zł', $deposit);
+        $this->assertEquals('55 m2', $area);
+        $this->assertEquals('3', $numberOfRooms);
+        $this->assertEquals('2600 zł', $rent);
+        $this->assertEquals('Gas', $fee1name);
+        $this->assertEquals('200 zł', $fee1value);
+        $this->assertEquals('Water', $fee2name);
+        $this->assertEquals('150 zł', $fee2value);
+        $this->assertEquals('3000 zł', $deposit);
+        $this->assertEquals('5 / 10', $floor);
         $this->assertEquals(1, $pictures);
         $this->assertEquals(1, $picturesForTenant);
-        $this->assertEquals('Description: This is example description', $description);
-        $this->assertEquals('Address: Test 12, 12-123 Tested', $address);
-        $this->assertMatchesRegularExpression('/Rent agreement: agreement-(.{13})\.pdf/', $rentAgreement);
-        $this->assertEquals('furnished', $furnishing1);
-        $this->assertEquals('bed', $furnishing2);
-        $this->assertEquals('tv', $furnishing3);
-        $this->assertEquals('Additional furnishing: 2 beds, 4 chairs', $additionalFurnishing);
+        $this->assertEquals('This is example description', $description);
+        $this->assertEquals('Test 12, 12-123 Tested', $address);
+        $this->assertEquals('agreement-...', $agreement);
+        $this->assertEquals('Furnished', $furnishing1);
+        $this->assertEquals('Bed', $furnishing2);
+        $this->assertEquals('Tv', $furnishing3);
+        $this->assertEquals('2 beds, 4 chairs', $furnishing4);
 
         $crawler = $this->client->submit($form);
 
@@ -220,7 +226,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertMatchesRegularExpression('/screen-(.{13})\.png/', $flat->getPictures()[2]);
         $this->assertEquals('This is example description', $flat->getDescription());
         $this->assertEquals('Test 12, 12-123 Tested', $flat->getAddress());
-        $this->assertMatchesRegularExpression('/agreement-(.{13})\.pdf/', $flat->getRentAgreement());
+        $this->assertEquals('agreement-...', $agreement);
         $this->assertEquals([["furnished","bed","tv"]], $flat->getFurnishing());
         $this->assertEquals('2 beds, 4 chairs', $flat->getAdditionalFurnishing());
         $this->assertEquals(5, $flat->getFloor());
@@ -286,15 +292,15 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $form = $crawler->selectButton('finish')->form();
         $this->client->waitForInvisibility('#spinner');
 
-        $flatArea =      $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
-        $numberOfRooms = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(2)')->text();
-        $rent =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(3)')->text();
-        $address =       $crawler->filter('#new_flat_form > .row > div ol li:nth-child(9)')->text();
+        $flatArea =      $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
+        $numberOfRooms = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(6)')->text();
+        $rent =          $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(2)')->text();
+        $address =       $crawler->filter('.card-title:nth-child(1)')->text();
 
-        $this->assertEquals('Flat area: 33 m2', $flatArea);
-        $this->assertEquals('Number of rooms: 2', $numberOfRooms);
-        $this->assertEquals('Rent: 2100 zł', $rent);
-        $this->assertEquals('Address: Test 12, 12-123 Tested', $address);
+        $this->assertEquals('33 m2', $flatArea);
+        $this->assertEquals('2', $numberOfRooms);
+        $this->assertEquals('2100 zł', $rent);
+        $this->assertEquals('Test 12, 12-123 Tested', $address);
 
         $crawler = $this->client->submit($form);
 
@@ -434,7 +440,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
             'new_flat_form[picturesForTenant][]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/pictures_for_tenant/img1.jpeg',
         ]);
 
-        // go back to the step 3
+        // go back to step 3
         $form = $crawler->selectButton('back')->form();
         $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
@@ -456,7 +462,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->submit($form);
 
-        // check if user was redirected to the step 3
+        // check if user was redirected to step 3
         $currentStep = $crawler->filter('#new_flat_form_flow_newFlatType_step')->attr('value');
         $this->assertEquals(3, $currentStep);
 
@@ -509,39 +515,41 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $currentStep = $crawler->filter('#form_flow_newFlatType_step')->attr('value');
         $this->assertEquals(5, $currentStep);
 
-        $flatArea =             $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
-        $numberOfRooms =        $crawler->filter('#new_flat_form > .row > div ol li:nth-child(2)')->text();
-        $rent =                 $crawler->filter('#new_flat_form > .row > div ol li:nth-child(3)')->text();
-        $fee1 =                 $crawler->filter('#new_flat_form > .row > div ol li:nth-child(4) ul li:nth-child(1)')->text();
-        $fee2 =                 $crawler->filter('#new_flat_form > .row > div ol li:nth-child(4) ul li:nth-child(2)')->text();
-        $deposit =              $crawler->filter('#new_flat_form > .row > div ol li:nth-child(5)')->text();
-        $pictures =             $crawler->filter('#new_flat_form > .row > div ol li:nth-child(6) div div')->count();
-        $picturesForTenant =    $crawler->filter('#new_flat_form > .row > div ol li:nth-child(7) div div')->count();
-        $description =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(8)')->text();
-        $address =              $crawler->filter('#new_flat_form > .row > div ol li:nth-child(9)')->text();
-        $rentAgreement =        $crawler->filter('#new_flat_form > .row > div ol li:nth-child(10)')->text();
-        $furnishing1 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(1)')->text();
-        $furnishing2 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(2)')->text();
-        $furnishing3 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(3)')->text();
-        $furnishing4 =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(11) div ul li:nth-child(4)')->text();
-        $additionalFurnishing = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(12)')->text();
+        $address            = $crawler->filter('.card-title:nth-child(1)')->text();
+        $area               = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
+        $numberOfRooms      = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(6)')->text();
+        $rent               = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(2)')->text();
+        $deposit            = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(6)')->text();
+        $floor              = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(2)')->text();
+        $agreement          = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(6)')->text();
+        $fee1name           = $crawler->filter('.table-fees tbody tr:nth-child(1) td:nth-child(2)')->text();
+        $fee1value          = $crawler->filter('.table-fees tbody tr:nth-child(1) td:nth-child(3)')->text();
+        $furnishing1        = $crawler->filter('.table-furnishing tbody tr:nth-child(1) td:nth-child(2)')->text();
+        $furnishing2        = $crawler->filter('.table-furnishing tbody tr:nth-child(2) td:nth-child(2)')->text();
+        $furnishing3        = $crawler->filter('.table-furnishing tbody tr:nth-child(3) td:nth-child(2)')->text();
+        $furnishing4        = $crawler->filter('.table-furnishing tbody tr:nth-child(4) td:nth-child(2)')->text();
+        $furnishing5        = $crawler->filter('.table-furnishing tbody tr:nth-child(5) td:nth-child(2)')->text();
+        $description        = $crawler->filter('.flat-description')->text();
+        $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
+        $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
 
-        $this->assertEquals('Flat area: 65 m2', $flatArea);
-        $this->assertEquals('Number of rooms: 3', $numberOfRooms);
-        $this->assertEquals('Rent: 3700 zł', $rent);
-        $this->assertEquals('Gas: 200 zł', $fee1);
-        $this->assertEquals('Electricity: 120 zł', $fee2);
-        $this->assertEquals('Deposit: 4100 zł', $deposit);
+        $this->assertEquals('65 m2', $area);
+        $this->assertEquals('3', $numberOfRooms);
+        $this->assertEquals('3700 zł', $rent);
+        $this->assertEquals('Gas', $fee1name);
+        $this->assertEquals('200 zł', $fee1value);
+        $this->assertEquals('4100 zł', $deposit);
+        $this->assertEquals('0 / 5', $floor);
         $this->assertEquals(2, $pictures);
         $this->assertEquals(2, $picturesForTenant);
-        $this->assertEquals('Description: This is example description', $description);
-        $this->assertEquals('Address: Testowa 8, 90-432 Testowo', $address);
-        $this->assertMatchesRegularExpression('/Rent agreement: agreement-(.{13})\.pdf/', $rentAgreement);
-        $this->assertEquals('furnished', $furnishing1);
-        $this->assertEquals('utensils', $furnishing2);
-        $this->assertEquals('kitchen set', $furnishing3);
-        $this->assertEquals('tv', $furnishing4);
-        $this->assertEquals('Additional furnishing: 2 beds, 4 chairs', $additionalFurnishing);
+        $this->assertEquals('This is example description', $description);
+        $this->assertEquals('Testowa 8, 90-432 Testowo', $address);
+        $this->assertEquals('agreement-...', $agreement);
+        $this->assertEquals('Furnished', $furnishing1);
+        $this->assertEquals('Utensils', $furnishing2);
+        $this->assertEquals('Kitchen set', $furnishing3);
+        $this->assertEquals('Tv', $furnishing4);
+        $this->assertEquals('2 beds, 4 chairs', $furnishing5);
 
         //go back to the first step using navigation, and change area
         $this->client->waitForInvisibility('#spinner');
@@ -575,11 +583,11 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Confirmation');
 
-        $flatArea =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(1)')->text();
-        $pictures =          $crawler->filter('#new_flat_form > .row > div ol li:nth-child(6) div div')->count();
-        $picturesForTenant = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(7) div div')->count();
+        $flatArea =          $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
+        $pictures =          $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
+        $picturesForTenant = $crawler->filter('.pictures-for-tenant div')->count();
 
-        $this->assertEquals('Flat area: 67 m2', $flatArea);
+        $this->assertEquals('67 m2', $flatArea);
         $this->assertEquals(3, $pictures);
         $this->assertEquals(1, $picturesForTenant);
 
@@ -603,11 +611,13 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->client->waitForInvisibility('#spinner');
         $crawler = $this->client->clickLink('Confirmation');
 
-        $deposit = $crawler->filter('#new_flat_form > .row > div ol li:nth-child(5)')->text();
-        $fee3 =    $crawler->filter('#new_flat_form > .row > div ol li:nth-child(4) ul li:nth-child(3)')->text();
+        $deposit   = $crawler->filter('.table-flat-info tr:nth-child(2) td:nth-child(6)')->text();
+        $fee3name  = $crawler->filter('.table-fees tbody tr:nth-child(3) td:nth-child(2)')->text();
+        $fee3value = $crawler->filter('.table-fees tbody tr:nth-child(3) td:nth-child(3)')->text();
 
-        $this->assertEquals('Deposit: 4500 zł', $deposit);
-        $this->assertEquals('Additional fee: 300 zł', $fee3);
+        $this->assertEquals('4500 zł', $deposit);
+        $this->assertEquals('Additional fee', $fee3name);
+        $this->assertEquals('300 zł', $fee3value);
 
         $form = $crawler->selectButton('finish')->form();
         $this->client->waitForInvisibility('#spinner');
@@ -642,7 +652,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $this->assertMatchesRegularExpression('/img3-(.{13})\.jpg/', $flat->getPicturesForTenant()[2]);
         $this->assertEquals('This is example description', $flat->getDescription());
         $this->assertEquals('Testowa 8, 90-432 Testowo', $flat->getAddress());
-        $this->assertMatchesRegularExpression('/agreement-(.{13})\.pdf/', $flat->getRentAgreement());
+        $this->assertEquals('agreement-...', $agreement);
         $this->assertEquals([["furnished", "utensils", "kitchen set", "tv"]], $flat->getFurnishing());
         $this->assertEquals('2 beds, 4 chairs', $flat->getAdditionalFurnishing());
         $this->assertEquals(0, $flat->getFloor());
