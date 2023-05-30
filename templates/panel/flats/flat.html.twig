@@ -115,7 +115,7 @@
                     {% if flat.description %}
                         <h5 class="text-secondary">Description</h5>
                     <p class="flat-description">
-                        {{ flat.description }}
+                        {{ flat.description | raw }}
                     </p>
                     {% endif %}
                     {% if flat.picturesForTenant %}

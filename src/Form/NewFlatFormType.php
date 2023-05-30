@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Flat;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use phpDocumentor\Reflection\Types\Integer;
 use PHPUnit\Util\TextTestListRenderer;
 use SebastianBergmann\CodeCoverage\Report\Text;
@@ -141,9 +142,15 @@ class NewFlatFormType extends AbstractType
                 break;
             case 4:
                 $builder
-                    ->add('description', TextareaType::class, [
-                        'attr' => ['class' => '
-                        form-control',
+                    ->add('description', CKEditorType::class, [
+                        'attr' => [
+                            'class' => 'form-control',
+                            'placeholder' => 'Flat description...',
+                        ],
+                        'config' => [
+                            'resize_enabled' => false,
+                            'height' => '300px',
+                            'toolbar' => 'full'
                         ],
                         'required' => false
                     ])

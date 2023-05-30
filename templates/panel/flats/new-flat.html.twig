@@ -274,7 +274,7 @@
                                 {% if form_data.description %}
                                     <h5 class="text-secondary">Description</h5>
                                     <p class="flat-description">
-                                        {{ form_data.description }}
+                                        {{ form_data.description | raw }}
                                     </p>
                                 {% endif %}
                                 {% if pictures_for_tenant %}
