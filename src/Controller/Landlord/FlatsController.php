@@ -5,6 +5,7 @@ namespace App\Controller\Landlord;
 use App\Entity\Flat;
 use App\Form\NewFlatTypeFlow;
 use App\Repository\FlatRepository;
+use App\Service\InvitationCodeHandler;
 use App\Service\NewFlatFormHandler;
 use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,12 +79,28 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}', name: 'app_flats_view')]
-    public function viewFlat(FlatRepository $flatRepository, int $id): Response
+    public function viewFlat(FlatRepository $flatRepository, int $id, InvitationCodeHandler $invitationCodeHandler): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
+        $tenants = $flat->getTenants();
+
+        $invitationCode = $invitationCodeHandler->getInvitationCode($flat);
+        $expirationDate = '';
+        $isCodeValid = '';
+        $invitationCodeEncoded = '';
+
+        if ($invitationCode) {
+            $expirationDate = $invitationCodeHandler->getExpirationDate($invitationCode)->format('d-m-Y H:i:s');
+            $isCodeValid = $invitationCodeHandler->isInvitationCodeValid($invitationCode);
+            $invitationCodeEncoded = $invitationCodeHandler->getEncodedInvitationCode($invitationCode);
+        }
 
         return $this->render('panel/flats/flat.html.twig', [
             'flat' => $flat,
+            'invitation_code' => $invitationCodeEncoded,
+            'expiration_date' => $expirationDate,
+            'is_code_valid' => $isCodeValid,
+            'tenants' => $tenants,
         ]);
     }
 }

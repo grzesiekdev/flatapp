@@ -2,9 +2,9 @@
 
 {% block content %}
     <div class="m-4">
-        <h1>Your flat</h1>
         <div class="row">
-            <div class="card col-8 m-3 p-0 border-0">
+            <h1>Your flat</h1>
+            <div class="card col-md-8 m-3 p-0 border-0">
                 {% if flat.pictures %}
                 <div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
                     <div class="carousel-inner">
@@ -138,6 +138,32 @@
                     <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
                     <a href="{{ path('app_flats_create_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
                 </div>
+            </div>
+
+            <div class="card col-md-3 m-3 p-3 border-0">
+                <h2 class="text-black text-center">Tenants</h2>
+                {% if invitation_code %}
+                    <div class="{{ is_code_valid ? 'text-success' : 'text-danger' }}">
+                        <p>Invitation code: <strong>{{ invitation_code }}</strong><br>
+                        <small>
+                            <i>You can share this code with tenant who you want to invite</i>
+                        </small>
+                        </p>
+                        <p>
+                            <small>
+                                Valid until: {{ expiration_date }}<br>
+                            </small>
+                        </p>
+                    </div>
+
+                {% endif %}
+                {% if tenants is empty %}
+                    There are no tenants associated with this flat
+                {% else %}
+                    {% for tenant in tenants %}
+                        {{ tenant }}
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>
