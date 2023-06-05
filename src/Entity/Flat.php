@@ -8,6 +8,7 @@ use App\Repository\FlatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FlatRepository::class)]
 class Flat
@@ -68,6 +69,9 @@ class Flat
 
     #[ORM\Column(length: 255)]
     private ?string $max_floor = null;
+
+    #[ORM\Column(type: 'ulid', nullable: true)]
+    private ?Ulid $invitationCode = null;
 
     public function __construct()
     {
@@ -301,5 +305,17 @@ class Flat
         $this->setDescription($flat->getDescription());
         $this->setFurnishing($flat->getFurnishing());
         $this->setAdditionalFurnishing($flat->getAdditionalFurnishing());
+    }
+
+    public function getInvitationCode(): ?Ulid
+    {
+        return $this->invitationCode;
+    }
+
+    public function setInvitationCode(?Ulid $invitationCode): self
+    {
+        $this->invitationCode = $invitationCode;
+
+        return $this;
     }
 }

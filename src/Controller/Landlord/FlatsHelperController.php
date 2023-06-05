@@ -11,8 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
-class FlatFormHelperController extends AbstractController
+class FlatsHelperController extends AbstractController
 {
     #[Route('/panel/flats/delete-picture/{id}', name: 'app_flats_delete_picture')]
     public function index(FilesUploader $fileUploader, Request $request, KernelInterface $kernel, int $id, FlatRepository $flatRepository, EntityManagerInterface $entityManager): Response
@@ -39,5 +41,18 @@ class FlatFormHelperController extends AbstractController
         $response->setStatusCode($statusCode);
 
         return $response;
+    }
+
+    #[Route('/panel/flats/create-invitation-code/{id}', name: 'app_flats_create_invitation_code')]
+    public function createInvitationCode(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $flat = $flatRepository->findOneBy(['id' => $id]);
+        $invitationCode = new Ulid();
+
+        $flat->setInvitationCode($invitationCode);
+        $entityManager->persist($flat);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_flats_view', ['id' => $id]);
     }
 }
