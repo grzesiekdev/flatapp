@@ -55,4 +55,16 @@ class FlatsHelperController extends AbstractController
 
         return $this->redirectToRoute('app_flats_view', ['id' => $id]);
     }
+
+    #[Route('/panel/flats/delete-invitation-code/{id}', name: 'app_flats_delete_invitation_code')]
+    public function deleteInvitationCode(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $flat = $flatRepository->findOneBy(['id' => $id]);
+        $flat->setInvitationCode(null);
+
+        $entityManager->persist($flat);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_flats_view', ['id' => $id]);
+    }
 }
