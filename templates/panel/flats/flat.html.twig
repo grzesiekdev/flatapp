@@ -84,7 +84,7 @@
                                     </tbody>
                                 </table>
                             {% endif %}
-                            {% if flat.furnishing[0] or flat.additionalFurnishing %}
+                            {% if flat.furnishing or flat.additionalFurnishing %}
                             <h5 class="text-secondary">Furnishing</h5>
                             <table class="table table-furnishing">
                                 <thead>
@@ -144,13 +144,13 @@
                 <h2 class="text-black text-center">Tenants</h2>
                 {% if invitation_code.code %}
                     <div class="{{ invitation_code.is_code_valid ? 'text-success' : 'text-danger' }}">
-                        <p>Invitation code:<br> <strong>{{ invitation_code.code }}</strong> <a href="{{ path('app_flats_delete_invitation_code', {id: flat.id}) }}" class="mx-2 text-danger"><i class="fas fa-trash-alt"></i></a> <br>
+                        <p>Invitation code:<br> <strong id="invitation-code">{{ invitation_code.code }}</strong> <a href="{{ path('app_flats_delete_invitation_code', {id: flat.id}) }}" class="mx-2 text-danger remove-invitation-code"><i class="fas fa-trash-alt"></i></a> <br>
                         <small>
                             <i>You can share this code with tenant whom you want to invite</i>
                         </small>
                         </p>
                         <p>
-                            <small>
+                            <small id="expiration-date">
                                 Valid until: {{ invitation_code.expiration_date }}<br>
                             </small>
                         </p>
