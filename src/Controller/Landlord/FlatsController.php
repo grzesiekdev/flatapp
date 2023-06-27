@@ -84,22 +84,19 @@ class FlatsController extends AbstractController
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $tenants = $flat->getTenants();
 
-        $invitationCode = $invitationCodeHandler->getInvitationCode($flat);
-        $expirationDate = '';
-        $isCodeValid = '';
-        $invitationCodeEncoded = '';
+        $invitationCode = [
+            'code' => $invitationCodeHandler->getInvitationCode($flat),
+        ];
 
-        if ($invitationCode) {
-            $expirationDate = $invitationCodeHandler->getExpirationDate($invitationCode)->format('d-m-Y H:i:s');
-            $isCodeValid = $invitationCodeHandler->isInvitationCodeValid($invitationCode);
-            $invitationCodeEncoded = $invitationCodeHandler->getEncodedInvitationCode($invitationCode);
+        if ($invitationCode['code']) {
+            $invitationCode['expiration_date'] = $invitationCodeHandler->getExpirationDate($invitationCode['code'])->format('d-m-Y H:i:s');
+            $invitationCode['is_code_valid'] = $invitationCodeHandler->isInvitationCodeValid($invitationCode['code']);
+            $invitationCode['invitation_code_encoded'] = $invitationCodeHandler->getEncodedInvitationCode($invitationCode['code']);
         }
 
         return $this->render('panel/flats/flat.html.twig', [
             'flat' => $flat,
-            'invitation_code' => $invitationCodeEncoded,
-            'expiration_date' => $expirationDate,
-            'is_code_valid' => $isCodeValid,
+            'invitation_code' => $invitationCode,
             'tenants' => $tenants,
         ]);
     }

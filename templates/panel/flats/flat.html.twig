@@ -142,16 +142,16 @@
 
             <div class="card col-md-3 m-3 p-3 border-0">
                 <h2 class="text-black text-center">Tenants</h2>
-                {% if invitation_code %}
-                    <div class="{{ is_code_valid ? 'text-success' : 'text-danger' }}">
-                        <p>Invitation code: <strong>{{ invitation_code }}</strong><br>
+                {% if invitation_code.code %}
+                    <div class="{{ invitation_code.is_code_valid ? 'text-success' : 'text-danger' }}">
+                        <p>Invitation code: <strong>{{ invitation_code.code }}</strong><br>
                         <small>
                             <i>You can share this code with tenant who you want to invite</i>
                         </small>
                         </p>
                         <p>
                             <small>
-                                Valid until: {{ expiration_date }}<br>
+                                Valid until: {{ invitation_code.expiration_date }}<br>
                             </small>
                         </p>
                     </div>
