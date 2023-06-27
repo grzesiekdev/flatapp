@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\Date;
 
 
 class FlatsController extends AbstractController
@@ -90,7 +91,8 @@ class FlatsController extends AbstractController
 
         if ($invitationCode['code']) {
             $invitationCode['expiration_date'] = $invitationCodeHandler->getExpirationDate($invitationCode['code'])->format('d-m-Y H:i:s');
-            $invitationCode['is_code_valid'] = $invitationCodeHandler->isInvitationCodeValid($invitationCode['code']);
+            $currentDate = new \DateTime('now');
+            $invitationCode['is_code_valid'] = $invitationCodeHandler->isInvitationCodeValid($invitationCode['code'], $currentDate);
             $invitationCode['invitation_code_encoded'] = $invitationCodeHandler->getEncodedInvitationCode($invitationCode['code']);
         }
 

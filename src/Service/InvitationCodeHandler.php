@@ -16,7 +16,8 @@ class InvitationCodeHandler
 
     public function getExpirationDate(Ulid $invitationCode): \DateTimeImmutable
     {
-        return $invitationCode->getDateTime()->modify('+24 hours');
+        // app is currently being developed for the Polish market, so I've used UTC + 2 hours to check if code is valid
+        return $invitationCode->getDateTime()->modify('+26 hours');
     }
 
     public function getEncodedInvitationCode(Ulid $invitationCode): string
@@ -24,9 +25,8 @@ class InvitationCodeHandler
         return $invitationCode->toBase58();
     }
 
-    public function isInvitationCodeValid(Ulid $invitationCode): bool
+    public function isInvitationCodeValid(Ulid $invitationCode, DateTime $currentDate): bool
     {
-        $currentDate = new DateTime();
         $initialDate = $invitationCode->getDateTime();
         $expirationDate = $this->getExpirationDate($invitationCode);
 
