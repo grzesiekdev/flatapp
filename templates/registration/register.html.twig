@@ -98,7 +98,15 @@
                         </div>
                     {% endfor %}
                 </div>
-                <small>Have an account? <a href="{{ path('app_login') }}">Login now!</a></small><br>
+                <div class="row mt-2 mb-2" id="registration_form_code_container" style="display: none;">
+                    <div class="col-2">
+                        {{ form_label(registrationForm.code) }}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form_widget(registrationForm.code) }}
+                    </div>
+                </div>
+                <small class="mt-2">Have an account? <a href="{{ path('app_login') }}">Login now!</a></small><br>
                 <button type="submit" class="btn btn-primary mt-4">Register</button>
                 {{ form_end(registrationForm) }}
             </div>

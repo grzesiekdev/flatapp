@@ -31,6 +31,16 @@ import {handle_floor_select} from "./js/floors";
     handle_fees();
     handle_floor_select();
 
+    $('input[name="registration_form[roles]"]').change(function() {
+        if ($('#registration_form_roles_1').is(':checked')) {
+            $('#registration_form_code_container').css('display', 'flex');
+        } else {
+            $('#registration_form_code_container').css('display', 'none');
+        }
+    });
+
+
+
     if ($('#new_flat_form_furnishing_0').is(":checked")) {
         $('input[name="new_flat_form[furnishing][]"]').not('#new_flat_form_furnishing_0').prop('checked', false).attr('disabled', 'disabled');
     }
@@ -59,6 +69,8 @@ import {handle_floor_select} from "./js/floors";
            }
        });
     });
+
+
 
 
     // Spinner

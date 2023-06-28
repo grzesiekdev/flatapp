@@ -100,6 +100,13 @@ class RegistrationFormType extends AbstractType
                 'placeholder' => false,
                 'label_html' => true
             ])
+            ->add('code', TextType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+                'required' => false,
+                'mapped' => false,
+            ])
         ;
         $builder->get('roles')
             ->addModelTransformer(new CallbackTransformer(
