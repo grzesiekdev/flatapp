@@ -160,8 +160,9 @@
                 {% if tenants is empty %}
                     There are no tenants associated with this flat
                 {% else %}
+                    Tenants: <br>
                     {% for tenant in tenants %}
-                        {{ tenant }}
+                        {{ tenant.name }} <br>
                     {% endfor %}
                 {% endif %}
             </div>

@@ -6,6 +6,7 @@ use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
+use App\Repository\FlatRepository;
 use App\Utils\UserRole;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
@@ -34,7 +36,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository): Response
     {
         if ($this->security->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -64,6 +66,19 @@ class RegistrationController extends AbstractController
             ->setImage($form->get('image')->getData())
             ->setPhone($form->get('phone')->getData())
             ->setRoles($userType);
+
+            if ($userType[0] == 'tenant') {
+                $invitationCode = $form->get('code')->getData();
+                if ($invitationCode) {
+                    $invitationCode = Ulid::fromBase32($invitationCode); // generating real Ulid from base32
+                    $flat = $flatRepository->findOneBy(['invitationCode' => $invitationCode]);
+                    if (!is_null($flat)) {
+                        $user->setFlatId($flat);
+                        $flat->addTenant($user);
+                        $entityManager->persist($flat);
+                    }
+                }
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
