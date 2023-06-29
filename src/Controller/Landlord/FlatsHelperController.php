@@ -3,6 +3,7 @@
 namespace App\Controller\Landlord;
 
 use App\Repository\FlatRepository;
+use App\Repository\TenantRepository;
 use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Type;
@@ -16,7 +17,7 @@ use Symfony\Component\Uid\Uuid;
 
 class FlatsHelperController extends AbstractController
 {
-    #[Route('/panel/flats/delete-picture/{id}', name: 'app_flats_delete_picture')]
+    #[Route('/panel/flats/{id}/delete-picture', name: 'app_flats_delete_picture')]
     public function index(FilesUploader $fileUploader, Request $request, KernelInterface $kernel, int $id, FlatRepository $flatRepository, EntityManagerInterface $entityManager): Response
     {
         $fileName = $request->request->get('file_name');
@@ -43,7 +44,7 @@ class FlatsHelperController extends AbstractController
         return $response;
     }
 
-    #[Route('/panel/flats/create-invitation-code/{id}', name: 'app_flats_create_invitation_code')]
+    #[Route('/panel/flats/{id}/generate-invitation-code', name: 'app_flats_generate_invitation_code')]
     public function createInvitationCode(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
@@ -56,7 +57,7 @@ class FlatsHelperController extends AbstractController
         return $this->redirectToRoute('app_flats_view', ['id' => $id]);
     }
 
-    #[Route('/panel/flats/delete-invitation-code/{id}', name: 'app_flats_delete_invitation_code')]
+    #[Route('/panel/flats/{id}/delete-invitation-code', name: 'app_flats_delete_invitation_code')]
     public function deleteInvitationCode(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
@@ -67,4 +68,21 @@ class FlatsHelperController extends AbstractController
 
         return $this->redirectToRoute('app_flats_view', ['id' => $id]);
     }
+
+    #[Route('/panel/flats/{flatId}/remove-tenant/{tenantId}', name: 'app_flats_remove_tenant')]
+    public function removeTenant(FlatRepository $flatRepository, TenantRepository $tenantRepository, int $flatId, int $tenantId, EntityManagerInterface $entityManager): Response
+    {
+        $flat = $flatRepository->findOneBy(['id' => $flatId]);
+        $tenant = $tenantRepository->findOneBy(['id' => $tenantId]);
+
+        $flat->removeTenant($tenant);
+        $tenant->setFlatId(null);
+
+        $entityManager->persist($flat);
+        $entityManager->persist($tenant);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_flats_view', ['id' => $flatId]);
+    }
+
 }

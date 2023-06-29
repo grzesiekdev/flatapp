@@ -12,7 +12,7 @@ class Tenant extends User
 {
 
     #[ORM\ManyToOne(inversedBy: 'tenants')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Flat $flat_id = null;
 
     public function getFlatId(): ?Flat

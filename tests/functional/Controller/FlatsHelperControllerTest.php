@@ -47,7 +47,7 @@ class FlatsHelperControllerTest extends WebTestCase
     public function testUserGeneratingInvitationCode(): void
     {
         $id = $this->flat->getId();
-        $crawler = $this->client->request('GET', '/panel/flats/create-invitation-code/' . $id);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $id . '/generate-invitation-code');
 
         $this->assertMatchesRegularExpression('/[0-9A-Z]{26}/', $this->flat->getInvitationCode());
     }
@@ -55,7 +55,7 @@ class FlatsHelperControllerTest extends WebTestCase
     public function testUserGeneratingInvitationCodeForDisplayingCode(): void
     {
         $id = $this->flat->getId();
-        $crawler = $this->client->request('GET', '/panel/flats/create-invitation-code/' . $id);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $id . '/generate-invitation-code');
         $crawler = $this->client->followRedirect();
 
         $code = $crawler->filter('#invitation-code')->text();
@@ -88,10 +88,10 @@ class FlatsHelperControllerTest extends WebTestCase
     {
         $id = $this->flat->getId();
 
-        $crawler = $this->client->request('GET', '/panel/flats/create-invitation-code/' . $id);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $id . '/generate-invitation-code');
         $this->assertMatchesRegularExpression('/[0-9A-Z]{26}/', $this->flat->getInvitationCode());
 
-        $crawler = $this->client->request('GET', '/panel/flats/delete-invitation-code/' . $id);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $id . '/delete-invitation-code');
 
         $flat = $this->flatRepository->findOneBy(['id' => $id]);
         $this->flat = $flat;

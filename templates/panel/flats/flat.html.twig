@@ -136,7 +136,7 @@
                     <!-- Gallery -->
                     <a href="{{ path('app_flats_edit', {id: flat.id}) }}" class="btn btn-primary">Edit</a>
                     <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
-                    <a href="{{ path('app_flats_create_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
+                    <a href="{{ path('app_flats_generate_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
                 </div>
             </div>
 
@@ -169,7 +169,7 @@
                             <div class="col-sm-9">
                                 {{ tenant.name }}
                                 <a class="mx-1" href="#" title="Go to the tenant profile"><i class="fa-solid fa-user"></i></a>
-                                <a href="#" class="mx-1 text-danger" title="Remove user from this flat"><i class="fas fa-trash-alt"></i></a><br>
+                                <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: tenant.id}) }}" class="mx-1 text-danger" title="Remove user from this flat"><i class="fas fa-trash-alt"></i></a><br>
                                 <small>Tenant since: 2023-06-29</small>
                             </div>
                         </div>

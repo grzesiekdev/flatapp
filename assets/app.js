@@ -58,7 +58,7 @@ import {handle_floor_select} from "./js/floors";
        let fileName = file.attr('src');
        let flatId = $(this).attr('data-flat-id');
        $.ajax({
-           url: '/panel/flats/delete-picture/'+flatId,
+           url: '/panel/flats/'+flatId+'/delete-picture',
            method: 'POST',
            data: {file_name: fileName},
            success: function(result) {
