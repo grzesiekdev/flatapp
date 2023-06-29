@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
 use App\Repository\FlatRepository;
+use App\Service\InvitationCodeHandler;
 use App\Utils\UserRole;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
@@ -36,7 +36,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository, InvitationCodeHandler $invitationCodeHandler): Response
     {
         if ($this->security->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -71,12 +71,21 @@ class RegistrationController extends AbstractController
                 $invitationCode = $form->get('code')->getData();
                 if ($invitationCode) {
                     $invitationCode = Ulid::fromBase32($invitationCode); // generating real Ulid from base32
-                    $flat = $flatRepository->findOneBy(['invitationCode' => $invitationCode]);
-                    if (!is_null($flat)) {
-                        $user->setFlatId($flat);
-                        $flat->addTenant($user);
-                        $entityManager->persist($flat);
+                    $currentDate = new \DateTime('now');
+                    if ($invitationCodeHandler->isInvitationCodeValid($invitationCode, $currentDate)) {
+                        $flat = $flatRepository->findOneBy(['invitationCode' => $invitationCode]);
+                        if (!is_null($flat)) {
+                            $user->setFlatId($flat);
+                            $flat->addTenant($user);
+                            $entityManager->persist($flat);
+                        }
+                    } else {
+                        $this->addFlash('error', 'Invalid invitation code.');
+                        return $this->redirectToRoute('app_register');
                     }
+                } else {
+                    $this->addFlash('error', 'Please provide an invitation code.');
+                    return $this->redirectToRoute('app_register');
                 }
             }
 

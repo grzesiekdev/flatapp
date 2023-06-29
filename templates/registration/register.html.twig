@@ -9,15 +9,16 @@
         </div>
     </div>
     <!-- Spinner End -->
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+
 
     <!-- Content Start -->
     <div class="content m-0 w-100">
         <div class="registration-form-box col-sm-12 col-xl-6 m-auto mt-5">
             <div class="bg-secondary rounded h-100 p-4">
                 <h1 class="mb-4">Register</h1>
+                {% for flash_error in app.flashes('error') %}
+                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                {% endfor %}
                 <small>Fields marked with <span style="color: var(--primary)">*</span> are required</small>
                 {{ form_start(registrationForm) }}
                 <div class="row mt-3">
