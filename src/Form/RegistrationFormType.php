@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User\User;
-use App\Entity\User\UserRegistration;
+use App\Form\DataTransformer\Base32CodeTransformer;
 use DateTime;
 use DateTimeImmutable;
 use SebastianBergmann\CodeCoverage\Report\Text;
@@ -19,17 +19,30 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationFormType extends AbstractType
 {
+    private ValidatorInterface $validator;
+    private SessionInterface $session;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+        $this->session = $options['session'];
+
         $builder
             ->add('name', TextType::class, [
                 'attr' => ['class' => '
@@ -108,6 +121,7 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
             ])
         ;
+
         $builder->get('roles')
             ->addModelTransformer(new CallbackTransformer(
                 function ($rolesArray) {
@@ -120,6 +134,9 @@ class RegistrationFormType extends AbstractType
                 }
             ));
 
+        $builder->get('code')
+            ->addModelTransformer(new Base32CodeTransformer($this->validator, $this->session));
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -127,5 +144,6 @@ class RegistrationFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);
+        $resolver->setRequired('session');
     }
 }

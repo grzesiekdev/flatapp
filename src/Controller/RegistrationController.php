@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,13 +37,15 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository, InvitationCodeHandler $invitationCodeHandler): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository, InvitationCodeHandler $invitationCodeHandler, SessionInterface $session): Response
     {
         if ($this->security->getUser()) {
             return $this->redirectToRoute('app_home');
         }
 
-        $form = $this->createForm(RegistrationFormType::class, new User());
+        $form = $this->createForm(RegistrationFormType::class, new User(), [
+            'session' => $session,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -67,7 +70,7 @@ class RegistrationController extends AbstractController
             ->setPhone($form->get('phone')->getData())
             ->setRoles($userType);
 
-            if ($userType[0] == 'tenant') {
+            if ($userType[0] == 'ROLE_TENANT') {
                 $invitationCode = $form->get('code')->getData();
                 if ($invitationCode) {
                     $invitationCode = Ulid::fromBase32($invitationCode); // generating real Ulid from base32

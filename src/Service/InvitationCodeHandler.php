@@ -4,11 +4,17 @@ namespace App\Service;
 
 
 use App\Entity\Flat;
+use App\Repository\FlatRepository;
 use DateTime;
 use Symfony\Component\Uid\Ulid;
 
 class InvitationCodeHandler
 {
+    public FlatRepository $flatRepository;
+    public function __construct(FlatRepository $flatRepository)
+    {
+        $this->flatRepository = $flatRepository;
+    }
     public function getInvitationCode(Flat $flat): Ulid | null
     {
         return $flat->getInvitationCode();
@@ -30,6 +36,9 @@ class InvitationCodeHandler
         $initialDate = $invitationCode->getDateTime();
         $expirationDate = $this->getExpirationDate($invitationCode);
 
-        return $currentDate > $initialDate && $currentDate < $expirationDate;
+        // check if there is flat with this code
+        $flat = $this->flatRepository->findOneBy(['invitationCode' => $invitationCode]);
+
+        return ($currentDate > $initialDate && $currentDate < $expirationDate) && !is_null($flat);
     }
 }
