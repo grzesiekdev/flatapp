@@ -32,7 +32,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+         - { path: ^/panel/flats$, roles: ['ROLE_LANDLORD'] }
          - { path: ^/panel, roles: IS_AUTHENTICATED_FULLY }
+
 
 when@test:
     security:

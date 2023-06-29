@@ -4,9 +4,9 @@ namespace App\Utils;
 
 class UserRole
 {
-    const LANDLORD = 'landlord';
-    const TENANT = 'tenant';
-    const DEFAULT = 'default';
+    const LANDLORD = 'ROLE_LANDLORD';
+    const TENANT = 'ROLE_TENANT';
+    const DEFAULT = 'ROLE_DEFAULT';
 
     public static function getAllRoles(): array
     {

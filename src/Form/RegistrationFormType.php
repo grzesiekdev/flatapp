@@ -90,8 +90,8 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('roles', ChoiceType::class, [
                 'choices' => [
-                    'Landlord <br> <small>I want to add new flats for rent and invite tenants</small>' => 'landlord',
-                    'Tenant <br> <small>I want to rent flat and I have code from landlord</small>' => 'tenant',
+                    'Landlord <br> <small>I want to add new flats for rent and invite tenants</small>' => 'ROLE_LANDLORD',
+                    'Tenant <br> <small>I want to rent flat and I have code from landlord</small>' => 'ROLE_TENANT',
                 ],
                 'attr' => ['class' => 'form-control'],
                 'expanded' => true,
