@@ -4,6 +4,7 @@ namespace App\Tests\functional\Controller;
 
 use App\Entity\Flat;
 use App\Repository\FlatRepository;
+use App\Repository\LandlordRepository;
 use App\Repository\TenantRepository;
 use App\Service\InvitationCodeHandler;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +18,7 @@ class RegistrationControllerTest extends WebTestCase
     private EntityManager $entityManager;
     private FlatRepository $flatRepository;
     private TenantRepository $tenantRepository;
+    private LandlordRepository $landlordRepository;
     private Ulid $code;
     private Flat $flat;
 
@@ -28,7 +30,130 @@ class RegistrationControllerTest extends WebTestCase
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->flatRepository = $container->get(FlatRepository::class);
         $this->tenantRepository = $container->get(TenantRepository::class);
+        $this->landlordRepository = $container->get(LandlordRepository::class);
         $this->flat = $this->flatRepository->findAll()[0];
+    }
+
+    public function testRegistrationControllerForLandlord(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Example Landlord',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+        $crawler = $this->client->followRedirect();
+
+        $landlord = $this->landlordRepository->findOneBy(['email' => 'example@landlord.pl']);
+        $this->assertNotNull($landlord);
+        $this->assertEquals('Example Landlord', $landlord->getName());
+        $this->assertEquals('ROLE_LANDLORD', $landlord->getRoles()[0]);
+    }
+
+    public function testRegistrationControllerForEmptyName(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => '',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Name can\'t be blank', $error);
+    }
+
+    public function testRegistrationControllerForShortPassword(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Example Landlord',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => 'test',
+            'registration_form[plainPassword][second]' => 'test',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Your password should be at least 6 characters', $error);
+    }
+
+    public function testRegistrationControllerForInvalidDate(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Example Landlord',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000/05/22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Please enter a valid date.', $error);
+    }
+    public function testRegistrationControllerForEmptyDate(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Example Landlord',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Please enter a valid date.', $error);
+    }
+
+    public function testRegistrationControllerForNotMatchingPasswords(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Example Landlord',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => 'test123',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('The password fields must match.', $error);
     }
 
     public function testRegistrationControllerForTenant(): void
@@ -57,6 +182,7 @@ class RegistrationControllerTest extends WebTestCase
         $this->assertNotNull($tenant);
         $this->assertEquals('Example Tenant', $tenant->getName());
         $this->assertEquals($tenant, $this->flat->getTenants()[0]);
+        $this->assertEquals('ROLE_TENANT', $tenant->getRoles()[0]);
     }
 
     public function testRegistrationControllerForTenantForEmptyInvitationCode(): void
