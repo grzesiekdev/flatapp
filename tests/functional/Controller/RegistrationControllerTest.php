@@ -156,6 +156,46 @@ class RegistrationControllerTest extends WebTestCase
         $this->assertEquals('The password fields must match.', $error);
     }
 
+    public function testRegistrationControllerForEmptyPasswords(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Example Landlord',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => '',
+            'registration_form[plainPassword][second]' => '',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Please enter a password', $error);
+    }
+
+    public function testRegistrationControllerForMultipleErrors(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => '',
+            'registration_form[email]' => 'example@landlord.pl',
+            'registration_form[plainPassword][first]' => '',
+            'registration_form[plainPassword][second]' => '',
+            'registration_form[dateOfBirth]' => '2000-05-22000',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Name can\'t be blankPlease enter a passwordPlease enter a valid date.', $error);
+    }
+
     public function testRegistrationControllerForTenant(): void
     {
         $crawler = $this->client->request('GET', '/register');
