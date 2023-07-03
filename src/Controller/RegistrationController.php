@@ -77,11 +77,9 @@ class RegistrationController extends AbstractController
                     $currentDate = new \DateTime('now');
                     if ($invitationCodeHandler->isInvitationCodeValid($invitationCode, $currentDate)) {
                         $flat = $flatRepository->findOneBy(['invitationCode' => $invitationCode]);
-                        if (!is_null($flat)) {
-                            $user->setFlatId($flat);
-                            $flat->addTenant($user);
-                            $entityManager->persist($flat);
-                        }
+                        $user->setFlatId($flat);
+                        $flat->addTenant($user);
+                        $entityManager->persist($flat);
                     } else {
                         $this->addFlash('error', 'Invalid invitation code.');
                         return $this->redirectToRoute('app_register');
