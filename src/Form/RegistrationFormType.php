@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User\User;
 use App\Form\DataTransformer\Base32CodeTransformer;
+use App\Form\DataTransformer\EmptyStringToNullTransformer;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -135,6 +136,8 @@ class RegistrationFormType extends AbstractType
 
         $builder->get('code')
             ->addModelTransformer(new Base32CodeTransformer($this->validator, $this->session));
+        $builder->get('dateOfBirth')
+            ->addModelTransformer(new EmptyStringToNullTransformer($this->session));
 
     }
 
