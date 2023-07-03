@@ -548,3 +548,6 @@ input[type=number] {
 .flat-description h3 {
     font-size: 1rem;
 }
+.alert.alert-danger ul {
+    margin-bottom: 0;
+}
