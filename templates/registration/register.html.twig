@@ -19,6 +19,9 @@
                 {% for flash_error in app.flashes('error') %}
                     <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
                 {% endfor %}
+                {% if form_errors(registrationForm) %}
+                    <div class="alert alert-danger" role="alert">{{ form_errors(registrationForm) }}</div>
+                {% endif %}
                 <small>Fields marked with <span style="color: var(--primary)">*</span> are required</small>
                 {{ form_start(registrationForm) }}
                 <div class="row mt-3">

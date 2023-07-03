@@ -37,12 +37,14 @@ class RegistrationFormType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
-                ]
+                ],
+                'error_bubbling' => true,
             ])
             ->add('email', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
-                ]
+                ],
+                'error_bubbling' => true,
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -63,6 +65,7 @@ class RegistrationFormType extends AbstractType
                 ],
                 'first_options'  => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
+                'error_bubbling' => true,
             ])
             ->add('dateOfBirth', DateType::class, [
                 'attr' => ['class' => '
@@ -71,25 +74,29 @@ class RegistrationFormType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'years' => range(date('Y')-80, date('Y')),
+                'error_bubbling' => true,
             ])
             ->add('address', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
                 ],
-                'required' => false
+                'required' => false,
+                'error_bubbling' => true,
             ])
             ->add('image', FileType::class, [
                 'attr' => ['class' => '
                 form-control',
                 ],
                 'required' => false,
-                'label' => 'Profile image'
+                'label' => 'Profile image',
+                'error_bubbling' => true,
             ])
             ->add('phone', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
                 ],
-                'required' => false
+                'required' => false,
+                'error_bubbling' => true,
             ])
             ->add('roles', ChoiceType::class, [
                 'choices' => [
@@ -101,7 +108,8 @@ class RegistrationFormType extends AbstractType
                 'multiple' => false,
                 'label' => 'I want to register as:',
                 'placeholder' => false,
-                'label_html' => true
+                'label_html' => true,
+                'error_bubbling' => true,
             ])
             ->add('code', TextType::class, [
                 'attr' => [
@@ -109,6 +117,7 @@ class RegistrationFormType extends AbstractType
                 ],
                 'required' => false,
                 'mapped' => false,
+                'error_bubbling' => true,
             ])
         ;
 
