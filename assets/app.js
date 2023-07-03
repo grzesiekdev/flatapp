@@ -34,7 +34,7 @@ import {handle_floor_select} from "./js/floors";
     if ($('#registration_form_roles_1').is(':checked')) {
         $('#registration_form_code_container').css('display', 'flex');
     }
-    
+
     $('input[name="registration_form[roles]"]').change(function() {
         if ($('#registration_form_roles_1').is(':checked')) {
             $('#registration_form_code_container').css('display', 'flex');

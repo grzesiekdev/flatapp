@@ -35,7 +35,7 @@ class RegistrationFormTypeTest extends PantherTestCase
             'registration_form[plainPassword][first]' => 'test12',
             'registration_form[plainPassword][second]' => 'test12',
             'registration_form[roles]' => [
-                'landlord'
+                'ROLE_LANDLORD'
             ],
         ]);
 

@@ -143,6 +143,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'validator' => ValidatorInterface::class,
         ]);
         $resolver->setRequired('session');
     }

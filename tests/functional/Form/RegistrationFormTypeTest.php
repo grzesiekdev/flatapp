@@ -48,12 +48,12 @@ class RegistrationFormTypeTest extends KernelTestCase
                 true
             ),
             'phone' => '123123123',
-            'roles' => 'landlord'
+            'roles' => 'ROLE_LANDLORD'
         ];
 
         $formFactory = $container->get('form.factory');
 
-        # Preparing expected Landlord model
+        # Preparing an expected Landlord model
         $this->expected = new Landlord();
         $this->model = new Landlord();
         $this->expected->setName($this->formData['name'])
@@ -68,7 +68,7 @@ class RegistrationFormTypeTest extends KernelTestCase
             ->setAddress($this->formData['address'])
             ->setImage($this->formData['image'])
             ->setPhone($this->formData['phone'])
-            ->setRoles(['landlord']);
+            ->setRoles(['ROLE_LANDLORD']);
 
         $this->form = $formFactory->create(RegistrationFormType::class, $this->model, [
             'csrf_protection' => false,
@@ -96,7 +96,7 @@ class RegistrationFormTypeTest extends KernelTestCase
         $this->assertEquals($this->expected->getPhone(), $this->model->getPhone());
         $this->assertEquals($this->expected->getRoles(), $this->model->getRoles());
 
-        # Because password hash is always different, we only check if submitted password is not null
+        # Because password hash is always different, we only check if the submitted password is not null
         $this->assertNotNull($this->model->getPassword());
     }
 
