@@ -3,12 +3,14 @@
 namespace App\Tests\functional\Controller;
 
 use App\Entity\Flat;
+use App\Entity\User\Type\Tenant;
 use App\Repository\FlatRepository;
 use App\Repository\LandlordRepository;
 use App\Service\InvitationCodeHandler;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class FlatsHelperControllerTest extends WebTestCase
 {
@@ -17,12 +19,14 @@ class FlatsHelperControllerTest extends WebTestCase
     private Flat $flat;
     private FlatRepository $flatRepository;
     private InvitationCodeHandler $invitationCodeHandler;
+    private UserPasswordHasherInterface $userPasswordHasher;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $container = static::getContainer();
+        $this->userPasswordHasher = $container->get(UserPasswordHasherInterface::class);;
 
         $this->flatRepository = $container->get(FlatRepository::class);
         $this->invitationCodeHandler = $container->get(InvitationCodeHandler::class);
@@ -117,4 +121,66 @@ class FlatsHelperControllerTest extends WebTestCase
         $this->assertNull($this->flat->getInvitationCode());
     }
 
+    public function testDeleteTenantFromFlat(): void
+    {
+        $user = new Tenant();
+        $user->setEmail('test_env_tenant@test.pl');
+        $user->setName('Test tenant');
+        $user->setPassword(
+            $this->userPasswordHasher->hashPassword(
+                $user,
+                'test12'
+            )
+        );
+        $user->setDateOfBirth(new \DateTime('1922-02-01'));
+        $this->entityManager->persist($user);
+        $this->flat->addTenant($user);
+
+        $this->entityManager->persist($this->flat);
+        $this->entityManager->flush();
+
+        $tenantId = $this->flat->getTenants()[0]->getId();
+        $flatId = $this->flat->getId();
+
+        // before removing tenant, we except that getTenants() will return User, not Null
+        $this->assertNotNull($this->flat->getTenants()[0]);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $flatId . '/remove-tenant/' . $tenantId);
+
+        // after removing tenant, we expect to get Null
+        $this->assertNull($this->flat->getTenants()[0]);
+    }
+
+    public function testDeleteTenantFromFlatWithCrawler(): void
+    {
+        $user = new Tenant();
+        $user->setEmail('test_env_tenant@test.pl');
+        $user->setName('Test tenant');
+        $user->setPassword(
+            $this->userPasswordHasher->hashPassword(
+                $user,
+                'test12'
+            )
+        );
+        $user->setDateOfBirth(new \DateTime('1922-02-01'));
+        $this->entityManager->persist($user);
+        $this->flat->addTenant($user);
+
+        $this->entityManager->persist($this->flat);
+        $this->entityManager->flush();
+
+        $flatId = $this->flat->getId();
+
+        // before removing tenant, we except that getTenants() will return User, not Null
+        $this->assertNotNull($this->flat->getTenants()[0]);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $flatId);
+
+        $link = $crawler->filter('.remove-tenant-from-flat')->link();
+        $this->client->click($link);
+        $crawler = $this->client->followRedirect();
+        
+        $this->flat = $this->flatRepository->findOneById(['id' => $this->flat->getId()]);
+
+        // after removing tenant, we expect to get Null
+        $this->assertNull($this->flat->getTenants()[0]);
+    }
 }
