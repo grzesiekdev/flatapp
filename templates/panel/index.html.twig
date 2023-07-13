@@ -15,13 +15,13 @@
                 {% endif %}
                 {% include './panel/widgets/messages.html.twig' %}
             </div>
-        {% endif %}
-        <div class="row g-4">
-            {# {% include './panel/widgets/calendar.html.twig' %}#}
-            {% include './panel/widgets/todo_list.html.twig' %}
-        </div>
-        {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
             <div class="row g-4">
+                {# {% include './panel/widgets/calendar.html.twig' %}#}
+                {% include './panel/widgets/todo_list.html.twig' %}
+            </div>
+        {% endif %}
+        {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
+            <div class="row g-4 my-3">
                 {# {% include './panel/widgets/calendar.html.twig' %}#}
                 {% include './panel/widgets/messages.html.twig' %}
                 {% include './panel/widgets/todo_list.html.twig' %}
