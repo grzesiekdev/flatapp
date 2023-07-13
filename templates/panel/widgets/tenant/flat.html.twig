@@ -1,0 +1,32 @@
+<div class="col-sm-12 col-md-6 col-xl-6">
+    <div class="card h-100 bg-secondary rounded p-4">
+        <figure>
+            {% if app.user.getFlatId.pictures %}
+                <div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        {% for picture in app.user.getFlatId.pictures %}
+                            <div class="carousel-item {{ (loop.index == 1) ? 'active' : '' }}">
+                                <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.getFlatId.landlord.id }}/{{ picture }}" alt="{{ app.user.getFlatId.address }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            {% endif %}
+        </figure>
+        <div class="card-body">
+            <h5 class="card-title text-secondary">{{ app.user.getFlatId.address }}, {{ app.user.getFlatId.area }} m<sup>2</sup>, {{ app.user.getFlatId.rent }}zł</h5>
+            <p class="card-text">{{ (app.user.getFlatId.description|length > 100 ? app.user.getFlatId.description|slice(0, 100) ~ '...': app.user.getFlatId.description) | striptags}}</p>
+            <a href="{{ path('app_flats_view', {id: app.user.getFlatId.id}) }}" class="btn btn-primary">See more</a>
+        </div>
+    </div>
+</div>
+
+
