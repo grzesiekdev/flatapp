@@ -10,7 +10,11 @@
                     <div class="carousel-inner">
                         {% for picture in flat.pictures %}
                             <div class="carousel-item {{ (loop.index == 1) ? 'active' : '' }}">
-                                <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.id }}/{{ picture }}" alt="{{ flat.address }}">
+                                {% if app.user.getFlatId.landlord.id is defined %}
+                                    <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.getFlatId.landlord.id}}/{{ picture }}" alt="{{ flat.address }}">
+                                {% else %}
+                                    <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.id }}/{{ picture }}" alt="{{ flat.address }}">
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
@@ -134,48 +138,51 @@
                     </div>
                     {% endif %}
                     <!-- Gallery -->
-                    <a href="{{ path('app_flats_edit', {id: flat.id}) }}" class="btn btn-primary">Edit</a>
-                    <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
-                    <a href="{{ path('app_flats_generate_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
+                    {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
+                        <a href="{{ path('app_flats_edit', {id: flat.id}) }}" class="btn btn-primary">Edit</a>
+                        <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
+                        <a href="{{ path('app_flats_generate_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
+                    {% endif %}
                 </div>
             </div>
-
-            <div class="card col-md-3 m-3 p-3 border-0">
-                <h2 class="text-black text-center">Tenants</h2>
-                {% if invitation_code.code %}
-                    <div class="{{ invitation_code.is_code_valid ? 'text-success' : 'text-danger' }}">
-                        <p>Invitation code:<br> <strong id="invitation-code">{{ invitation_code.code }}</strong> <a href="{{ path('app_flats_delete_invitation_code', {id: flat.id}) }}" class="mx-2 text-danger remove-invitation-code"><i class="fas fa-trash-alt"></i></a> <br>
-                        <small>
-                            <i>You can share this code with tenant whom you want to invite</i>
-                        </small>
-                        </p>
-                        <p>
-                            <small id="expiration-date">
-                                Valid until: {{ invitation_code.expiration_date }}<br>
+            {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
+                <div class="card col-md-3 m-3 p-3 border-0">
+                    <h2 class="text-black text-center">Tenants</h2>
+                    {% if invitation_code.code %}
+                        <div class="{{ invitation_code.is_code_valid ? 'text-success' : 'text-danger' }}">
+                            <p>Invitation code:<br> <strong id="invitation-code">{{ invitation_code.code }}</strong> <a href="{{ path('app_flats_delete_invitation_code', {id: flat.id}) }}" class="mx-2 text-danger remove-invitation-code"><i class="fas fa-trash-alt"></i></a> <br>
+                            <small>
+                                <i>You can share this code with tenant whom you want to invite</i>
                             </small>
-                        </p>
-                    </div>
-
-                {% endif %}
-                {% if tenants is empty %}
-                    There are no tenants associated with this flat
-                {% else %}
-                    Tenants: <br>
-                    {% for tenant in tenants %}
-                        <div class="row border py-2 m-1">
-                            <div class="col-sm-3">
-                                <img src="/img/user.jpg" class="rounded-circle" />
-                            </div>
-                            <div class="col-sm-9">
-                                {{ tenant.name }}
-                                <a class="mx-1" href="#" title="Go to the tenant profile"><i class="fa-solid fa-user"></i></a>
-                                <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: tenant.id}) }}" class="mx-1 text-danger remove-tenant-from-flat" title="Remove user from this flat"><i class="fas fa-trash-alt"></i></a><br>
-                                <small>Tenant since: 2023-06-29</small>
-                            </div>
+                            </p>
+                            <p>
+                                <small id="expiration-date">
+                                    Valid until: {{ invitation_code.expiration_date }}<br>
+                                </small>
+                            </p>
                         </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+
+                    {% endif %}
+                    {% if tenants is empty %}
+                        There are no tenants associated with this flat
+                    {% else %}
+                        Tenants: <br>
+                        {% for tenant in tenants %}
+                            <div class="row border py-2 m-1">
+                                <div class="col-sm-3">
+                                    <img src="/img/user.jpg" class="rounded-circle" />
+                                </div>
+                                <div class="col-sm-9">
+                                    {{ tenant.name }}
+                                    <a class="mx-1" href="#" title="Go to the tenant profile"><i class="fa-solid fa-user"></i></a>
+                                    <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: tenant.id}) }}" class="mx-1 text-danger remove-tenant-from-flat" title="Remove user from this flat"><i class="fas fa-trash-alt"></i></a><br>
+                                    <small>Tenant since: 2023-06-29</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 
