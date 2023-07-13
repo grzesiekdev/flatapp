@@ -78,6 +78,7 @@ class RegistrationController extends AbstractController
                     if ($invitationCodeHandler->isInvitationCodeValid($invitationCode, $currentDate)) {
                         $flat = $flatRepository->findOneBy(['invitationCode' => $invitationCode]);
                         $user->setFlatId($flat);
+                        $user->setTenantSince($currentDate);
                         $flat->addTenant($user);
                         $entityManager->persist($flat);
                     } else {

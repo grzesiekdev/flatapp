@@ -176,7 +176,7 @@
                                     {{ tenant.name }}
                                     <a class="mx-1" href="#" title="Go to the tenant profile"><i class="fa-solid fa-user"></i></a>
                                     <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: tenant.id}) }}" class="mx-1 text-danger remove-tenant-from-flat" title="Remove user from this flat"><i class="fas fa-trash-alt"></i></a><br>
-                                    <small>Tenant since: 2023-06-29</small>
+                                    <small>Tenant since: {{ tenant.tenantSince | date("d-m-Y") }}</small>
                                 </div>
                             </div>
                         {% endfor %}
