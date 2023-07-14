@@ -19,7 +19,7 @@
                             {{ form_start(form) }}
                             <label for="edit_profile_form_image" class="edit-image-form">
                                 <div class="image-container">
-                                    <img src="/uploads/profile_pictures/user{{ user.id }}/{{ user.image }}" alt="Profile image" class="rounded-circle" width="150px" height="150px">
+                                    <img src="/uploads/profile_pictures/{{ user.image }}" alt="Profile image" class="rounded-circle" width="150px" height="150px">
                                     <div class="overlay">
                                         <span class="caption">Edit</span>
                                     </div>
@@ -29,7 +29,8 @@
                                 {{ form_widget(form.image) }}
                             </div>
                             <div class="mt-3">
-                                <h4>{{ user.name }}</h4>
+                                <a class="btn btn-outline-danger my-2 delete-profile-picture" data-user-id="{{ user.id }}">Delete profile picture</a>
+                                <h4 class="mt-3">{{ user.name }}</h4>
                                 <p class="text-secondary mb-1">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
                                 <p class="text-muted font-size-sm">{{ user.address }}</p>
                                 {% if not current_user %}

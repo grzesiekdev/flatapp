@@ -6,6 +6,7 @@ use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
 use App\Repository\FlatRepository;
+use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
 use App\Utils\UserRole;
 use App\Form\RegistrationFormType;
@@ -38,7 +39,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository, InvitationCodeHandler $invitationCodeHandler, SessionInterface $session): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FlatRepository $flatRepository, InvitationCodeHandler $invitationCodeHandler, SessionInterface $session, FilesUploader $filesUploader): Response
     {
         if ($this->security->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -67,9 +68,18 @@ class RegistrationController extends AbstractController
             )
             ->setDateOfBirth($form->get('dateOfBirth')->getData())
             ->setAddress($form->get('address')->getData())
-            ->setImage($form->get('image')->getData())
             ->setPhone($form->get('phone')->getData())
             ->setRoles($userType);
+
+            $profilePicture = $form->get('image')->getData();
+            if ($profilePicture)
+            {
+                $path = $this->getParameter('profile_pictures');
+                $newFilename = $filesUploader->upload($profilePicture, $path);
+                $user->setImage($newFilename);
+            } else {
+                $user->setImage('default-profile-picture.png');
+            }
 
             if ($userType[0] == 'ROLE_TENANT') {
                 $invitationCode = $form->get('code')->getData();

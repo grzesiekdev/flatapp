@@ -170,7 +170,7 @@
                         {% for tenant in tenants %}
                             <div class="row border py-2 m-1">
                                 <div class="col-sm-3">
-                                    <img src="/uploads/profile_pictures/user{{ tenant.id }}/{{ tenant.image }}" class="rounded-circle img-fluid" />
+                                    <img src="/uploads/profile_pictures/{{ tenant.image }}" class="rounded-circle img-fluid" />
                                 </div>
                                 <div class="col-sm-9">
                                     {{ tenant.name }}

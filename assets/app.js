@@ -74,7 +74,20 @@ import {handle_floor_select} from "./js/floors";
        });
     });
 
-
+    $('.delete-profile-picture').click(function() {
+        let userId = $(this).attr('data-user-id');
+        let image = $('.edit-image-form img');
+        $.ajax({
+            url: '/panel/profile/'+userId+'/delete-picture',
+            method: 'POST',
+            success: function(result) {
+                image.attr('src', '/uploads/profile_pictures/default-profile-picture.png');
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
 
 
     // Spinner

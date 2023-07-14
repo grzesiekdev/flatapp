@@ -56,7 +56,7 @@ class ProfileController extends AbstractController
         ]);
     }
     #[Route('/panel/profile/{id}/edit', name: 'app_profile_edit')]
-    public function profileEdit(UserRepository $userRepository, int $id, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, FilesUploader $filesUploader): Response
+    public function profileEdit(UserRepository $userRepository, int $id, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, FilesUploader $filesUploader): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
         $form = $this->createForm(EditProfileFormType::class, $user, [
@@ -71,21 +71,12 @@ class ProfileController extends AbstractController
             $profilePicture = $form->get('image')->getData();
             if ($profilePicture)
             {
-                $originalFileName = pathinfo($profilePicture->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFileName);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $profilePicture->guessExtension();
-
-                // This function returns a path in format /uploads/profile_pictures/user{id}
-                $path = $filesUploader->createTempDir($this->getParameter('profile_pictures'), $id);
-                try {
-                    $profilePicture->move(
-                        $path,
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Error occurred when uploading profile picture');
+                $path = $this->getParameter('profile_pictures');
+                if ($user->getImage() && $user->getImage() !== 'default-profile-picture.png')
+                {
+                    $filesUploader->deleteFile($path . '/' . $user->getImage());
                 }
-
+                $newFilename = $filesUploader->upload($profilePicture, $path);
                 $user->setImage($newFilename);
             }
 
@@ -99,6 +90,28 @@ class ProfileController extends AbstractController
             'user' => $user,
             'form' => $form->createView()
         ]);
+    }
+
+    #[Route('/panel/profile/{id}/delete-picture', name: 'app_profile_delete_picture')]
+    public function profileDeletePicture(UserRepository $userRepository, int $id, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, FilesUploader $filesUploader): Response
+    {
+        $user = $userRepository->findOneBy(['id' => $id]);
+        $response = new Response();
+        if ($user->getImage() && $user->getImage() !== 'default-profile-picture.png')
+        {
+            $path = $this->getParameter('profile_pictures');
+            $filesUploader->deleteFile($path . '/' . $user->getImage());
+            $user->setImage('default-profile-picture.png');
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $response->setStatusCode(Response::HTTP_OK);
+        } else {
+            $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $response;
     }
 
 }
