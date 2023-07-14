@@ -8,6 +8,9 @@
     {% endif %}
 <div class="container-fluid px-4">
     <div class="row my-4">
+        {% for flash_error in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
         <div class="col-md-4 mb-3">
             <div class="card bg-secondary h-100">
                 <div class="card-body">
@@ -102,12 +105,15 @@
                     {% else %}
                         <span class="text-muted">Currently you are not assigned with any flat — you can enter invitation code below</span>
                         {{ form_start(invitation_code_form) }}
-                        <div class="row">
-                            <div class="col">
-                                {{ form_row(invitation_code_form.code) }}
+                        <div class="row my-4">
+                            <div class="col-sm-2">
+                                {{ form_label(invitation_code_form.code) }}
                             </div>
-
+                            <div class="col-sm-10">
+                                {{ form_widget(invitation_code_form.code) }}
+                            </div>
                         </div>
+                        <button type="submit" class="btn btn-primary mt-4">Enter code</button>
                         {{ form_end(invitation_code_form) }}
                     {% endif %}
                 </div>

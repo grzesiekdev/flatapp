@@ -5,15 +5,21 @@ namespace App\Service;
 
 use App\Entity\Flat;
 use App\Repository\FlatRepository;
+use App\Repository\TenantRepository;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
 class InvitationCodeHandler
 {
-    public FlatRepository $flatRepository;
-    public function __construct(FlatRepository $flatRepository)
+    private FlatRepository $flatRepository;
+    private TenantRepository $tenantRepository;
+    private EntityManagerInterface $entityManager;
+    public function __construct(FlatRepository $flatRepository, TenantRepository $tenantRepository, EntityManagerInterface $entityManager)
     {
         $this->flatRepository = $flatRepository;
+        $this->tenantRepository = $tenantRepository;
+        $this->entityManager = $entityManager;
     }
     public function getInvitationCode(Flat $flat): Ulid | null
     {
@@ -40,5 +46,18 @@ class InvitationCodeHandler
         $flat = $this->flatRepository->findOneBy(['invitationCode' => $invitationCode]);
 
         return ($currentDate > $initialDate && $currentDate < $expirationDate) && !is_null($flat);
+    }
+
+    public function setInvitationCode(int $id, string $invitationCode, DateTime $currentDate) : void
+    {
+        $tenant = $this->tenantRepository->findOneBy(['id' => $id]);
+        $flat = $this->flatRepository->findOneBy(['invitationCode' => $invitationCode]);
+        $tenant->setFlatId($flat);
+        $tenant->setTenantSince($currentDate);
+        $flat->addTenant($tenant);
+
+        $this->entityManager->persist($flat);
+        $this->entityManager->persist($tenant);
+        $this->entityManager->flush();
     }
 }
