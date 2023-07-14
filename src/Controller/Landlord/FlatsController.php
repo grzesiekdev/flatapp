@@ -90,7 +90,7 @@ class FlatsController extends AbstractController
         ];
 
         if ($invitationCode['code']) {
-            $invitationCode['expiration_date'] = $invitationCodeHandler->getExpirationDate($invitationCode['code'])->format('d-m-Y H:i:s');
+            $invitationCode['expiration_date'] = $invitationCodeHandler->getExpirationDate($invitationCode['code'])->modify('+2 hours')->format('d-m-Y H:i:s');
             $currentDate = new \DateTime('now');
             $invitationCode['is_code_valid'] = $invitationCodeHandler->isInvitationCodeValid($invitationCode['code'], $currentDate);
             $invitationCode['invitation_code_encoded'] = $invitationCodeHandler->getEncodedInvitationCode($invitationCode['code']);
