@@ -15,7 +15,7 @@
             <div class="card bg-secondary h-100">
                 <div class="card-body">
                     <div class="d-flex flex-column align-items-center text-center">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                        <img src="/uploads/profile_pictures/user{{ user.id }}/{{ user.image }}" alt="Admin" class="rounded-circle" width="150px" height="150px">
                         <div class="mt-3">
                             <h4>{{ user.name }}</h4>
                             <p class="text-secondary mb-1">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
@@ -79,7 +79,7 @@
                     {% if current_user %}
                     <div class="row">
                         <div class="col-sm-12">
-                            <a class="btn btn-success " target="__blank" href="#">Edit</a>
+                            <a class="btn btn-success " target="__blank" href="{{ path('app_profile_edit', {id: user.id}) }}">Edit</a>
                         </div>
                     </div>
                     {% endif %}

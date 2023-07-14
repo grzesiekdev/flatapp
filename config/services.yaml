@@ -7,6 +7,7 @@ parameters:
     temp_pictures: '%kernel.project_dir%/public/uploads/flats/tmp/pictures'
     temp_pictures_for_tenant: '%kernel.project_dir%/public/uploads/flats/tmp/pictures_for_tenant'
     agreements: '%kernel.project_dir%/public/uploads/flats/agreements'
+    profile_pictures: '%kernel.project_dir%/public/uploads/profile_pictures'
 
     test_images: '%kernel.project_dir%/public/img/test'
 services:

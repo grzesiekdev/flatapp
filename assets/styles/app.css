@@ -551,3 +551,41 @@ input[type=number] {
 .alert.alert-danger ul {
     margin-bottom: 0;
 }
+
+.edit-image-form img {
+    -webkit-transition: all 1s ease;
+    transition: all 0.5s ease;
+}
+
+.edit-image-form .image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.edit-image-form .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.edit-image-form .caption {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.edit-image-form:hover .overlay {
+    opacity: 1;
+    cursor: pointer;
+    border-radius: 50%;
+}
