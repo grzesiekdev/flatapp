@@ -83,7 +83,7 @@ class FlatsHelperControllerTest extends WebTestCase
 
         $this->assertEquals($this->flat->getInvitationCode()->toBase32(), $code);
         $this->assertEquals(
-            'Valid until: ' . $this->invitationCodeHandler->getExpirationDate($this->flat->getInvitationCode())->format('d-m-Y H:i:s'),
+            'Valid until: ' . $this->invitationCodeHandler->getExpirationDate($this->flat->getInvitationCode())->modify('+2 hours')->format('d-m-Y H:i:s'),
             $expirationDate
         );
     }
