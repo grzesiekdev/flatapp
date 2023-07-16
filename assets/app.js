@@ -89,6 +89,12 @@ import {handle_floor_select} from "./js/floors";
         });
     });
 
+    // Get the current URL path
+    let currentPath = window.location.pathname;
+
+    // Find the sidebar link with a matching href and add the 'active' class
+    $('.navbar-nav a[href="' + currentPath + '"]').addClass('active');
+
 
     // Spinner
     var spinner = function () {
