@@ -6,20 +6,19 @@
     {% else %}
         {% set current_user = false %}
     {% endif %}
+    {{ form_start(form) }}
     <div class="container-fluid px-4">
         <div class="row my-4">
             {% for flash_error in app.flashes('error') %}
                 <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
             {% endfor %}
-
             <div class="col-md-4 mb-3">
                 <div class="card bg-secondary h-100">
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
-                            {{ form_start(form) }}
                             <label for="edit_profile_form_image" class="edit-image-form">
                                 <div class="image-container">
-                                    <img src="/uploads/profile_pictures/{{ user.image }}" alt="Profile image" class="rounded-circle" width="150px" height="150px">
+                                    <img src="/uploads/profile_pictures/{{ user.image }}" alt="Profile image" class="rounded-circle profile-picture" width="150px" height="150px">
                                     <div class="overlay">
                                         <span class="caption">Edit</span>
                                     </div>
@@ -30,9 +29,9 @@
                             </div>
                             <div class="mt-3">
                                 <a class="btn btn-outline-danger my-2 delete-profile-picture" data-user-id="{{ user.id }}">Delete profile picture</a>
-                                <h4 class="mt-3">{{ user.name }}</h4>
-                                <p class="text-secondary mb-1">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
-                                <p class="text-muted font-size-sm">{{ user.address }}</p>
+                                <h4 class="mt-3 profile-name">{{ user.name }}</h4>
+                                <p class="text-secondary mb-1 profile-role">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
+                                <p class="text-muted font-size-sm profile-address">{{ user.address }}</p>
                                 {% if not current_user %}
                                     <button class="btn btn-outline-success">Message</button>
                                 {% endif %}
@@ -41,14 +40,14 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 mb-3">
                 <div class="card bg-secondary mb-3">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Full Name</h6>
                             </div>
-                            <div class="col-sm-9 text-secondary">
+                            <div class="col-sm-9 text-secondary profile-table-name">
                                 {{ form_widget(form.name) }}
                             </div>
                         </div>
@@ -57,7 +56,7 @@
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Date of birth</h6>
                             </div>
-                            <div class="col-sm-9 text-secondary">
+                            <div class="col-sm-9 text-secondary profile-table-date-of-birth">
                                 {{ form_widget(form.dateOfBirth) }}
                             </div>
                         </div>
@@ -66,7 +65,7 @@
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Email</h6> <small>If you want to change email, contact an admin</small>
                             </div>
-                            <div class="col-sm-9 text-secondary">
+                            <div class="col-sm-9 text-secondary profile-table-email">
                                 {{ user.email }}
                             </div>
                         </div>
@@ -75,7 +74,7 @@
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Phone</h6>
                             </div>
-                            <div class="col-sm-9 text-secondary">
+                            <div class="col-sm-9 text-secondary profile-table-phone">
                                 {{ form_widget(form.phone) }}
                             </div>
                         </div>
@@ -84,7 +83,7 @@
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Address</h6>
                             </div>
-                            <div class="col-sm-9 text-secondary">
+                            <div class="col-sm-9 text-secondary profile-table-address">
                                 {{ form_widget(form.address) }}
                             </div>
                         </div>
@@ -93,7 +92,7 @@
                     </div>
                 </div>
             </div>
-            {{ form_end(form) }}
         </div>
     </div>
+    {{ form_end(form) }}
 {% endblock %}
