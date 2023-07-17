@@ -17,9 +17,9 @@
                     <div class="d-flex flex-column align-items-center text-center">
                         <img src="/uploads/profile_pictures/{{ user.image }}" alt="Admin" class="rounded-circle" width="150px" height="150px">
                         <div class="mt-3">
-                            <h4>{{ user.name }}</h4>
-                            <p class="text-secondary mb-1">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
-                            <p class="text-muted font-size-sm">{{ user.address }}</p>
+                            <h4 class="profile-name">{{ user.name }}</h4>
+                            <p class="text-secondary mb-1 profile-role">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
+                            <p class="text-muted font-size-sm profile-address">{{ user.address }}</p>
                             {% if not current_user %}
                                 <button class="btn btn-outline-success">Message</button>
                             {% endif %}
@@ -35,7 +35,7 @@
                         <div class="col-sm-3">
                             <h6 class="mb-0">Full Name</h6>
                         </div>
-                        <div class="col-sm-9 text-secondary">
+                        <div class="col-sm-9 text-secondary profile-table-name">
                             {{ user.name }}
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                         <div class="col-sm-3">
                             <h6 class="mb-0">Date of birth</h6>
                         </div>
-                        <div class="col-sm-9 text-secondary">
+                        <div class="col-sm-9 text-secondary profile-table-date-of-birth">
                             {{ user.dateOfBirth | date('d-m-Y') }}
                         </div>
                     </div>
@@ -53,8 +53,8 @@
                         <div class="col-sm-3">
                             <h6 class="mb-0">Email</h6>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            {{ user.email }}
+                        <div class="col-sm-9 text-secondary profile-table-email">
+                            <a href="mailto:{{ user.email }}">{{ user.email }}</a>
                         </div>
                     </div>
                     <hr>
@@ -62,8 +62,8 @@
                         <div class="col-sm-3">
                             <h6 class="mb-0">Phone</h6>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            {{ user.phone }}
+                        <div class="col-sm-9 text-secondary profile-table-phone">
+                            <a href="tel:{{ user.phone }}">{{ user.phone }}</a>
                         </div>
                     </div>
                     <hr>
@@ -71,7 +71,7 @@
                         <div class="col-sm-3">
                             <h6 class="mb-0">Address</h6>
                         </div>
-                        <div class="col-sm-9 text-secondary">
+                        <div class="col-sm-9 text-secondary profile-table-address">
                             {{ user.address }}
                         </div>
                     </div>
