@@ -93,7 +93,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/panel/profile/{id}/delete-picture', name: 'app_profile_delete_picture')]
-    public function profileDeletePicture(UserRepository $userRepository, int $id, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, FilesUploader $filesUploader): Response
+    public function profileDeletePicture(UserRepository $userRepository, int $id, EntityManagerInterface $entityManager, FilesUploader $filesUploader): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
         $response = new Response();
@@ -108,7 +108,7 @@ class ProfileController extends AbstractController
 
             $response->setStatusCode(Response::HTTP_OK);
         } else {
-            $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
         }
 
         return $response;
