@@ -82,7 +82,7 @@ class ProfileControllerTest extends WebTestCase
         $this->assertEquals('jkowalski@o2.pl', $tableEmail);
     }
 
-    public function testIfLandlordCanEditProfile(): void
+    public function testIfLandlordCanEditProfileAndIfDataFromProfileIsCorrectlyDisplayedInEditForm(): void
     {
         $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlord->getId());
         $this->assertEquals('http://localhost/panel/profile/' . $this->landlord->getId(), $crawler->getUri());
@@ -92,6 +92,20 @@ class ProfileControllerTest extends WebTestCase
 
         $this->assertEquals('http://localhost/panel/profile/' . $this->landlord->getId() . '/edit', $crawler->getUri());
         $this->assertCount(1, $crawler->filter('form[name="edit_profile_form"]'));
+
+        $name = $crawler->filter('.profile-name')->text();
+        $role = $crawler->filter('.profile-role')->text();
+        $image = $crawler->filter('.profile-picture')->attr('src');
+        $tableEmail = $crawler->filter('.profile-table-email')->text();
+        $tableName = $crawler->filter('.profile-table-name input')->attr('value');
+        $tableDateOfBirth = $crawler->filter('.profile-table-date-of-birth input')->attr('value');
+
+        $this->assertEquals('Jan Kowalski', $name);
+        $this->assertEquals('Landlord', $role);
+        $this->assertEquals('/uploads/profile_pictures/default-profile-picture.png', $image);
+        $this->assertEquals('Jan Kowalski', $tableName);
+        $this->assertEquals('1922-02-01', $tableDateOfBirth);
+        $this->assertEquals('jkowalski@o2.pl', $tableEmail);
 
         $form = $crawler->filter('form[name="edit_profile_form"]')->form([
             'edit_profile_form[name]' => 'Jan Nowak',
