@@ -3,7 +3,6 @@
 namespace App\Tests\functional\Controller;
 
 use App\Entity\User\Type\Landlord;
-use App\Entity\User\Type\Tenant;
 use App\Repository\LandlordRepository;
 use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManager;
@@ -12,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class ProfileControllerTest extends WebTestCase
+class LandlordProfileControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
     private Landlord $landlord;
