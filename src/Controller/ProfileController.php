@@ -2,20 +2,24 @@
 
 namespace App\Controller;
 
+use App\Entity\User\Type\Landlord;
 use App\Form\EditProfileFormType;
 use App\Form\InvitationCodeFormType;
 use App\Repository\FlatRepository;
+use App\Repository\LandlordRepository;
 use App\Repository\TenantRepository;
 use App\Repository\UserRepository;
 use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -24,12 +28,49 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProfileController extends AbstractController
 {
     #[Route('/panel/profile/{id}', name: 'app_profile')]
-    public function profile(UserRepository $userRepository, int $id, Request $request, InvitationCodeHandler $invitationCodeHandler, SessionInterface $session): Response
+    public function profile(UserRepository $userRepository, int $id, Request $request, InvitationCodeHandler $invitationCodeHandler, SessionInterface $session, Security $security, FlatRepository $flatRepository, TenantRepository $tenantRepository, LandlordRepository $landlordRepository): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
         $form = $this->createForm(InvitationCodeFormType::class, $user, [
             'session' => $session,
         ]);
+
+        if (is_null($user))
+        {
+            throw new \Exception('User doesn\'t exist!');
+        }
+
+        $loggedInUser = $security->getUser();
+        $allowed = false;
+
+        if (in_array('ROLE_TENANT', $loggedInUser->getRoles()))
+        {
+            $allowed = $loggedInUser === $user;
+            $landlord = $landlordRepository->findOneBy(['id' => $user->getId()]);
+            if (!is_null($landlord)) {
+                $flat = $flatRepository->findOneBy(['landlord' => $landlord]);
+                if (!is_null($flat))
+                {
+                    $allowed = $flat->getLandlord() === $user;
+                }
+            }
+        } elseif (in_array('ROLE_LANDLORD', $loggedInUser->getRoles()))
+        {
+            $allowed = $loggedInUser === $user;
+            $tenant = $tenantRepository->findOneBy(['id' => $user->getId()]);
+            if (!is_null($tenant))
+            {
+                $flat = $tenant->getFlatId();
+                if (!is_null($flat))
+                {
+                    $allowed = $flat->getTenants()->contains($user);
+                }
+            }
+        }
+
+        if (!$allowed) {
+            throw new AccessDeniedException('Access denied.');
+        }
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
