@@ -40,6 +40,7 @@ class ProfileController extends AbstractController
                 $currentDate = new \DateTime('now');
                 if ($invitationCodeHandler->isInvitationCodeValid($invitationCode, $currentDate)) {
                     $invitationCodeHandler->setInvitationCode($id, $invitationCode, $currentDate);
+                    $this->addFlash('success', 'Flat added successfully');
                 } else {
                     $this->addFlash('error', 'Invalid invitation code.');
                     return $this->redirectToRoute('app_profile', ['id' => $user->getId()]);
