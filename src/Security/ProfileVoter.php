@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class ProfileVoter extends Voter
 {
     const VIEW = 'view';
+    const EDIT = 'edit';
 
     private FlatRepository $flatRepository;
     private TenantRepository $tenantRepository;
@@ -25,7 +26,7 @@ class ProfileVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT])) {
             return false;
         }
 
@@ -50,6 +51,7 @@ class ProfileVoter extends Voter
 
         return match($attribute) {
             self::VIEW => $this->canView($profile, $user),
+            self::EDIT => $this->canEdit($profile, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -81,6 +83,11 @@ class ProfileVoter extends Voter
             }
         }
         return $allowed;
+    }
+
+    private function canEdit(User $user, User $loggedInUser): bool
+    {
+        return $loggedInUser === $user;
     }
 
 }

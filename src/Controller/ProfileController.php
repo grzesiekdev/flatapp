@@ -64,7 +64,8 @@ class ProfileController extends AbstractController
         ]);
     }
     #[Route('/panel/profile/{id}/edit', name: 'app_profile_edit')]
-    public function profileEdit(UserRepository $userRepository, int $id, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, FilesUploader $filesUploader): Response
+    #[IsGranted('edit', 'profile', 'You don\'t have permissions to edit this profile', 403)]
+    public function profileEdit(UserRepository $userRepository, int $id, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, FilesUploader $filesUploader, User $profile = null): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
         $form = $this->createForm(EditProfileFormType::class, $user, [
