@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Tests\functional\Controller;
+namespace App\Tests\functional\Controller\Security;
 
 use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Repository\FlatRepository;
 use App\Repository\TenantRepository;
-use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Uid\Ulid;
 
 class ProfileSecurityControllerTest extends WebTestCase
 {
