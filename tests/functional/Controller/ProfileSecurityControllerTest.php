@@ -264,4 +264,58 @@ class ProfileSecurityControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
+    public function testIfTenantCanEditOwnProfile(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenant->getId() . '/edit');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->tenant->getId() . '/edit', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testIfTenantCannotEditAnotherTenantProfile(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenantTwo->getId() . '/edit');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->tenantTwo->getId() . '/edit', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCannotEditLandlordProfile(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlord->getId() . '/edit');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->landlord->getId() . '/edit', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanEditOwnProfile(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlord->getId() . '/edit');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->landlord->getId() . '/edit', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testIfLandlordCannotEditAnotherLandlordProfile(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlordTwo->getId() . '/edit');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->landlordTwo->getId() . '/edit', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotEditTenantProfile(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenant->getId() . '/edit');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->tenant->getId() . '/edit', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
 }
