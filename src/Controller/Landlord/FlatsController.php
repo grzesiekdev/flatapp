@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints\Date;
 
@@ -80,7 +81,8 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}', name: 'app_flats_view')]
-    public function viewFlat(FlatRepository $flatRepository, int $id, InvitationCodeHandler $invitationCodeHandler): Response
+    #[IsGranted('view', 'flat', 'You don\'t have permissions to view this flat', 403)]
+    public function viewFlat(FlatRepository $flatRepository, int $id, InvitationCodeHandler $invitationCodeHandler, Flat $flat = null): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $tenants = $flat->getTenants();
