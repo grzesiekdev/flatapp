@@ -196,6 +196,9 @@ class FlatSecurityControllerTest extends WebTestCase
         $this->entityManager->flush();
     }
 
+    /*
+     * Tests for viewing flat
+     */
    public function testIfTenantCanViewOwnFlat(): void
    {
        $this->client->loginUser($this->tenant);
@@ -288,4 +291,59 @@ class FlatSecurityControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(301);
     }
 
+    /*
+     * Tests for editing flat
+     */
+    public function testIfTenantCannotEditOwnFlat(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->tenant->getFlatId()->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCannotEditRandomFlat(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->tenantFour->getFlatId()->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->tenantFour->getFlatId()->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanEditOwnFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flat->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flat->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testIfLandlordCannotEditDifferentFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flatTwo->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flatTwo->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotEditPreviousFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+
+        $this->flat->removeTenant($this->tenant);
+        $this->flat->removeTenant($this->tenantThree);
+        $this->landlord->removeFlat($this->flat);
+        $this->entityManager->persist($this->flat);
+        $this->entityManager->persist($this->landlord);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flat->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flat->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(301);
+    }
 }
