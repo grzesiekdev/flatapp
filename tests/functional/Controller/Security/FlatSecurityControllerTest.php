@@ -324,9 +324,9 @@ class FlatSecurityControllerTest extends WebTestCase
     public function testIfLandlordCannotEditDifferentFlat(): void
     {
         $this->client->loginUser($this->landlord);
-        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flatTwo->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flatThree->getId());
 
-        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flatTwo->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flatThree->getId(), $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -344,6 +344,54 @@ class FlatSecurityControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flat->getId());
 
         $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flat->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(301);
+        $crawler = $this->client->followRedirect();
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    /*
+     * Tests for deleting flat
+     */
+    public function testIfTenantCannotDeleteOwnFlat(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $this->tenant->getFlatId()->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/delete/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCannotDeleteRandomFlat(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $this->tenantFour->getFlatId()->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/delete/' . $this->tenantFour->getFlatId()->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanDeleteOwnFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $flatId = $this->flat->getId();
+
+        $this->flat->removeTenant($this->tenant);
+        $this->flat->removeTenant($this->tenantThree);
+        $this->entityManager->persist($this->flat);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $flatId);
+
+        $this->assertEquals('http://localhost/panel/flats/delete/' . $flatId, $crawler->getUri());
+        $crawler = $this->client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testIfLandlordCannotDeleteDifferentFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $this->flatThree->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/delete/' . $this->flatThree->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
     }
 }

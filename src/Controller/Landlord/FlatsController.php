@@ -43,7 +43,8 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats/delete/{id}', name: 'app_flats_delete')]
-    public function deleteFlat(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager): Response
+    #[IsGranted('delete', 'flat', 'You don\'t have permissions to delete this flat', 403)]
+    public function deleteFlat(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager, Flat $flat = null): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $entityManager->remove($flat);

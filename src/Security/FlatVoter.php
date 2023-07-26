@@ -55,7 +55,7 @@ class FlatVoter extends Voter
         return match($attribute) {
             self::VIEW => $this->canView($flat, $user),
             self::EDIT => $this->canEdit($flat, $user),
-//            self::DELETE => $this->canDelete($flat, $user),
+            self::DELETE => $this->canDelete($flat, $user),
 //            self::ADD => $this->canAdd($flat, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
@@ -92,12 +92,13 @@ class FlatVoter extends Voter
         }
         return $allowed;
     }
-//
-//    private function canDelete(Flat $flat, User $loggedInUser): bool
-//    {
-//
-//    }
-//
+
+    private function canDelete(Flat $flat, User $loggedInUser): bool
+    {
+        // if a user can edit own flat, then they can also delete it
+        return $this->canEdit($flat, $loggedInUser);
+    }
+
 //    private function canAdd(Flat $flat, User $loggedInUser): bool
 //    {
 //
