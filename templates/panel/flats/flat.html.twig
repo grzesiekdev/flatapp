@@ -10,11 +10,7 @@
                     <div class="carousel-inner">
                         {% for picture in flat.pictures %}
                             <div class="carousel-item {{ (loop.index == 1) ? 'active' : '' }}">
-                                {% if app.user.getFlatId.landlord.id is defined %}
-                                    <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.getFlatId.landlord.id}}/{{ picture }}" alt="{{ flat.address }}">
-                                {% else %}
-                                    <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ app.user.id }}/{{ picture }}" alt="{{ flat.address }}">
-                                {% endif %}
+                                <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ flat.landlord.id }}/{{ picture }}" alt="{{ flat.address }}">
                             </div>
                         {% endfor %}
                     </div>
@@ -59,7 +55,7 @@
                                     {% if flat.rentAgreement %}
                                     <td><strong>Agreement</strong></td>
                                     <td>
-                                        <a href="/uploads/flats/agreements/user{{ app.user.id }}/{{ flat.rentAgreement }}" download>
+                                        <a href="/uploads/flats/agreements/user{{ flat.landlord.id }}/{{ flat.rentAgreement }}" download>
                                             {{ flat.rentAgreement|length > 10 ? flat.rentAgreement|slice(0, 10) ~ '...': flat.rentAgreement }} <i class="fa-solid fa-download"></i>
                                         </a>
                                     </td>
@@ -129,7 +125,7 @@
                         {% for picture in flat.picturesForTenant %}
                         <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
                             <img
-                                    src="/uploads/flats/pictures_for_tenant/user{{ app.user.id }}/{{ picture }}"
+                                    src="/uploads/flats/pictures_for_tenant/user{{ flat.landlord.id }}/{{ picture }}"
                                     class="w-100 shadow-1-strong rounded mb-4"
                                     alt="{{ flat.address }}"
                             />
