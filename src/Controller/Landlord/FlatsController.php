@@ -53,7 +53,8 @@ class FlatsController extends AbstractController
     }
 
     #[Route('/panel/flats/edit/{id}', name: 'app_flats_edit')]
-    public function editFlat(NewFlatFormHandler $newFlatFormHandler, int $id, FlatRepository $flatRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
+    #[IsGranted('edit', 'flat', 'You don\'t have permissions to edit this flat', 403)]
+    public function editFlat(NewFlatFormHandler $newFlatFormHandler, int $id, FlatRepository $flatRepository, Flat $flat = null): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $landlord = $this->getUser();

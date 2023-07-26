@@ -54,7 +54,7 @@ class FlatVoter extends Voter
 
         return match($attribute) {
             self::VIEW => $this->canView($flat, $user),
-//            self::EDIT => $this->canEdit($flat, $user),
+            self::EDIT => $this->canEdit($flat, $user),
 //            self::DELETE => $this->canDelete($flat, $user),
 //            self::ADD => $this->canAdd($flat, $user),
             default => throw new \LogicException('This code should not be reached!')
@@ -65,14 +65,24 @@ class FlatVoter extends Voter
     {
         $allowed = false;
 
-        if (in_array('ROLE_TENANT', $loggedInUser->getRoles()))
+        if ($this->canEdit($flat, $loggedInUser))
+        {
+            $allowed = true;
+        } elseif (in_array('ROLE_TENANT', $loggedInUser->getRoles()))
         {
             $tenant = $this->tenantRepository->findOneBy(['id' => $loggedInUser->getId()]);
             if (!is_null($tenant))
             {
                 $allowed = $flat->getTenants()->contains($tenant);
             }
-        } elseif (in_array('ROLE_LANDLORD', $loggedInUser->getRoles()))
+        }
+        return $allowed;
+    }
+
+    private function canEdit(Flat $flat, User $loggedInUser): bool
+    {
+        $allowed = false;
+        if (in_array('ROLE_LANDLORD', $loggedInUser->getRoles()))
         {
             $landlord = $this->landlordRepository->findOneBy(['id' => $loggedInUser->getId()]);
             if (!is_null($landlord))
@@ -82,11 +92,6 @@ class FlatVoter extends Voter
         }
         return $allowed;
     }
-
-//    private function canEdit(Flat $flat, User $loggedInUser): bool
-//    {
-//
-//    }
 //
 //    private function canDelete(Flat $flat, User $loggedInUser): bool
 //    {
