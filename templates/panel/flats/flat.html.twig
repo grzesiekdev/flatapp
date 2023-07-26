@@ -170,7 +170,7 @@
                         {% for tenant in tenants %}
                             <div class="row border py-2 m-1">
                                 <div class="col-sm-3">
-                                    <img src="/uploads/profile_pictures/{{ tenant.image }}" class="rounded-circle img-fluid" />
+                                    <img src="/uploads/profile_pictures/{{ tenant.image }}" style="clip-path: circle();" class="rounded-circle img-fluid" />
                                 </div>
                                 <div class="col-sm-9">
                                     {{ tenant.name }}
@@ -187,7 +187,7 @@
                     <h2 class="text-black text-center">Landlord</h2>
                         <div class="row border py-2 m-1">
                             <div class="col-sm-3">
-                                <img src="/uploads/profile_pictures/{{ flat.landlord.image }}" class="rounded-circle img-fluid" />
+                                <img src="/uploads/profile_pictures/{{ flat.landlord.image }}" style="clip-path: circle();" class="rounded-circle img-fluid" />
                             </div>
                             <div class="col-sm-9">
                                 {{ flat.landlord.name }}
