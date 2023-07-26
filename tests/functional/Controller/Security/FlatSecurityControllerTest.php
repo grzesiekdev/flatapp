@@ -394,4 +394,25 @@ class FlatSecurityControllerTest extends WebTestCase
         $this->assertEquals('http://localhost/panel/flats/delete/' . $this->flatThree->getId(), $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
+
+    /*
+     * Tests for adding flat
+     */
+    public function testIfTenantCannotAddNewFlat(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/new');
+
+        $this->assertEquals('http://localhost/panel/flats/new', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanAddNewFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/new');
+
+        $this->assertEquals('http://localhost/panel/flats/new', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
 }
