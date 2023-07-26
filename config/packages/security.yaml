@@ -33,6 +33,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
          - { path: ^/panel/flats$, roles: ['ROLE_LANDLORD'] }
+         - { path: ^/panel/flats/new$, roles: ['ROLE_LANDLORD'] }
          - { path: ^/panel, roles: IS_AUTHENTICATED_FULLY }
 
 

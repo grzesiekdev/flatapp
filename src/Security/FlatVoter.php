@@ -15,7 +15,6 @@ class FlatVoter extends Voter
     const VIEW = 'view';
     const EDIT = 'edit';
     const DELETE = 'delete';
-    const ADD = 'add';
 
     private FlatRepository $flatRepository;
     private TenantRepository $tenantRepository;
@@ -29,7 +28,7 @@ class FlatVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE, self::ADD])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])) {
             return false;
         }
 
@@ -56,7 +55,6 @@ class FlatVoter extends Voter
             self::VIEW => $this->canView($flat, $user),
             self::EDIT => $this->canEdit($flat, $user),
             self::DELETE => $this->canDelete($flat, $user),
-//            self::ADD => $this->canAdd($flat, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -98,10 +96,5 @@ class FlatVoter extends Voter
         // if a user can edit own flat, then they can also delete it
         return $this->canEdit($flat, $loggedInUser);
     }
-
-//    private function canAdd(Flat $flat, User $loggedInUser): bool
-//    {
-//
-//    }
 
 }
