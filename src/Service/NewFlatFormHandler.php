@@ -52,7 +52,7 @@ class NewFlatFormHandler
     }
 
 
-    public function uploadPictures(array $pictures, string $sessionVarName): void
+    public function uploadPictures(array $pictures, string $sessionVarName, $id = null): void
     {
         $kindOfPictures = '';
         if ($sessionVarName == 'specificPicturesTempDirectory') {
@@ -61,7 +61,11 @@ class NewFlatFormHandler
             $kindOfPictures = $this->tempPicturesForTenantDirectory;
         }
 
-        $specificPicturesTempDirectory = $this->filesUploader->createTempDir($kindOfPictures, $this->userId);
+        if ($id) {
+            $specificPicturesTempDirectory = $this->filesUploader->createTempDir($kindOfPictures, $id);
+        } else {
+            $specificPicturesTempDirectory = $this->filesUploader->createTempDir($kindOfPictures, $this->userId);
+        }
         $this->setSessionVariable($sessionVarName, $specificPicturesTempDirectory);
 
         foreach ($pictures as $picture) {

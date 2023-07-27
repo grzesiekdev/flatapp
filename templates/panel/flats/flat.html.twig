@@ -138,6 +138,18 @@
                         <a href="{{ path('app_flats_edit', {id: flat.id}) }}" class="btn btn-primary">Edit</a>
                         <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
                         <a href="{{ path('app_flats_generate_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
+                    {% elseif app.user.roles[0] == 'ROLE_TENANT' %}
+                        {{ form_start(additional_photos_form) }}
+                        <div class="row my-4">
+                            <div class="col-sm-2">
+                                {{ form_label(additional_photos_form.picturesForTenant) }}
+                            </div>
+                            <div class="col-sm-10">
+                                {{ form_widget(additional_photos_form.picturesForTenant) }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Submit photos</button>
+                        {{ form_end(additional_photos_form) }}
                     {% endif %}
                 </div>
             </div>
