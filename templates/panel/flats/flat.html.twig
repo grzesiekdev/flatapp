@@ -102,11 +102,12 @@
                                         <td>{{ furnishing | capitalize }}</td>
                                     </tr>
                                 {% endfor %}
+                                {% if flat.additionalFurnishing %}
                                 <tr>
                                     <th scope="row">{{ counter + 1 }}</th>
                                     <td>{{ flat.additionalFurnishing }}</td>
                                 </tr>
-
+                                {% endif %}
                                 </tbody>
                             </table>
                             {% endif %}
