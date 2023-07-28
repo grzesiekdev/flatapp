@@ -73,9 +73,13 @@ class Flat
     #[ORM\Column(type: 'ulid', nullable: true)]
     private ?Ulid $invitationCode = null;
 
+    #[ORM\OneToMany(mappedBy: 'flat', targetEntity: UtilityMeterReading::class, orphanRemoval: true)]
+    private Collection $utilityMeterReadings;
+
     public function __construct()
     {
         $this->tenants = new ArrayCollection();
+        $this->utilityMeterReadings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -315,6 +319,36 @@ class Flat
     public function setInvitationCode(?Ulid $invitationCode): self
     {
         $this->invitationCode = $invitationCode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UtilityMeterReading>
+     */
+    public function getUtilityMeterReadings(): Collection
+    {
+        return $this->utilityMeterReadings;
+    }
+
+    public function addUtilityMeterReading(UtilityMeterReading $utilityMeterReading): self
+    {
+        if (!$this->utilityMeterReadings->contains($utilityMeterReading)) {
+            $this->utilityMeterReadings->add($utilityMeterReading);
+            $utilityMeterReading->setFlat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUtilityMeterReading(UtilityMeterReading $utilityMeterReading): self
+    {
+        if ($this->utilityMeterReadings->removeElement($utilityMeterReading)) {
+            // set the owning side to null (unless already changed)
+            if ($utilityMeterReading->getFlat() === $this) {
+                $utilityMeterReading->setFlat(null);
+            }
+        }
 
         return $this;
     }
