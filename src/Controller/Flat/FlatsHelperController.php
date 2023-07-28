@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Controller\Landlord;
+namespace App\Controller\Flat;
 
 use App\Repository\FlatRepository;
 use App\Repository\TenantRepository;
 use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Uid\Uuid;
 
 class FlatsHelperController extends AbstractController
 {
