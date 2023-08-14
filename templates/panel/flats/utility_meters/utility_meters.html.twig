@@ -1,0 +1,15 @@
+{% extends '/panel/page.html.twig' %}
+
+{% block content %}
+    <div class="bg-secondary rounded m-4 p-3 row">
+        Utility meter readings: <br>
+        ...
+        <hr>
+        {% if app.user.roles[0] == 'ROLE_TENANT' %}
+            <div class="col-6">
+                <a href="{{ path('app_flats_utility_meters_new', {id: flat.id}) }}" class="btn btn-success">Add new reading</a>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

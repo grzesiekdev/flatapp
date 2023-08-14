@@ -152,6 +152,8 @@
                         </div>
                         <button type="submit" class="btn btn-primary mt-4">Submit photos</button>
                         {{ form_end(additional_photos_form) }}
+                        <hr>
+                        <a href="{{ path('app_flats_utility_meters', {id: flat.id}) }}" class="btn btn-primary mt-4">Check state of utility meters</a>
                     {% endif %}
                 </div>
             </div>

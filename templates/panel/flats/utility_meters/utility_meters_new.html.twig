@@ -1,0 +1,72 @@
+{% extends '/panel/page.html.twig' %}
+
+{% block content %}
+    <div class="bg-secondary rounded m-4 p-3 row">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="row my-4">
+            <div class="col-sm-6">
+                {{ form_label(form.date) }}<br>
+            </div>
+            <div class="col-sm-3">
+                {{ form_widget(form.date) }} <br>
+                <small>Date is in dd/mm/YYYY format</small>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-sm-6">
+                Water<br>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_label(form.water_amount) }}<br>
+                        {{ form_widget(form.water_amount) }} m<sup>3</sup>
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_label(form.water_cost) }}<br>
+                        {{ form_widget(form.water_cost) }} zł
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-sm-6">
+                Gas<br>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_label(form.gas_amount) }}<br>
+                        {{ form_widget(form.gas_amount) }} m<sup>3</sup>
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_label(form.gas_cost) }}<br>
+                        {{ form_widget(form.gas_cost) }} zł
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-sm-6">
+                Electricity<br>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_label(form.electricity_amount) }}<br>
+                        {{ form_widget(form.electricity_amount) }} kwH
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_label(form.electricity_cost) }}<br>
+                        {{ form_widget(form.electricity_cost) }} zł
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Submit reading</button>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
