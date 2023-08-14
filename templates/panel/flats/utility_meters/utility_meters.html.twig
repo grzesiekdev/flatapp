@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="bg-secondary rounded m-4 p-3 row">
-        Utility meter readings: <br>
-        <table class="table-primary">
+        <span style="font-size: 19px; padding: 0;">Utility meter readings</span> <br>
+        <table class="table-primary mt-2">
             <thead>
             <tr>
                 <th scope="col">Date</th>
@@ -15,7 +15,12 @@
             <tbody>
             {% for reading in utility_meters %}
                 <tr class="pt-5">
-                    <th scope="row">{{ reading.date | date('d-m-Y') }}</th>
+                    <th scope="row">
+                        {% if app.user.getRoles[0] == 'ROLE_LANDLORD' %}
+                            <a href="{{ path('app_flats_utility_meters_edit', {id: flat.id, readingId: reading.id}) }}" class="btn-success" title="Add/change cost of those utilities"><i class="fa-solid fa-circle-plus"></i></a>
+                        {% endif %}
+                        {{ reading.date | date('d-m-Y') }}
+                    </th>
                     <td>{{ reading.water.amount }} m<sup>3</sup>, {{ reading.water.cost }} zł</td>
                     <td>{{ reading.gas.amount }} m<sup>3</sup>, {{ reading.gas.cost }} zł</td>
                     <td>{{ reading.electricity.amount }} m<sup>3</sup>, {{ reading.electricity.cost }} zł</td>
