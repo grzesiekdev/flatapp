@@ -589,3 +589,11 @@ input[type=number] {
     cursor: pointer;
     border-radius: 50%;
 }
+
+table {
+    color: var(--light) !important;
+}
+
+td {
+    padding: 5px;
+}

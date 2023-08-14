@@ -3,7 +3,26 @@
 {% block content %}
     <div class="bg-secondary rounded m-4 p-3 row">
         Utility meter readings: <br>
-        ...
+        <table class="table-primary">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Water</th>
+                <th scope="col">Gas</th>
+                <th scope="col">Electricity</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for reading in utility_meters %}
+                <tr class="pt-5">
+                    <th scope="row">{{ reading.date | date('d-m-Y') }}</th>
+                    <td>{{ reading.water.amount }} m<sup>3</sup>, {{ reading.water.cost }} zł</td>
+                    <td>{{ reading.gas.amount }} m<sup>3</sup>, {{ reading.gas.cost }} zł</td>
+                    <td>{{ reading.electricity.amount }} m<sup>3</sup>, {{ reading.electricity.cost }} zł</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         <hr>
         {% if app.user.roles[0] == 'ROLE_TENANT' %}
             <div class="col-6">
