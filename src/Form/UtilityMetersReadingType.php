@@ -42,7 +42,8 @@ class UtilityMetersReadingType extends AbstractType
                 'attr' => ['class' => '
                     form-control mt-1',
                 ],
-                'disabled' => $this->userRole != 'ROLE_TENANT'
+                'disabled' => $this->userRole != 'ROLE_TENANT',
+                'empty_data' => 0
             ])
             ->add('water_cost', IntegerType::class, [
                 'required' => false,
@@ -50,7 +51,8 @@ class UtilityMetersReadingType extends AbstractType
                 'attr' => ['class' => '
                     form-control mt-1',
                 ],
-                'disabled' => $this->userRole != 'ROLE_LANDLORD'
+                'disabled' => $this->userRole != 'ROLE_LANDLORD',
+                'empty_data' => 0
             ])
             ->add('gas_amount', IntegerType::class, [
                 'required' => false,
@@ -58,7 +60,8 @@ class UtilityMetersReadingType extends AbstractType
                 'attr' => ['class' => '
                     form-control mt-1',
                 ],
-                'disabled' => $this->userRole != 'ROLE_TENANT'
+                'disabled' => $this->userRole != 'ROLE_TENANT',
+                'empty_data' => 0
             ])
             ->add('gas_cost', IntegerType::class, [
                 'required' => false,
@@ -66,7 +69,8 @@ class UtilityMetersReadingType extends AbstractType
                 'attr' => ['class' => '
                     form-control mt-1',
                 ],
-                'disabled' => $this->userRole != 'ROLE_LANDLORD'
+                'disabled' => $this->userRole != 'ROLE_LANDLORD',
+                'empty_data' => 0
             ])
             ->add('electricity_amount', IntegerType::class, [
                 'required' => false,
@@ -74,7 +78,8 @@ class UtilityMetersReadingType extends AbstractType
                 'attr' => ['class' => '
                     form-control mt-1',
                 ],
-                'disabled' => $this->userRole != 'ROLE_TENANT'
+                'disabled' => $this->userRole != 'ROLE_TENANT',
+                'empty_data' => 0
             ])
             ->add('electricity_cost', IntegerType::class, [
                 'required' => false,
@@ -82,7 +87,8 @@ class UtilityMetersReadingType extends AbstractType
                 'attr' => ['class' => '
                     form-control mt-1',
                 ],
-                'disabled' => $this->userRole != 'ROLE_LANDLORD'
+                'disabled' => $this->userRole != 'ROLE_LANDLORD',
+                'empty_data' => 0
             ]);
     }
 

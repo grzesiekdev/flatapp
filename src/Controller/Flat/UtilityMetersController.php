@@ -56,6 +56,8 @@ class UtilityMetersController extends AbstractController
             $entityManager->persist($utilityMeterReading);
             $entityManager->persist($flat);
             $entityManager->flush();
+
+            return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
         }
 
         return $this->render('panel/flats/utility_meters/utility_meters_new.html.twig', [
