@@ -30,14 +30,19 @@ class FilesUploader
     public function createTempDir ($path, $userId): string
     {
         $specificTempDirectory = $this->getSpecificTempPath($path, $userId);
-        if (!file_exists($specificTempDirectory)) {
-            mkdir($specificTempDirectory, 0777, true);
-        } else if (!is_writable($specificTempDirectory)) {
-            chown($specificTempDirectory, 'www-data');
-            chmod($specificTempDirectory, 0777);
-        }
+        $this->createDir($specificTempDirectory);
 
         return $specificTempDirectory;
+    }
+
+    public function createDir ($path): void
+    {
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        } else if (!is_writable($path)) {
+            chown($path, 'www-data');
+            chmod($path, 0777);
+        }
     }
 
     public function upload($file, $tempDirectory): string
