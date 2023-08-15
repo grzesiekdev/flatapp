@@ -6,6 +6,7 @@ use App\Entity\UtilityMeterReading;
 use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -103,6 +104,17 @@ class UtilityMetersReadingType extends AbstractType
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
                 'empty_data' => 0,
                 'scale' => 2
+            ])
+            ->add('invoices', FileType::class, [
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => '
+                    form-control mt-1'
+                ],
+                'disabled' => $this->userRole != 'ROLE_LANDLORD',
+                'empty_data' => null,
+                'multiple' => true,
+                'label' => false
             ]);
     }
 

@@ -64,6 +64,19 @@
                 </div>
             </div>
         </div>
+        <div class="row my-4">
+            <div class="col-sm-6">
+                Invoices<br>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-6">
+                        {{ form_label(form.invoices) }}<br>
+                        {{ form_widget(form.invoices) }}
+                    </div>
+                </div>
+            </div>
+        </div>
         {% if app.user.getRoles[0] == 'ROLE_LANDLORD' %}
             <small>You will be able to add costs of this reading only once - be sure that you've entered correct data</small><br>
         {% endif %}

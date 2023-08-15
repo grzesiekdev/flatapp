@@ -106,6 +106,16 @@ import {handle_floor_select} from "./js/floors";
     };
     spinner();
 
+    $('.invoices-collapse').each(
+        function (){
+            let invoiceId = $(this).attr('id');
+            $(this).wrap('<div class="collapse" id="reading-'+invoiceId+'""></div>')
+        }
+    )
+
+    $('.expand-invoices').click(function (){
+        $(this).find('i').css('rotate', '180deg');
+    });
 
     // Back to top button
     $(window).scroll(function () {

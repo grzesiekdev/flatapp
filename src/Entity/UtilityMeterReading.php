@@ -33,6 +33,9 @@ class UtilityMeterReading
     #[ORM\Column(nullable: true)]
     private ?bool $was_edited = null;
 
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private array $invoices = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,6 +109,18 @@ class UtilityMeterReading
     public function setWasEdited(?bool $was_edited): self
     {
         $this->was_edited = $was_edited;
+
+        return $this;
+    }
+
+    public function getInvoices(): array
+    {
+        return $this->invoices;
+    }
+
+    public function setInvoices(?array $invoices): self
+    {
+        $this->invoices = $invoices;
 
         return $this;
     }

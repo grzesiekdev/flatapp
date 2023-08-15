@@ -7,9 +7,11 @@ use App\Form\AdditionalPhotosFormType;
 use App\Form\UtilityMetersReadingType;
 use App\Repository\FlatRepository;
 use App\Repository\UtilityMeterReadingRepository;
+use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,17 +70,17 @@ class UtilityMetersController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}/utility-meters/{readingId}', name: 'app_flats_utility_meters_edit')]
-    public function editUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, Request $request, EntityManagerInterface $entityManager, Security $security, UtilityMeterReadingRepository $utilityMeterReadingRepository): Response
+    public function editUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, Request $request, EntityManagerInterface $entityManager, Security $security, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
-
         $user = $security->getUser();
 
         // getting amounts of utilities
         $water = $utilityMeterReading->getWater()['amount'];
         $gas = $utilityMeterReading->getGas()['amount'];
         $electricity = $utilityMeterReading->getElectricity()['amount'];
+        $date = $utilityMeterReading->getDate();
 
         $form = $this->createForm(UtilityMetersReadingType::class, $utilityMeterReading, [
             'userRole' => $user->getRoles(),
@@ -93,13 +95,22 @@ class UtilityMetersController extends AbstractController
             $water = ['amount' => $water, 'cost' => $form->get('water_cost')->getData()];
             $gas = ['amount' => $gas, 'cost' => $form->get('gas_cost')->getData()];
             $electricity = ['amount' => $electricity, 'cost' => $form->get('electricity_cost')->getData()];
-            $date = $utilityMeterReading->getDate();
+
+            $invoices = $form->get('invoices')->getData();
+            $invoicesNames = [];
+            $invoicesPath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $date->format('d-m-Y');
+            $filesUploader->createDir($invoicesPath);
+
+            foreach ($invoices as $invoice) {
+                $invoicesNames[] = $filesUploader->upload($invoice, $invoicesPath);
+            }
 
             $utilityMeterReading->setWater($water);
             $utilityMeterReading->setGas($gas);
             $utilityMeterReading->setElectricity($electricity);
             $utilityMeterReading->setDate($date);
             $utilityMeterReading->setWasEdited(true);
+            $utilityMeterReading->setInvoices($invoicesNames);
 
             $entityManager->persist($utilityMeterReading);
             $entityManager->flush();

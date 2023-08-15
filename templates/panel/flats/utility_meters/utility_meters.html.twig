@@ -6,10 +6,10 @@
         <table class="table-primary mt-2">
             <thead>
             <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Water</th>
-                <th scope="col">Gas</th>
-                <th scope="col">Electricity</th>
+                <th scope="col" style="width: 25%;">Date</th>
+                <th scope="col"><span class="mx-1">Water</span></th>
+                <th scope="col"><span class="mx-1">Gas</span></th>
+                <th scope="col"><span class="mx-1">Electricity</span></th>
             </tr>
             </thead>
             <tbody>
@@ -26,7 +26,18 @@
                     </th>
                     <td>{{ reading.water.amount }} m<sup>3</sup>, {{ reading.water.cost }} zł</td>
                     <td>{{ reading.gas.amount }} m<sup>3</sup>, {{ reading.gas.cost }} zł</td>
-                    <td>{{ reading.electricity.amount }} m<sup>3</sup>, {{ reading.electricity.cost }} zł</td>
+                    <td>{{ reading.electricity.amount }} m<sup>3</sup>, {{ reading.electricity.cost }} zł
+                        <a class="text-success expand-invoices mx-1" data-bs-toggle="collapse" href="#reading-{{ reading.id }}" role="button" aria-expanded="false" aria-controls="reading-{{ reading.id }}">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr class="invoices-collapse" id="{{ reading.id }}">
+                    {% for invoice in reading.invoices %}
+                        <td>
+                            <a href="/uploads/invoices/flat{{ flat.id }}/{{ reading.date|date('d-m-Y') }}/{{ invoice }}" target="_blank">{{ invoice }}</a>
+                        </td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
             </tbody>
