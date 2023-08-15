@@ -10,7 +10,7 @@
             </div>
             <div class="col-sm-3">
                 {{ form_widget(form.date) }} <br>
-                <small>Date is in dd/mm/YYYY format</small>
+                <small>Date is in mm/dd/YYYY format</small>
             </div>
         </div>
         <div class="row my-4">
@@ -64,7 +64,9 @@
                 </div>
             </div>
         </div>
-
+        {% if app.user.getRoles[0] == 'ROLE_LANDLORD' %}
+            <small>You will be able to add costs of this reading only once - be sure that you've entered correct data</small><br>
+        {% endif %}
         <button type="submit" class="btn btn-primary mt-4">Submit reading</button>
         {{ form_end(form) }}
     </div>

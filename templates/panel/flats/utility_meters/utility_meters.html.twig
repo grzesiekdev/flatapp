@@ -17,7 +17,10 @@
                 <tr class="pt-5">
                     <th scope="row">
                         {% if app.user.getRoles[0] == 'ROLE_LANDLORD' %}
-                            <a href="{{ path('app_flats_utility_meters_edit', {id: flat.id, readingId: reading.id}) }}" class="btn-success" title="Add/change cost of those utilities"><i class="fa-solid fa-circle-plus"></i></a>
+                            {% if not reading.wasEdited %}
+                                <a href="{{ path('app_flats_utility_meters_edit', {id: flat.id, readingId: reading.id}) }}" class="btn-success" title="Add cost of those utilities"><i class="fa-solid fa-circle-plus"></i></a>
+                            {% endif %}
+                            <a href="{{ path('app_flats_utility_meters_delete', {id: flat.id, readingId: reading.id}) }}" style="color:#dc3545;" title="Remove this reading"><i class="fa-solid fa-circle-minus"></i></a>
                         {% endif %}
                         {{ reading.date | date('d-m-Y') }}
                     </th>

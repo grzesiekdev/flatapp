@@ -7,6 +7,7 @@ use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -40,7 +41,7 @@ class UtilityMetersReadingType extends AbstractType
                 'data' => new DateTime('now'),
                 'required' => false
             ])
-            ->add('water_amount', IntegerType::class, [
+            ->add('water_amount', NumberType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
@@ -48,18 +49,20 @@ class UtilityMetersReadingType extends AbstractType
                     'placeholder' => $this->water
                 ],
                 'disabled' => $this->userRole != 'ROLE_TENANT',
-                'empty_data' => 0
+                'empty_data' => 0,
+                'scale' => 2
             ])
-            ->add('water_cost', IntegerType::class, [
+            ->add('water_cost', NumberType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => '
-                    form-control mt-1',
+                    form-control mt-1'
                 ],
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
-                'empty_data' => 0
+                'empty_data' => 0,
+                'scale' => 2
             ])
-            ->add('gas_amount', IntegerType::class, [
+            ->add('gas_amount', NumberType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
@@ -67,18 +70,20 @@ class UtilityMetersReadingType extends AbstractType
                     'placeholder' => $this->gas
                 ],
                 'disabled' => $this->userRole != 'ROLE_TENANT',
-                'empty_data' => 0
+                'empty_data' => 0,
+                'scale' => 2
             ])
-            ->add('gas_cost', IntegerType::class, [
+            ->add('gas_cost', NumberType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => '
-                    form-control mt-1',
+                    form-control mt-1'
                 ],
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
-                'empty_data' => 0
+                'empty_data' => 0,
+                'scale' => 2
             ])
-            ->add('electricity_amount', IntegerType::class, [
+            ->add('electricity_amount', NumberType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
@@ -86,16 +91,18 @@ class UtilityMetersReadingType extends AbstractType
                     'placeholder' => $this->electricity
                 ],
                 'disabled' => $this->userRole != 'ROLE_TENANT',
-                'empty_data' => 0
+                'empty_data' => 0,
+                'scale' => 2
             ])
-            ->add('electricity_cost', IntegerType::class, [
+            ->add('electricity_cost', NumberType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => '
-                    form-control mt-1',
+                    form-control mt-1'
                 ],
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
-                'empty_data' => 0
+                'empty_data' => 0,
+                'scale' => 2
             ]);
     }
 

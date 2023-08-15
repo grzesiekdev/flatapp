@@ -30,6 +30,9 @@ class UtilityMeterReading
     #[ORM\Column(nullable: true)]
     private array $electricity = [];
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $was_edited = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +94,18 @@ class UtilityMeterReading
     public function setElectricity(?array $electricity): self
     {
         $this->electricity = $electricity;
+
+        return $this;
+    }
+
+    public function isWasEdited(): ?bool
+    {
+        return $this->was_edited;
+    }
+
+    public function setWasEdited(?bool $was_edited): self
+    {
+        $this->was_edited = $was_edited;
 
         return $this;
     }

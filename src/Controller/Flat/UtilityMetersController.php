@@ -93,12 +93,13 @@ class UtilityMetersController extends AbstractController
             $water = ['amount' => $water, 'cost' => $form->get('water_cost')->getData()];
             $gas = ['amount' => $gas, 'cost' => $form->get('gas_cost')->getData()];
             $electricity = ['amount' => $electricity, 'cost' => $form->get('electricity_cost')->getData()];
-            $date = new \DateTime('now');
+            $date = $utilityMeterReading->getDate();
 
             $utilityMeterReading->setWater($water);
             $utilityMeterReading->setGas($gas);
             $utilityMeterReading->setElectricity($electricity);
             $utilityMeterReading->setDate($date);
+            $utilityMeterReading->setWasEdited(true);
 
             $entityManager->persist($utilityMeterReading);
             $entityManager->flush();
@@ -110,6 +111,20 @@ class UtilityMetersController extends AbstractController
             'flat' => $flat,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/panel/flats/{id}/utility-meters/{readingId}/delete', name: 'app_flats_utility_meters_delete')]
+    public function deleteUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, EntityManagerInterface $entityManager, UtilityMeterReadingRepository $utilityMeterReadingRepository): Response
+    {
+        $flat = $flatRepository->findOneBy(['id' => $id]);
+        $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
+
+        $flat->removeUtilityMeterReading($utilityMeterReading);
+        $entityManager->remove($utilityMeterReading);
+        $entityManager->persist($flat);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
     }
 
 }
