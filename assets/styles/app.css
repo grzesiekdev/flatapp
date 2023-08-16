@@ -601,3 +601,7 @@ td {
 .invoices-collapse td {
     display: block;
 }
+
+.fa-chevron-down  {
+    transition: transform 0.3s ease;
+}

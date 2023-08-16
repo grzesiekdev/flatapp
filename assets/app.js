@@ -114,7 +114,12 @@ import {handle_floor_select} from "./js/floors";
     )
 
     $('.expand-invoices').click(function (){
-        $(this).find('i').css('rotate', '180deg');
+        var icon = $(this).find('i');
+        var currentRotation = parseInt(icon.attr('data-rotation')) || 0;
+
+        currentRotation += 180; // Rotate by 180 degrees
+        icon.css('transform', 'rotate(' + currentRotation + 'deg)');
+        icon.attr('data-rotation', currentRotation);
     });
 
     // Back to top button
