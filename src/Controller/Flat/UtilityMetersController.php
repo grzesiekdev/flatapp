@@ -127,10 +127,17 @@ class UtilityMetersController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}/utility-meters/{readingId}/delete', name: 'app_flats_utility_meters_delete')]
-    public function deleteUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, EntityManagerInterface $entityManager, UtilityMeterReadingRepository $utilityMeterReadingRepository): Response
+    public function deleteUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, EntityManagerInterface $entityManager, UtilityMeterReadingRepository $utilityMeterReadingRepository, ParameterBagInterface $parameterBag, FilesUploader $filesUploader): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
+
+        $invoices = $utilityMeterReading->getInvoices();
+        foreach ($invoices as $invoice)
+        {
+            $invoicePath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $utilityMeterReading->getDate()->format('d-m-Y') . '/' . $invoice;
+            $filesUploader->deleteFile($invoicePath);
+        }
 
         $flat->removeUtilityMeterReading($utilityMeterReading);
         $entityManager->remove($utilityMeterReading);
