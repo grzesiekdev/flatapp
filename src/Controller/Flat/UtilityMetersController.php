@@ -101,8 +101,10 @@ class UtilityMetersController extends AbstractController
             $invoicesPath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $date->format('d-m-Y');
             $filesUploader->createDir($invoicesPath);
 
-            foreach ($invoices as $invoice) {
-                $invoicesNames[] = $filesUploader->upload($invoice, $invoicesPath);
+            if ($invoices) {
+                foreach ($invoices as $invoice) {
+                    $invoicesNames[] = $filesUploader->upload($invoice, $invoicesPath);
+                }
             }
 
             $utilityMeterReading->setWater($water);
@@ -155,7 +157,6 @@ class UtilityMetersController extends AbstractController
             $entityManager->persist($utilityMeterReading);
             $entityManager->flush();
         }
-
 
         return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
     }
