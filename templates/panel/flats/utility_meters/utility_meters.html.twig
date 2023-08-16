@@ -37,6 +37,9 @@
                         {% for invoice in reading.invoices %}
                             <span class="invoices-collapse" id="{{ reading.id }}">
                                 {{ loop.index }}. <a href="/uploads/invoices/flat{{ flat.id }}/{{ reading.date|date('d-m-Y') }}/{{ invoice }}" target="_blank">{{ invoice }}</a>
+                                {% if app.user.getRoles[0] == 'ROLE_LANDLORD' %}
+                                    <a href="{{ path('app_flats_utility_meters_delete_invoice', {id: flat.id, readingId: reading.id, invoice: invoice}) }}" style="color:#dc3545;" title="Remove this invoice"><i class="fa-solid fa-delete-left"></i></a>
+                                {% endif %}
                             </span>
                         {% endfor %}
                     </td>

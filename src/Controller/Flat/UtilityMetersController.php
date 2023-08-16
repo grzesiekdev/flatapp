@@ -138,4 +138,26 @@ class UtilityMetersController extends AbstractController
         return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
     }
 
+    #[Route('/panel/flats/{id}/utility-meters/{readingId}/delete-invoice/{invoice}', name: 'app_flats_utility_meters_delete_invoice')]
+    public function deleteInvoice(int $id, int $readingId, string $invoice, EntityManagerInterface $entityManager, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
+    {
+        $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
+
+        $invoicePath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $utilityMeterReading->getDate()->format('d-m-Y') . '/' . $invoice;
+        $deleteStatus = $filesUploader->deleteFile($invoicePath);
+        if ($deleteStatus == 200)
+        {
+            $invoices = $utilityMeterReading->getInvoices();
+            $invoiceToDelete = array_search($invoice, $invoices);
+            unset($invoices[$invoiceToDelete]);
+            $utilityMeterReading->setInvoices($invoices);
+
+            $entityManager->persist($utilityMeterReading);
+            $entityManager->flush();
+        }
+
+
+        return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
+    }
+
 }
