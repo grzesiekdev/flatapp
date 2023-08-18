@@ -75,7 +75,7 @@ class UtilityMetersController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}/utility-meters/{readingId}', name: 'app_flats_utility_meters_edit')]
-    public function editUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, Request $request, EntityManagerInterface $entityManager, Security $security, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag, UtilityMeterReading $utilityMeterReading = null): Response
+    public function editUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, Request $request, EntityManagerInterface $entityManager, Security $security, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);

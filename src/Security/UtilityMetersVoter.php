@@ -36,8 +36,14 @@ class UtilityMetersVoter extends Voter
             return false;
         }
 
-        if (!$subject[0] instanceof UtilityMeterReading || !$subject[1] instanceof Flat) {
-            return false;
+        if (gettype($subject) == 'array') {
+            if (!$subject[0] instanceof UtilityMeterReading || !$subject[1] instanceof Flat) {
+                return false;
+            }
+        } else {
+            if (!$subject instanceof UtilityMeterReading) {
+                return false;
+            }
         }
 
         return true;
