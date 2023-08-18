@@ -2,11 +2,13 @@
 
 namespace App\Controller\Flat;
 
+use App\Entity\Flat;
 use App\Entity\UtilityMeterReading;
 use App\Form\AdditionalPhotosFormType;
 use App\Form\UtilityMetersReadingType;
 use App\Repository\FlatRepository;
 use App\Repository\UtilityMeterReadingRepository;
+use App\Security\UtilityMetersVoter;
 use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,12 +17,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UtilityMetersController extends AbstractController
 {
 
     #[Route('/panel/flats/{id}/utility-meters', name: 'app_flats_utility_meters')]
-    public function utilityMeters(FlatRepository $flatRepository, int $id): Response
+    #[IsGranted('view', 'flat', 'You don\'t have permissions to view this flat', 403)]
+    public function utilityMeters(FlatRepository $flatRepository, int $id, Flat $flat = null): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeters = $flat->getUtilityMeterReadings();
@@ -32,7 +36,8 @@ class UtilityMetersController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}/utility-meters/add-new', name: 'app_flats_utility_meters_new')]
-    public function addNewUtilityMetersReading(FlatRepository $flatRepository, int $id, Request $request, EntityManagerInterface $entityManager, Security $security): Response
+    #[IsGranted('add', 'flat', 'You don\'t have permissions to add utility meters reading to this flat', 403)]
+    public function addNewUtilityMetersReading(FlatRepository $flatRepository, int $id, Request $request, EntityManagerInterface $entityManager, Security $security, Flat $flat = null ): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = new UtilityMeterReading();
@@ -70,10 +75,15 @@ class UtilityMetersController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}/utility-meters/{readingId}', name: 'app_flats_utility_meters_edit')]
-    public function editUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, Request $request, EntityManagerInterface $entityManager, Security $security, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
+    public function editUtilityMetersReading(FlatRepository $flatRepository, int $id, int $readingId, Request $request, EntityManagerInterface $entityManager, Security $security, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag, UtilityMeterReading $utilityMeterReading = null): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
+
+        if (!$this->isGranted(UtilityMetersVoter::EDIT, [$utilityMeterReading, $flat])) {
+            throw $this->createAccessDeniedException('You do not have permission to edit this utility meter reading');
+        }
+
         $user = $security->getUser();
 
         // getting amounts of utilities
@@ -132,6 +142,10 @@ class UtilityMetersController extends AbstractController
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
 
+        if (!$this->isGranted(UtilityMetersVoter::DELETE, [$utilityMeterReading, $flat])) {
+            throw $this->createAccessDeniedException('You do not have permission to delete this utility meter reading');
+        }
+
         $invoices = $utilityMeterReading->getInvoices();
         foreach ($invoices as $invoice)
         {
@@ -148,9 +162,14 @@ class UtilityMetersController extends AbstractController
     }
 
     #[Route('/panel/flats/{id}/utility-meters/{readingId}/delete-invoice/{invoice}', name: 'app_flats_utility_meters_delete_invoice')]
-    public function deleteInvoice(int $id, int $readingId, string $invoice, EntityManagerInterface $entityManager, UtilityMeterReadingRepository $utilityMeterReadingRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
+    public function deleteInvoice(int $id, int $readingId, string $invoice, EntityManagerInterface $entityManager, UtilityMeterReadingRepository $utilityMeterReadingRepository, FlatRepository $flatRepository, FilesUploader $filesUploader, ParameterBagInterface $parameterBag): Response
     {
+        $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
+
+        if (!$this->isGranted(UtilityMetersVoter::DELETE_INVOICE, [$utilityMeterReading, $flat])) {
+            throw $this->createAccessDeniedException('You do not have permission to delete this Invoice');
+        }
 
         $invoicePath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $utilityMeterReading->getDate()->format('d-m-Y') . '/' . $invoice;
         $deleteStatus = $filesUploader->deleteFile($invoicePath);

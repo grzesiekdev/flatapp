@@ -15,6 +15,7 @@ class FlatVoter extends Voter
     const VIEW = 'view';
     const EDIT = 'edit';
     const DELETE = 'delete';
+    const ADD_UTILITY_METER_READING = 'add';
 
     private FlatRepository $flatRepository;
     private TenantRepository $tenantRepository;
@@ -28,7 +29,7 @@ class FlatVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE, self::ADD_UTILITY_METER_READING])) {
             return false;
         }
 
@@ -55,25 +56,22 @@ class FlatVoter extends Voter
             self::VIEW => $this->canView($flat, $user),
             self::EDIT => $this->canEdit($flat, $user),
             self::DELETE => $this->canDelete($flat, $user),
+            self::ADD_UTILITY_METER_READING => $this->canAddUtilityMeterReading($flat, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
 
     private function canView(Flat $flat, User $loggedInUser): bool
     {
-        $allowed = false;
-
         if ($this->canEdit($flat, $loggedInUser))
         {
             $allowed = true;
-        } elseif (in_array('ROLE_TENANT', $loggedInUser->getRoles()))
+        } else
         {
-            $tenant = $this->tenantRepository->findOneBy(['id' => $loggedInUser->getId()]);
-            if (!is_null($tenant))
-            {
-                $allowed = $flat->getTenants()->contains($tenant);
-            }
+            // if user is tenant and have permissions to add utility meters, then he can definitely view this flat
+            $allowed = $this->canAddUtilityMeterReading($flat, $loggedInUser);
         }
+
         return $allowed;
     }
 
@@ -95,6 +93,22 @@ class FlatVoter extends Voter
     {
         // if a user can edit own flat, then they can also delete it
         return $this->canEdit($flat, $loggedInUser);
+    }
+
+    private function canAddUtilityMeterReading(Flat $flat, User $loggedInUser): bool
+    {
+        $allowed = false;
+
+        if (in_array('ROLE_TENANT', $loggedInUser->getRoles()))
+        {
+            $tenant = $this->tenantRepository->findOneBy(['id' => $loggedInUser->getId()]);
+            if (!is_null($tenant))
+            {
+                $allowed = $flat->getTenants()->contains($tenant);
+            }
+        }
+
+        return $allowed;
     }
 
 }
