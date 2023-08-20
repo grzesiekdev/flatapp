@@ -15,9 +15,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class UtilityMetersReadingType extends AbstractType
 {
     public string $userRole;
-    public int $water = 0;
-    public int $gas = 0;
-    public int $electricity = 0;
+    public float $water = 0;
+    public float $gas = 0;
+    public float $electricity = 0;
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $year = date('Y');
@@ -56,7 +56,8 @@ class UtilityMetersReadingType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => '
-                    form-control mt-1'
+                    form-control mt-1',
+                    'placeholder' => 0
                 ],
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
                 'empty_data' => '0',
@@ -77,7 +78,8 @@ class UtilityMetersReadingType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => '
-                    form-control mt-1'
+                    form-control mt-1',
+                    'placeholder' => 0
                 ],
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
                 'empty_data' => '0',
@@ -98,7 +100,8 @@ class UtilityMetersReadingType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => '
-                    form-control mt-1'
+                    form-control mt-1',
+                    'placeholder' => 0
                 ],
                 'disabled' => $this->userRole != 'ROLE_LANDLORD',
                 'empty_data' => '0',
