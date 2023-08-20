@@ -5,6 +5,7 @@ namespace App\Tests\functional\Controller\Security;
 use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
+use App\Entity\UtilityMeterReading;
 use App\Repository\FlatRepository;
 use App\Repository\TenantRepository;
 use Doctrine\ORM\EntityManager;
@@ -31,6 +32,9 @@ class UtilityMetersControllerTest extends WebTestCase
     private Flat $flat;
     private Flat $flatTwo;
     private Flat $flatThree;
+    private UtilityMeterReading $utilityMeterReading;
+    private UtilityMeterReading $utilityMeterReadingTwo;
+    private UtilityMeterReading $utilityMeterReadingThree;
 
     /*
      * In this test we have the following relations:
@@ -41,6 +45,9 @@ class UtilityMetersControllerTest extends WebTestCase
      * Landlord 1 -> related with Tenant 1 and Tenant 3 by Flat 1, and with Tenant 4 by Flat 2
      * Landlord 2 -> not related to anyone
      * Landlord 3 -> related with no-one, but has Flat 3
+     * Utility meter reading 1 -> related with flat 1
+     * Utility meter reading 2 -> related with flat 3
+     * Utility meter reading 3 -> related with flat 1 - was edited
      */
 
     protected function setUp(): void
@@ -123,6 +130,28 @@ class UtilityMetersControllerTest extends WebTestCase
         $this->landlordTwo = $users['landlord2'];
         $this->landlordThree = $users['landlord3'];
 
+        $this->utilityMeterReading = new UtilityMeterReading();
+        $this->utilityMeterReading->setDate(new \DateTime('now'));
+        $this->utilityMeterReading->setWater(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReading->setGas(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReading->setElectricity(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReading->setInvoices(['test-invoice1.pdf']);
+
+        $this->utilityMeterReadingTwo = new UtilityMeterReading();
+        $this->utilityMeterReadingTwo->setDate(new \DateTime('now'));
+        $this->utilityMeterReadingTwo->setWater(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReadingTwo->setGas(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReadingTwo->setElectricity(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReadingTwo->setInvoices(['test-invoice2.pdf']);
+
+        $this->utilityMeterReadingThree = new UtilityMeterReading();
+        $this->utilityMeterReadingThree->setDate(new \DateTime('now'));
+        $this->utilityMeterReadingThree->setWater(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReadingThree->setGas(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReadingThree->setElectricity(['amount' => 1, 'cost' => 2]);
+        $this->utilityMeterReadingThree->setInvoices(['test-invoice3.pdf']);
+        $this->utilityMeterReadingThree->setWasEdited(true);
+
         $this->flat = new Flat();
         $this->flat->setArea(55);
         $this->flat->setNumberOfRooms(2);
@@ -133,6 +162,8 @@ class UtilityMetersControllerTest extends WebTestCase
         $this->flat->setLandlord($this->landlord);
         $this->flat->addTenant($this->tenant);
         $this->flat->addTenant($this->tenantThree);
+        $this->flat->addUtilityMeterReading($this->utilityMeterReading);
+        $this->flat->addUtilityMeterReading($this->utilityMeterReadingThree);
 
         $this->flatTwo = new Flat();
         $this->flatTwo->setArea(55);
@@ -152,11 +183,15 @@ class UtilityMetersControllerTest extends WebTestCase
         $this->flatThree->setMaxFloor(5);
         $this->flatThree->setRent(2000);
         $this->flatThree->setLandlord($this->landlordThree);
+        $this->flatThree->addUtilityMeterReading($this->utilityMeterReadingTwo);
 
         $this->landlord->addFlat($this->flat);
         $this->landlord->addFlat($this->flatTwo);
         $this->landlordThree->addFlat($this->flatThree);
 
+        $this->entityManager->persist($this->utilityMeterReading);
+        $this->entityManager->persist($this->utilityMeterReadingTwo);
+        $this->entityManager->persist($this->utilityMeterReadingThree);
         $this->entityManager->persist($this->flat);
         $this->entityManager->persist($this->flatTwo);
         $this->entityManager->persist($this->flatThree);
@@ -171,222 +206,266 @@ class UtilityMetersControllerTest extends WebTestCase
     }
 
     /*
-     * Tests for viewing flat
+     * Tests for viewing utility meters readings
      */
-   public function testIfTenantCanViewOwnFlat(): void
+   public function testIfTenantCanViewOwnReadings(): void
    {
        $this->client->loginUser($this->tenant);
-       $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId());
+       $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters');
 
-       $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
+       $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters', $crawler->getUri());
        $this->assertResponseStatusCodeSame(200);
    }
 
-    public function testIfTenantCannotViewDifferentFlat(): void
+    public function testIfTenantCannotViewOtherFlatReadings(): void
     {
         $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatTwo->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatTwo->getId() . '/utility-meters');
 
-        $this->assertEquals('http://localhost/panel/flats/' . $this->flatTwo->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatTwo->getId() . '/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testIfTenantCannotViewNonExistentFlat(): void
+    public function testIfTenantCannotViewNonExistentReadings(): void
     {
         $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/' . 123123123);
+        $crawler = $this->client->request('GET', '/panel/flats/' . 123123123 . '/utility-meters');
 
-        $this->assertEquals('http://localhost/panel/flats/123123123', $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/123123123/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testIfTenantCannotViewPreviousFlat(): void
-    {
-        $this->client->loginUser($this->tenant);
-
-        $this->flat->removeTenant($this->tenant);
-        $this->entityManager->persist($this->tenant);
-        $this->entityManager->flush();
-
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId());
-
-        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfLandlordCanViewOwnFlats(): void
+    public function testIfLandlordCanViewOwnReadings(): void
     {
         $this->client->loginUser($this->landlord);
 
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters');
 
-        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(200);
 
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatTwo->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatTwo->getId() . '/utility-meters');
 
-        $this->assertEquals('http://localhost/panel/flats/' . $this->flatTwo->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatTwo->getId() . '/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(200);
     }
 
-    public function testIfLandlordCannotViewOtherLandlordsFlats(): void
+    public function testIfLandlordCannotViewOtherLandlordsReadings(): void
     {
         $this->client->loginUser($this->landlord);
 
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId() . '/utility-meters');
 
-        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId() . '/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testIfLandlordCannotViewNotExistentFlat(): void
+    public function testIfLandlordCannotViewNotExistentReading(): void
     {
         $this->client->loginUser($this->landlord);
 
-        $crawler = $this->client->request('GET', '/panel/flats/123123123');
+        $crawler = $this->client->request('GET', '/panel/flats/123123123/utility-meters');
 
-        $this->assertEquals('http://localhost/panel/flats/123123123', $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/123123123/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfLandlordCannotViewPreviousFlat(): void
-    {
-        $this->client->loginUser($this->landlord);
-
-        $this->flat->removeTenant($this->tenant);
-        $this->flat->removeTenant($this->tenantThree);
-        $this->landlord->removeFlat($this->flat);
-        $this->entityManager->persist($this->flat);
-        $this->entityManager->persist($this->landlord);
-        $this->entityManager->flush();
-
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId());
-
-        $this->assertResponseStatusCodeSame(301);
     }
 
     /*
-     * Tests for editing flat
+     * Tests for adding readings
      */
-    public function testIfTenantCannotEditOwnFlat(): void
+    public function testIfTenantCanAddNewReading(): void
     {
         $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->tenant->getFlatId()->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/add-new');
 
-        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfTenantCannotEditRandomFlat(): void
-    {
-        $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->tenantFour->getFlatId()->getId());
-
-        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->tenantFour->getFlatId()->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfLandlordCanEditOwnFlat(): void
-    {
-        $this->client->loginUser($this->landlord);
-        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flat->getId());
-
-        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flat->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/add-new', $crawler->getUri());
         $this->assertResponseStatusCodeSame(200);
     }
 
-    public function testIfLandlordCannotEditDifferentFlat(): void
+    public function testIfTenantCannotAddReadingToOtherFlat(): void
     {
-        $this->client->loginUser($this->landlord);
-        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flatThree->getId());
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenantFour->getFlatId()->getId() . '/utility-meters/add-new');
 
-        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flatThree->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenantFour->getFlatId()->getId() . '/utility-meters/add-new', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testIfLandlordCannotEditPreviousFlat(): void
+    public function testIfLandlordCannotAddReadingToOwnFlat(): void
     {
         $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/add-new');
 
-        $this->flat->removeTenant($this->tenant);
-        $this->flat->removeTenant($this->tenantThree);
-        $this->landlord->removeFlat($this->flat);
-        $this->entityManager->persist($this->flat);
-        $this->entityManager->persist($this->landlord);
-        $this->entityManager->flush();
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters/add-new', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
 
-        $crawler = $this->client->request('GET', '/panel/flats/edit/' . $this->flat->getId());
+    public function testIfLandlordCannotAddReadingToOtherFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId() . '/utility-meters/add-new');
 
-        $this->assertEquals('http://localhost/panel/flats/edit/' . $this->flat->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId() . '/utility-meters/add-new', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    /*
+     * Tests for editing readings
+     */
+
+    public function testIfTenantCannotEditOwnReading(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReading->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReading->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCannotEditDifferentReading(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanEditOwnReading(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReading->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReading->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testIfLandlordCannotEditAlreadyEditedReading(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReadingThree->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReadingThree->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotEditDifferentReadingForDifferentFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotEditOwnReadingForDifferentFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReading->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReading->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotEditDifferentReadingForOwnFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId());
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId(), $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    /*
+     * Tests for deleting readings
+     */
+    public function testIfTenantCannotDeleteOwnReading(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCannotDeleteDifferentReading(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanDeleteOwnReading(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $readingId = $this->utilityMeterReading->getId();
+
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $readingId . '/delete');
         $crawler = $this->client->followRedirect();
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testIfLandlordCannotDeleteDifferentReadingForOwnFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotDeleteDifferentReadingForDifferentFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotDeleteOwnReadingForDifferentFlat(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flatThree->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
     /*
-     * Tests for deleting flat
+     * Tests for deleting readings
      */
-    public function testIfTenantCannotDeleteOwnFlat(): void
-    {
-        $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $this->tenant->getFlatId()->getId());
-
-        $this->assertEquals('http://localhost/panel/flats/delete/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfTenantCannotDeleteRandomFlat(): void
-    {
-        $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $this->tenantFour->getFlatId()->getId());
-
-        $this->assertEquals('http://localhost/panel/flats/delete/' . $this->tenantFour->getFlatId()->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfLandlordCanDeleteOwnFlat(): void
+    public function testIfLandlordCanDeleteInvoice(): void
     {
         $this->client->loginUser($this->landlord);
-        $flatId = $this->flat->getId();
-
-        $this->flat->removeTenant($this->tenant);
-        $this->flat->removeTenant($this->tenantThree);
-        $this->entityManager->persist($this->flat);
-        $this->entityManager->flush();
-
-        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $flatId);
-
-        $this->assertEquals('http://localhost/panel/flats/delete/' . $flatId, $crawler->getUri());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete-invoice/' . $this->utilityMeterReading->getInvoices()[0]);
         $crawler = $this->client->followRedirect();
+
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters', $crawler->getUri());
         $this->assertResponseStatusCodeSame(200);
     }
 
-    public function testIfLandlordCannotDeleteDifferentFlat(): void
+    public function testIfLandlordCannotDeleteOwnReadingInvoiceForDifferentOwnReading(): void
     {
+        // in this test, we want to check if a user cannot delete 'invoice A for reading A',
+        // when accessing route 'invoice A for reading B'
         $this->client->loginUser($this->landlord);
-        $crawler = $this->client->request('GET', '/panel/flats/delete/' . $this->flatThree->getId());
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete-invoice/' . $this->utilityMeterReadingThree->getInvoices()[0]);
 
-        $this->assertEquals('http://localhost/panel/flats/delete/' . $this->flatThree->getId(), $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->flat->getId() . '/utility-meters/' . $this->utilityMeterReading->getId() . '/delete-invoice/' . $this->utilityMeterReadingThree->getInvoices()[0], $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
 
-    /*
-     * Tests for adding flat
-     */
-    public function testIfTenantCannotAddNewFlat(): void
+    public function testIfTenantCannotDeleteInvoice(): void
     {
         $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/new');
+        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete-invoice/' . $this->utilityMeterReading->getInvoices()[0]);
 
-        $this->assertEquals('http://localhost/panel/flats/new', $crawler->getUri());
+        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId() . '/utility-meters/' . $this->utilityMeterReadingTwo->getId() . '/delete-invoice/' . $this->utilityMeterReading->getInvoices()[0], $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testIfLandlordCanAddNewFlat(): void
-    {
-        $this->client->loginUser($this->landlord);
-        $crawler = $this->client->request('GET', '/panel/flats/new');
-
-        $this->assertEquals('http://localhost/panel/flats/new', $crawler->getUri());
-        $this->assertResponseStatusCodeSame(200);
     }
 }
