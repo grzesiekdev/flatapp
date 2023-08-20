@@ -167,7 +167,7 @@ class UtilityMetersController extends AbstractController
         $flat = $flatRepository->findOneBy(['id' => $id]);
         $utilityMeterReading = $utilityMeterReadingRepository->findOneBy(['id' => $readingId]);
 
-        if (!$this->isGranted(UtilityMetersVoter::DELETE_INVOICE, [$utilityMeterReading, $flat])) {
+        if (!$this->isGranted(UtilityMetersVoter::DELETE_INVOICE, [$utilityMeterReading, $flat, $invoice])) {
             throw $this->createAccessDeniedException('You do not have permission to delete this Invoice');
         }
 

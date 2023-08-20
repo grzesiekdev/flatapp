@@ -60,11 +60,17 @@ class UtilityMetersVoter extends Voter
 
         $utilityMetersReading = $subject[0];
         $flat = $subject[1];
+        $invoice = '';
+        if (count($subject) == 3)
+        {
+            // if invoice is being deleted, then subject has third value
+            $invoice = $subject[2];
+        }
 
         return match($attribute) {
             self::EDIT => $this->canEdit($utilityMetersReading, $flat, $loggedInUser),
             self::DELETE => $this->canDelete($utilityMetersReading, $flat, $loggedInUser),
-            self::DELETE_INVOICE => $this->canDeleteInvoice($utilityMetersReading, $flat, $loggedInUser),
+            self::DELETE_INVOICE => $this->canDeleteInvoice($utilityMetersReading, $flat, $loggedInUser, $invoice),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -99,9 +105,14 @@ class UtilityMetersVoter extends Voter
         return $allowed;
     }
 
-    public function canDeleteInvoice(UtilityMeterReading $utilityMeterReading, Flat $flat, User $user): bool
+    public function canDeleteInvoice(UtilityMeterReading $utilityMeterReading, Flat $flat, User $user, $invoice): bool
     {
-        return $this->canDelete($utilityMeterReading, $flat, $user);
+        $allowed = false;
+        if (array_search($invoice, $utilityMeterReading->getInvoices()) !== false) {
+
+            $allowed = $this->canDelete($utilityMeterReading, $flat, $user);
+        }
+        return $allowed;
     }
 
 }
