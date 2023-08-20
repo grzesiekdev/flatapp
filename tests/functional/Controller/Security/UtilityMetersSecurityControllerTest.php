@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use App\Tests\Utils\TestDataProvider;
 
-class UtilityMetersControllerTest extends WebTestCase
+class UtilityMetersSecurityControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
     private TestDataProvider $testDataProvider;
