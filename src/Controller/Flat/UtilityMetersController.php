@@ -108,10 +108,10 @@ class UtilityMetersController extends AbstractController
 
             $invoices = $form->get('invoices')->getData();
             $invoicesNames = [];
-            $invoicesPath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $date->format('d-m-Y');
-            $filesUploader->createDir($invoicesPath);
 
             if ($invoices) {
+                $invoicesPath = $parameterBag->get('invoices') . '/flat' . $id . '/' . $date->format('d-m-Y');
+                $filesUploader->createDir($invoicesPath);
                 foreach ($invoices as $invoice) {
                     $invoicesNames[] = $filesUploader->upload($invoice, $invoicesPath);
                 }
