@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use App\Tests\Utils\TestDataProvider;
 
-class FlatSecurityControllerTest extends WebTestCase
+class UtilityMetersControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
     private TestDataProvider $testDataProvider;
@@ -173,14 +173,14 @@ class FlatSecurityControllerTest extends WebTestCase
     /*
      * Tests for viewing flat
      */
-    public function testIfTenantCanViewOwnFlat(): void
-    {
-        $this->client->loginUser($this->tenant);
-        $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId());
+   public function testIfTenantCanViewOwnFlat(): void
+   {
+       $this->client->loginUser($this->tenant);
+       $crawler = $this->client->request('GET', '/panel/flats/' . $this->tenant->getFlatId()->getId());
 
-        $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
-        $this->assertResponseStatusCodeSame(200);
-    }
+       $this->assertEquals('http://localhost/panel/flats/' . $this->tenant->getFlatId()->getId(), $crawler->getUri());
+       $this->assertResponseStatusCodeSame(200);
+   }
 
     public function testIfTenantCannotViewDifferentFlat(): void
     {

@@ -7,6 +7,7 @@ use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Repository\FlatRepository;
 use App\Repository\TenantRepository;
+use App\Tests\Utils\TestDataProvider;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -16,6 +17,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class ProfileSecurityControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
+    private TestDataProvider $testDataProvider;
     private Tenant $tenant;
     private Tenant $tenantTwo;
     private Tenant $tenantThree;
@@ -39,81 +41,63 @@ class ProfileSecurityControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $userPasswordHasher = self::getContainer()->get(UserPasswordHasherInterface::class);
+        $this->testDataProvider = self::getContainer()->get('App\Tests\Utils\TestDataProvider');
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->appKernel = self::getContainer()->get(KernelInterface::class);
         $this->tenantRepository = self::getContainer()->get(TenantRepository::class);
         $this->flatRepository = self::getContainer()->get(FlatRepository::class);
 
-        $this->tenant = new Tenant();
-        $this->tenant->setName('Jan Kowalski')
-            ->setEmail('jkowalski@tenant.pl')
-            ->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $this->tenant,
-                    'test12'
-                )
-            )
-            ->setDateOfBirth(new \DateTime('1922-02-01'))
-            ->setRoles(['ROLE_TENANT'])
-            ->setImage('default-profile-picture.png')
-        ;
+        $usersData = [
+            'tenant1' => [
+                'name' => 'Jan Kowalski',
+                'email' => 'jkowalski@tenant.pl',
+                'password' => 'test12',
+                'dob' => '1922-02-01',
+                'role' => 'ROLE_TENANT',
+                'image' => 'default-profile-picture.png'
+            ],
+            'tenant2' => [
+                'name' => 'Jan Kowalski',
+                'email' => 'jkowalski2@tenant.pl',
+                'password' => 'test12',
+                'dob' => '1922-02-01',
+                'role' => 'ROLE_TENANT',
+                'image' => 'default-profile-picture.png'
+            ],
+            'tenant3' => [
+                'name' => 'Jan Kowalski',
+                'email' => 'jkowalski3@tenant.pl',
+                'password' => 'test12',
+                'dob' => '1922-02-01',
+                'role' => 'ROLE_TENANT',
+                'image' => 'default-profile-picture.png'
+            ],
+            'landlord1' => [
+                'name' => 'Jan Kowalski',
+                'email' => 'jkowalski@landlord.pl',
+                'password' => 'test12',
+                'dob' => '1922-02-01',
+                'role' => 'ROLE_LANDLORD',
+                'image' => 'default-profile-picture.png'
+            ],
+            'landlord2' => [
+                'name' => 'Jan Kowalski',
+                'email' => 'jkowalski2@landlord.pl',
+                'password' => 'test12',
+                'dob' => '1922-02-01',
+                'role' => 'ROLE_LANDLORD',
+                'image' => 'default-profile-picture.png'
+            ],
+        ];
 
-        $this->tenantTwo = new Tenant();
-        $this->tenantTwo->setName('Jan Kowalski')
-            ->setEmail('jkowalski2@tenant.pl')
-            ->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $this->tenantTwo,
-                    'test12'
-                )
-            )
-            ->setDateOfBirth(new \DateTime('1922-02-01'))
-            ->setRoles(['ROLE_TENANT'])
-            ->setImage('default-profile-picture.png')
-        ;
+        $users = $this->testDataProvider->provideUsers($usersData);
 
-        $this->tenantThree = new Tenant();
-        $this->tenantThree->setName('Jan Kowalski')
-            ->setEmail('jkowalski3@tenant.pl')
-            ->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $this->tenantThree,
-                    'test12'
-                )
-            )
-            ->setDateOfBirth(new \DateTime('1922-02-01'))
-            ->setRoles(['ROLE_TENANT'])
-            ->setImage('default-profile-picture.png')
-        ;
+        $this->tenant = $users['tenant1'];
+        $this->tenantTwo = $users['tenant2'];
+        $this->tenantThree = $users['tenant3'];
 
-        $this->landlord = new Landlord();
-        $this->landlord->setName('Jan Kowalski')
-            ->setEmail('jkowalski@landlord.pl')
-            ->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $this->landlord,
-                    'test12'
-                )
-            )
-            ->setDateOfBirth(new \DateTime('1922-02-01'))
-            ->setRoles(['ROLE_LANDLORD'])
-            ->setImage('default-profile-picture.png')
-        ;
-
-        $this->landlordTwo = new Landlord();
-        $this->landlordTwo->setName('Jan Kowalski')
-            ->setEmail('jkowalski2@landlord.pl')
-            ->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $this->landlordTwo,
-                    'test12'
-                )
-            )
-            ->setDateOfBirth(new \DateTime('1922-02-01'))
-            ->setRoles(['ROLE_LANDLORD'])
-            ->setImage('default-profile-picture.png')
-        ;
+        $this->landlord = $users['landlord1'];
+        $this->landlordTwo = $users['landlord2'];
 
         $this->flat = new Flat();
         $this->flat->setArea(55);

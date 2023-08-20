@@ -1,0 +1,4 @@
+services:
+  _defaults:
+    public: true
+  test.App\Tests\Utils\TestDataProvider: '@App\Tests\Utils\TestDataProvider'
