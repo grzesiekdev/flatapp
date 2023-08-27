@@ -33,7 +33,7 @@ class UtilityMetersControllerTest extends WebTestCase
     private UtilityMeterReading $utilityMeterReadingTwo;
     private array $invoicesToDelete;
     private FilesUploader $filesUploader;
-
+    private \DateTime $currentDate;
 
     protected function setUp(): void
     {
@@ -44,6 +44,7 @@ class UtilityMetersControllerTest extends WebTestCase
         $this->tenantRepository = self::getContainer()->get(TenantRepository::class);
         $this->flatRepository = self::getContainer()->get(FlatRepository::class);
         $this->filesUploader = self::getContainer()->get(FilesUploader::class);
+        $this->currentDate = new \DateTime('now');
 
         $usersData = [
             'tenant1' => [
@@ -70,14 +71,14 @@ class UtilityMetersControllerTest extends WebTestCase
         $this->landlord = $users['landlord1'];
 
         $this->utilityMeterReading = new UtilityMeterReading();
-        $this->utilityMeterReading->setDate(new \DateTime('2023-08-20'));
+        $this->utilityMeterReading->setDate(new \DateTime('now'));
         $this->utilityMeterReading->setWater(['amount' => 10, 'cost' => 22]);
         $this->utilityMeterReading->setGas(['amount' => 15, 'cost' => 55]);
         $this->utilityMeterReading->setElectricity(['amount' => 20, 'cost' => 32]);
         $this->utilityMeterReading->setInvoices(['test-invoice1.pdf']);
 
         $this->utilityMeterReadingTwo = new UtilityMeterReading();
-        $this->utilityMeterReadingTwo->setDate(new \DateTime('2023-08-20'));
+        $this->utilityMeterReadingTwo->setDate(new \DateTime('now'));
         $this->utilityMeterReadingTwo->setWater(['amount' => 54.67, 'cost' => 0]);
         $this->utilityMeterReadingTwo->setGas(['amount' => 12.5, 'cost' => 0]);
         $this->utilityMeterReadingTwo->setElectricity(['amount' => 1.21, 'cost' => 0]);
@@ -140,13 +141,13 @@ class UtilityMetersControllerTest extends WebTestCase
         $electricity2 = $crawler->filter('tbody tr:nth-child(2) td:nth-child(4)')->text();
         $invoices2    = $crawler->filter('tbody tr:nth-child(2) td:nth-child(5)')->text();
 
-        $this->assertEquals('20-08-2023', $date1);
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date1);
         $this->assertEquals('10 m3, 22 zł', $water1);
         $this->assertEquals('15 m3, 55 zł', $gas1);
         $this->assertEquals('20 kwH, 32 zł', $electricity1);
         $this->assertEquals('Invoices: 1 1. test-invoice1.pdf', $invoices1);
 
-        $this->assertEquals('20-08-2023', $date2);
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date2);
         $this->assertEquals('54.67 m3, 0 zł', $water2);
         $this->assertEquals('12.5 m3, 0 zł', $gas2);
         $this->assertEquals('1.21 kwH, 0 zł', $electricity2);
@@ -172,7 +173,7 @@ class UtilityMetersControllerTest extends WebTestCase
         $invoices          = $crawler->filter('#utility_meters_reading_invoices');
 
         $this->assertEquals('disabled', $date->attr('disabled'));
-        $this->assertEquals('2023-08-20', $date->attr('value'));
+        $this->assertEquals($this->currentDate->format('Y-m-d'), $date->attr('value'));
         $this->assertEquals('0', $waterAmount->attr('placeholder'));
         $this->assertEquals('disabled', $waterCost->attr('disabled'));
         $this->assertEquals('0', $gasAmount->attr('placeholder'));
@@ -196,9 +197,8 @@ class UtilityMetersControllerTest extends WebTestCase
         $gas         = $crawler->filter('tbody tr:nth-child(3) td:nth-child(3)')->text();
         $electricity = $crawler->filter('tbody tr:nth-child(3) td:nth-child(4)')->text();
         $invoices    = $crawler->filter('tbody tr:nth-child(3) td:nth-child(5)')->text();
-
-        $currentDate = new \DateTime('now');
-        $this->assertEquals($currentDate->format('d-m-Y'), $date);
+        
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date);
         $this->assertEquals('23.12 m3, zł', $water);
         $this->assertEquals('10.54 m3, zł', $gas);
         $this->assertEquals('1.43 kwH, zł', $electricity);
@@ -222,9 +222,8 @@ class UtilityMetersControllerTest extends WebTestCase
         $gas         = $crawler->filter('tbody tr:nth-child(3) td:nth-child(3)')->text();
         $electricity = $crawler->filter('tbody tr:nth-child(3) td:nth-child(4)')->text();
         $invoices    = $crawler->filter('tbody tr:nth-child(3) td:nth-child(5)')->text();
-
-        $currentDate = new \DateTime('now');
-        $this->assertEquals($currentDate->format('d-m-Y'), $date);
+        
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date);
         $this->assertEquals('0 m3, zł', $water);
         $this->assertEquals('0 m3, zł', $gas);
         $this->assertEquals('0 kwH, zł', $electricity);
@@ -249,13 +248,13 @@ class UtilityMetersControllerTest extends WebTestCase
         $electricity2 = $crawler->filter('tbody tr:nth-child(2) td:nth-child(4)')->text();
         $invoices2    = $crawler->filter('tbody tr:nth-child(2) td:nth-child(5)')->text();
 
-        $this->assertEquals('20-08-2023', $date1);
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date1);
         $this->assertEquals('10 m3, 22 zł', $water1);
         $this->assertEquals('15 m3, 55 zł', $gas1);
         $this->assertEquals('20 kwH, 32 zł', $electricity1);
         $this->assertEquals('Invoices: 1 1. test-invoice1.pdf', $invoices1);
 
-        $this->assertEquals('20-08-2023', $date2);
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date2);
         $this->assertEquals('54.67 m3, 0 zł', $water2);
         $this->assertEquals('12.5 m3, 0 zł', $gas2);
         $this->assertEquals('1.21 kwH, 0 zł', $electricity2);
@@ -289,7 +288,7 @@ class UtilityMetersControllerTest extends WebTestCase
         $electricityCost   = $crawler->filter('#utility_meters_reading_electricity_cost');
 
         $this->assertEquals('disabled', $date->attr('disabled'));
-        $this->assertEquals('2023-08-20', $date->attr('value'));
+        $this->assertEquals($this->currentDate->format('Y-m-d'), $date->attr('value'));
 
         $this->assertEquals('54.67', $waterAmount->attr('placeholder'));
         $this->assertEquals('disabled', $waterAmount->attr('disabled'));
@@ -318,9 +317,8 @@ class UtilityMetersControllerTest extends WebTestCase
         $gas         = $crawler->filter('tbody tr:nth-child(2) td:nth-child(3)')->text();
         $electricity = $crawler->filter('tbody tr:nth-child(2) td:nth-child(4)')->text();
         $invoices    = $crawler->filter('tbody tr:nth-child(2) td:nth-child(5)')->text();
-
-        $currentDate = new \DateTime('now');
-        $this->assertEquals($currentDate->format('d-m-Y'), $date);
+        
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date);
         $this->assertEquals('54.67 m3, 125.4 zł', $water);
         $this->assertEquals('12.5 m3, 254.25 zł', $gas);
         $this->assertEquals('1.21 kwH, 167.9 zł', $electricity);
@@ -352,8 +350,7 @@ class UtilityMetersControllerTest extends WebTestCase
         $electricity = $crawler->filter('tbody tr:nth-child(2) td:nth-child(4)')->text();
         $invoices    = $crawler->filter('tbody tr:nth-child(2) td:nth-child(5)')->text();
 
-        $currentDate = new \DateTime('now');
-        $this->assertEquals($currentDate->format('d-m-Y'), $date);
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date);
         $this->assertEquals('54.67 m3, 0 zł', $water);
         $this->assertEquals('12.5 m3, 0 zł', $gas);
         $this->assertEquals('1.21 kwH, 0 zł', $electricity);
@@ -378,7 +375,7 @@ class UtilityMetersControllerTest extends WebTestCase
         $electricity2 = $crawler->filter('tbody tr:nth-child(1) td:nth-child(4)')->text();
         $invoices2    = $crawler->filter('tbody tr:nth-child(1) td:nth-child(5)')->text();
 
-        $this->assertEquals('20-08-2023', $date2);
+        $this->assertEquals($this->currentDate->format('d-m-Y'), $date2);
         $this->assertEquals('54.67 m3, 0 zł', $water2);
         $this->assertEquals('12.5 m3, 0 zł', $gas2);
         $this->assertEquals('1.21 kwH, 0 zł', $electricity2);
