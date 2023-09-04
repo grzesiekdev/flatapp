@@ -163,6 +163,7 @@
                         {{ form_end(additional_photos_form) }}
                         <hr>
                         <a href="{{ path('app_flats_utility_meters', {id: flat.id}) }}" class="btn btn-primary">Check state of utility meters</a>
+                        <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: app.user.Id}) }}" class="btn btn-danger">Remove me from this apartment</a>
                     {% endif %}
                 </div>
             </div>

@@ -4,8 +4,10 @@ namespace App\Controller\Flat;
 
 use App\Repository\FlatRepository;
 use App\Repository\TenantRepository;
+use App\Repository\UserRepository;
 use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
+use \Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,10 +70,18 @@ class FlatsHelperController extends AbstractController
     }
 
     #[Route('/panel/flats/{flatId}/remove-tenant/{tenantId}', name: 'app_flats_remove_tenant')]
-    public function removeTenant(FlatRepository $flatRepository, TenantRepository $tenantRepository, int $flatId, int $tenantId, EntityManagerInterface $entityManager): Response
+    public function removeTenant(FlatRepository $flatRepository, TenantRepository $tenantRepository, int $flatId, int $tenantId, EntityManagerInterface $entityManager, Security $security, UserRepository $userRepository): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $flatId]);
         $tenant = $tenantRepository->findOneBy(['id' => $tenantId]);
+        $currentUser = $security->getUser();
+        $currentUserId = $userRepository->findOneBy(['email' => $currentUser->getUserIdentifier()])->getId();
+
+        if ($tenantId === $currentUserId && $currentUser->getRoles()[0] === 'ROLE_LANDLORD') {
+            throw $this->createAccessDeniedException('You cannot remove yourself from this flat');
+        } elseif (is_null($tenant) || !in_array($tenant, $flat->getTenants()->toArray())) {
+            throw $this->createAccessDeniedException('You cannot remove this tenant from this flat');
+        }
 
         $flat->removeTenant($tenant);
         $tenant->setFlatId(null);
@@ -80,7 +90,8 @@ class FlatsHelperController extends AbstractController
         $entityManager->persist($tenant);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_flats_view', ['id' => $flatId]);
+        if ($currentUser->getRoles()[0] == 'ROLE_TENANT') return $this->redirectToRoute('app_panel');
+        else return $this->redirectToRoute('app_flats_view', ['id' => $flatId]);
     }
 
 }
