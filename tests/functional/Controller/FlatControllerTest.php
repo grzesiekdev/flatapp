@@ -90,7 +90,7 @@ class FlatControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         // check if the image was added correctly
-        $picture1 = $crawler->filter('.pictures-for-tenant div > img')->image()->getUri();
+        $picture1 = $crawler->filter('.pictures-for-tenant a > img')->image()->getUri();
         $this->assertMatchesRegularExpression('/^(.*)\/uploads\/flats\/pictures_for_tenant\/user\d+\/screen-[a-z0-9]{13}\.png/', $picture1);
 
         // add next picture
@@ -100,8 +100,8 @@ class FlatControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         // check if the previous image is there, along with new picture
-        $picture1 = $crawler->filter('.pictures-for-tenant div > img')->image()->getUri();
-        $picture2 = $crawler->filter('.pictures-for-tenant div:nth-child(2) > img')->image()->getUri();
+        $picture1 = $crawler->filter('.pictures-for-tenant a > img')->image()->getUri();
+        $picture2 = $crawler->filter('.pictures-for-tenant a:nth-child(2) > img')->image()->getUri();
         $this->assertMatchesRegularExpression('/^(.*)\/uploads\/flats\/pictures_for_tenant\/user\d+\/screen-[a-z0-9]{13}\.png/', $picture1);
         $this->assertMatchesRegularExpression('/^(.*)\/uploads\/flats\/pictures_for_tenant\/user\d+\/screen-[a-z0-9]{13}\.png/', $picture2);
     }

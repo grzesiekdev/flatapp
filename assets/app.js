@@ -11,6 +11,7 @@ import 'bootstrap';
 
 // start the Stimulus application
 import './bootstrap';
+import 'bs5-lightbox';
 
 // preventing <i> being replaced by svg due to css problems
 window.FontAwesomeConfig = { autoReplaceSvg: false }
@@ -24,12 +25,15 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import {handle_fees} from "./js/fees";
 import {handle_floor_select} from "./js/floors";
+import Lightbox from "bs5-lightbox";
 
 (function ($) {
     "use strict";
 
     handle_fees();
     handle_floor_select();
+
+    document.querySelectorAll('.lightbox-toggle').forEach(el => el.addEventListener('click', Lightbox.initialize));
 
     if ($('#registration_form_roles_1').is(':checked')) {
         $('#registration_form_code_container').css('display', 'flex');

@@ -9,9 +9,9 @@
                 <div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
                     <div class="carousel-inner">
                         {% for picture in flat.pictures %}
-                            <div class="carousel-item {{ (loop.index == 1) ? 'active' : '' }}">
+                            <a class="lightbox-toggle carousel-item {{ (loop.index == 1) ? 'active' : '' }}" href="/uploads/flats/pictures/user{{ flat.landlord.id }}/{{ picture }}" data-toggle="lightbox" data-gallery="flat-gallery">
                                 <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ flat.landlord.id }}/{{ picture }}" alt="{{ flat.address }}">
-                            </div>
+                            </a>
                         {% endfor %}
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="prev">
@@ -124,13 +124,13 @@
                     <!-- Gallery -->
                     <div class="row pictures-for-tenant">
                         {% for picture in flat.picturesForTenant %}
-                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <a class="col-lg-4 col-md-12 mb-4 mb-lg-0 lightbox-toggle" href="/uploads/flats/pictures_for_tenant/user{{ flat.landlord.id }}/{{ picture }}" data-toggle="lightbox" data-gallery="tenant-pictures-gallery">
                             <img
                                     src="/uploads/flats/pictures_for_tenant/user{{ flat.landlord.id }}/{{ picture }}"
                                     class="w-100 shadow-1-strong rounded mb-4"
                                     alt="{{ flat.address }}"
                             />
-                        </div>
+                        </a>
                         {% endfor %}
                     </div>
                     {% endif %}

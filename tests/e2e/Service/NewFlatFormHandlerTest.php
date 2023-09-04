@@ -698,7 +698,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $furnishing5        = $crawler->filter('.table-furnishing tbody tr:nth-child(5) td:nth-child(2)')->text();
         $description        = $crawler->filter('.flat-description')->text();
         $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
-        $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
+        $picturesForTenant  = $crawler->filter('.pictures-for-tenant a')->count();
 
         $this->assertEquals('Testowa 8, 90-432 Testowo', $address);
         $this->assertEquals('67 m2', $area);
@@ -769,7 +769,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $area               = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
         $floor              = $crawler->filter('.table-flat-info tr:nth-child(3) td:nth-child(2)')->text();
         $pictures           = $crawler->filter('#flatPicturesSlider > .carousel-inner .carousel-item')->count();
-        $picturesForTenant  = $crawler->filter('.pictures-for-tenant div')->count();
+        $picturesForTenant  = $crawler->filter('.pictures-for-tenant a')->count();
 
         $this->assertEquals('87 m2', $area);
         $this->assertEquals('2 / 9', $floor);
