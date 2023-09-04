@@ -75,20 +75,31 @@ class FlatsHelperController extends AbstractController
         $flat = $flatRepository->findOneBy(['id' => $flatId]);
         $tenant = $tenantRepository->findOneBy(['id' => $tenantId]);
         $currentUser = $security->getUser();
-        $currentUserId = $userRepository->findOneBy(['email' => $currentUser->getUserIdentifier()])->getId();
 
-        if ($tenantId === $currentUserId && $currentUser->getRoles()[0] === 'ROLE_LANDLORD') {
-            throw $this->createAccessDeniedException('You cannot remove yourself from this flat');
-        } elseif (is_null($tenant) || !in_array($tenant, $flat->getTenants()->toArray())) {
-            throw $this->createAccessDeniedException('You cannot remove this tenant from this flat');
+        if (is_null($flat) || !in_array($tenant, $flat->getTenants()->toArray())) {
+            throw $this->createAccessDeniedException('This user is not assigned to this flat');
         }
 
-        $flat->removeTenant($tenant);
-        $tenant->setFlatId(null);
+        if ($currentUser->getRoles()[0] === 'ROLE_LANDLORD') {
+            if ($tenant === $currentUser) {
+                throw $this->createAccessDeniedException('You cannot remove yourself from this flat');
+            }
+        } else {
+            if ($currentUser !== $tenant)  {
+                throw $this->createAccessDeniedException('You cannot remove this tenant from this flat');
+            }
+        }
 
-        $entityManager->persist($flat);
-        $entityManager->persist($tenant);
-        $entityManager->flush();
+        if (is_null($tenant)) {
+            throw $this->createAccessDeniedException('This user doesnt exist');
+        } else {
+            $flat->removeTenant($tenant);
+            $tenant->setFlatId(null);
+
+            $entityManager->persist($flat);
+            $entityManager->persist($tenant);
+            $entityManager->flush();
+        }
 
         if ($currentUser->getRoles()[0] == 'ROLE_TENANT') return $this->redirectToRoute('app_panel');
         else return $this->redirectToRoute('app_flats_view', ['id' => $flatId]);
