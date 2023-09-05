@@ -12,6 +12,7 @@
 /vendor/
 /screen.png
 /drivers/
+/config/secrets/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
