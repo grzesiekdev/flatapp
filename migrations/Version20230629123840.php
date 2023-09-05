@@ -20,12 +20,12 @@ final class Version20230629123840 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE tenant CHANGE flat_id_id flat_id_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE tenant CHANGE flat_id flat_id_id INT DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE tenant CHANGE flat_id_id flat_id_id INT NOT NULL');
+        $this->addSql('ALTER TABLE tenant CHANGE flat_id flat_id_id INT NOT NULL');
     }
 }
