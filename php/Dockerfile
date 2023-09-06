@@ -1,13 +1,17 @@
 FROM php:8.2-fpm
 
 RUN apt-get update \
-    && apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip bash libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-2 libxt6 libpci-dev libasound2 \
+    && apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip bash libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-2 libxt6 libpci-dev libasound2 zsh \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install intl opcache pdo pdo_mysql \
     && pecl install apcu \
     && docker-php-ext-enable apcu \
     && docker-php-ext-configure zip \
-    && docker-php-ext-install zip
+    && docker-php-ext-install zip \
+    && PATH="$PATH:/usr/bin/zsh" \
+    && sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions \
+    && sed -i 's/plugins=(/plugins=(zsh-autosuggestions /' ~/.zshrc
 
 WORKDIR /var/www/docker
 
