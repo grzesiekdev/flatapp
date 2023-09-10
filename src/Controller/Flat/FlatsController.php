@@ -3,12 +3,12 @@
 namespace App\Controller\Flat;
 
 use App\Entity\Flat;
-use App\Form\AdditionalPhotosFormType;
-use App\Form\NewFlatTypeFlow;
+use App\Form\Flat\AdditionalPhotosFormType;
+use App\Form\Flat\NewFlatTypeFlow;
 use App\Repository\FlatRepository;
+use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
 use App\Service\NewFlatFormHandler;
-use App\Service\FilesUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Flat;
 
-use App\Form\NewFlatFormType;
 use Craue\FormFlowBundle\Form\FormFlow;
-use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 class NewFlatTypeFlow extends FormFlow {
     protected $allowDynamicStepNavigation = true;

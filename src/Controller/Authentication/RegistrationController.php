@@ -5,7 +5,7 @@ namespace App\Controller\Authentication;
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
-use App\Form\RegistrationFormType;
+use App\Form\User\RegistrationFormType;
 use App\Repository\FlatRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;

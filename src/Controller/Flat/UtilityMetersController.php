@@ -4,8 +4,7 @@ namespace App\Controller\Flat;
 
 use App\Entity\Flat;
 use App\Entity\UtilityMeterReading;
-use App\Form\AdditionalPhotosFormType;
-use App\Form\UtilityMetersReadingType;
+use App\Form\Flat\UtilityMetersReadingType;
 use App\Repository\FlatRepository;
 use App\Repository\UtilityMeterReadingRepository;
 use App\Security\UtilityMetersVoter;

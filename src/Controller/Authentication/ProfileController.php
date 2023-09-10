@@ -3,8 +3,8 @@
 namespace App\Controller\Authentication;
 
 use App\Entity\User\User;
-use App\Form\EditProfileFormType;
-use App\Form\InvitationCodeFormType;
+use App\Form\User\EditProfileFormType;
+use App\Form\User\InvitationCodeFormType;
 use App\Repository\UserRepository;
 use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
