@@ -11,15 +11,15 @@
             {{ form_errors(form) }}
 
             {% if flow.getCurrentStepNumber() == 1 %}
-                {% include 'panel/flats/steps/step_1.html.twig' %}
+                {% include 'panel/flats/_partials/_steps/_step_1.html.twig' %}
             {% elseif flow.getCurrentStepNumber() == 2 %}
-                {% include 'panel/flats/steps/step_2.html.twig' %}
+                {% include 'panel/flats/_partials/_steps/_step_2.html.twig' %}
             {% elseif flow.getCurrentStepNumber() == 3 %}
-                {% include 'panel/flats/steps/step_3.html.twig' %}
+                {% include 'panel/flats/_partials/_steps/_step_3.html.twig' %}
             {% elseif flow.getCurrentStepNumber() == 4 %}
-                {% include 'panel/flats/steps/step_4.html.twig' %}
+                {% include 'panel/flats/_partials/_steps/_step_4.html.twig' %}
             {% elseif flow.getCurrentStepNumber() == 5 %}
-                {% include 'panel/flats/steps/step_5.html.twig' %}
+                {% include 'panel/flats/_partials/_steps/_step_5.html.twig' %}
             {% endif %}
 
             {{ form_rest(form) }}

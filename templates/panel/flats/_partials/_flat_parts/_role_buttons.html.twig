@@ -1,0 +1,30 @@
+{% if app.user.roles[0] == 'ROLE_LANDLORD' %}
+    <div class="row my-4">
+        <div class="col-sm-6">
+            <a href="{{ path('app_flats_edit', {id: flat.id}) }}" class="btn btn-primary">Edit</a>
+            <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-sm-6">
+            <a href="{{ path('app_flats_generate_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
+            <a href="{{ path('app_flats_utility_meters', {id: flat.id}) }}" class="btn btn-primary">Check state of utility meters</a>
+        </div>
+    </div>
+{% elseif app.user.roles[0] == 'ROLE_TENANT' %}
+    {{ form_start(additional_photos_form) }}
+    <div class="row my-4">
+        <div class="col-sm-6">
+            {{ form_label(additional_photos_form.picturesForTenant) }}<br>
+            <small>Here you can add additional photos of flat. Remember that you won't be able to delete them; only landlord has those permissions</small>
+        </div>
+        <div class="col-sm-6">
+            {{ form_widget(additional_photos_form.picturesForTenant) }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Submit photos</button>
+    {{ form_end(additional_photos_form) }}
+    <hr>
+    <a href="{{ path('app_flats_utility_meters', {id: flat.id}) }}" class="btn btn-primary">Check state of utility meters</a>
+    <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: app.user.Id}) }}" class="btn btn-danger">Remove me from this apartment</a>
+{% endif %}

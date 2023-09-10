@@ -1,0 +1,12 @@
+<h2 class="text-black text-center">Landlord</h2>
+<div class="row border py-2 m-1">
+    <div class="col-sm-3">
+        <img src="/uploads/profile_pictures/{{ flat.landlord.image }}" style="clip-path: circle();" class="rounded-circle img-fluid" />
+    </div>
+    <div class="col-sm-9">
+        {{ flat.landlord.name }}
+        <a class="mx-1" href="{{ path('app_profile', {id: flat.landlord.id}) }}" title="Go to the landlord profile"><i class="fa-solid fa-user"></i></a>
+    </div>
+</div>
+<br>
+<small>You are tenant since: {{ app.user.tenantSince | date("d-m-Y") }}</small>

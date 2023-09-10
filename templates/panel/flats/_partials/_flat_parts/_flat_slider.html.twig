@@ -1,0 +1,17 @@
+<div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
+    <div class="carousel-inner">
+        {% for picture in flat.pictures %}
+            <a class="lightbox-toggle carousel-item {{ (loop.index == 1) ? 'active' : '' }}" href="/uploads/flats/pictures/user{{ flat.landlord.id }}/{{ picture }}" data-toggle="lightbox" data-gallery="flat-gallery">
+                <img class="card-img-top d-block w-100" src="/uploads/flats/pictures/user{{ flat.landlord.id }}/{{ picture }}" alt="{{ flat.address }}">
+            </a>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
