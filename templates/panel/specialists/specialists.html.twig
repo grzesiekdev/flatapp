@@ -1,5 +1,12 @@
 {% extends '/panel/page.html.twig' %}
-
 {% block content %}
-    <h1>Specialists</h1>
+    <div class="m-4">
+        <div class="row">
+            <h1>Specialists</h1>
+            <div class="col-sm-4">
+                <a href="{{ path('app_specialists_new') }}" class="btn btn-success">Add new</a>
+            </div>
+
+        </div>
+    </div>
 {% endblock %}

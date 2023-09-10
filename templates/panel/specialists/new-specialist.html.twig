@@ -1,0 +1,117 @@
+{% extends '/panel/page.html.twig' %}
+{% block content %}
+    <div class="container-fluid px-4">
+        <div class="row my-4">
+            <h1>New specialist</h1>
+            {% for flash_error in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+            <small class="my-2">Fields marked with <span style="color: var(--primary)">*</span> are required</small>
+            {{ form_start(form) }}
+            <div class="col-md-7 mb-3">
+                <div class="card bg-secondary mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.name) }}
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.name) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.profession) }}
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.profession) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.email) }}
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.email) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.phone) }}
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.phone) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.address) }}
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.address) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.gmb) }}<br>
+                                    <small style="font-weight: lighter;">Paste here URL to desired Google Business</small>
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.gmb) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.note) }}
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form_widget(form.note) }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">
+                                    {{ form_label(form.flats) }}<br>
+                                    <small style="font-weight: lighter;">Check flats with which this specialist will be related</small>
+                                </h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {% for choice in form.flats %}
+                                    <div>
+                                        {{ form_widget(choice) }}
+                                        {{ loop.index }}. {{ form_label(choice) }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-primary mt-4">Add specialist</button>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

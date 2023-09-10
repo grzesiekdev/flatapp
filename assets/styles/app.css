@@ -605,3 +605,7 @@ td {
 .fa-chevron-down  {
     transition: transform 0.3s ease;
 }
+
+form[name="new_specialist_form"] input[type="checkbox"] {
+    margin-right: 5px;
+}

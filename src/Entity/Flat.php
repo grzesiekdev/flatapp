@@ -76,10 +76,14 @@ class Flat
     #[ORM\OneToMany(mappedBy: 'flat', targetEntity: UtilityMeterReading::class, orphanRemoval: true)]
     private Collection $utilityMeterReadings;
 
+    #[ORM\ManyToMany(targetEntity: Specialist::class, mappedBy: 'flats')]
+    private Collection $specialists;
+
     public function __construct()
     {
         $this->tenants = new ArrayCollection();
         $this->utilityMeterReadings = new ArrayCollection();
+        $this->specialists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -348,6 +352,33 @@ class Flat
             if ($utilityMeterReading->getFlat() === $this) {
                 $utilityMeterReading->setFlat(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Specialist>
+     */
+    public function getSpecialists(): Collection
+    {
+        return $this->specialists;
+    }
+
+    public function addSpecialist(Specialist $specialist): self
+    {
+        if (!$this->specialists->contains($specialist)) {
+            $this->specialists->add($specialist);
+            $specialist->addFlat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialist(Specialist $specialist): self
+    {
+        if ($this->specialists->removeElement($specialist)) {
+            $specialist->removeFlat($this);
         }
 
         return $this;
