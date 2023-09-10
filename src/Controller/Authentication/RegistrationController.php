@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Authentication;
 
 use App\Entity\User\Type\Landlord;
 use App\Entity\User\Type\Tenant;
 use App\Entity\User\User;
+use App\Form\RegistrationFormType;
 use App\Repository\FlatRepository;
+use App\Repository\UserRepository;
+use App\Security\EmailVerifier;
 use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
 use App\Utils\UserRole;
-use App\Form\RegistrationFormType;
-use App\Repository\UserRepository;
-use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +23,6 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 

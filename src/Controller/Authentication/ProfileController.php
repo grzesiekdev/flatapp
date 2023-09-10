@@ -1,30 +1,21 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Authentication;
 
-use App\Entity\User\Type\Landlord;
 use App\Entity\User\User;
 use App\Form\EditProfileFormType;
 use App\Form\InvitationCodeFormType;
-use App\Repository\FlatRepository;
-use App\Repository\LandlordRepository;
-use App\Repository\TenantRepository;
 use App\Repository\UserRepository;
 use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 class ProfileController extends AbstractController
