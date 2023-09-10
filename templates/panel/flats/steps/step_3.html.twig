@@ -1,0 +1,40 @@
+<div class="row mt-2">
+    <div class="col-2">
+        {{ form_label(form.pictures) }}
+    </div>
+    <div class="col-sm-3">
+        {{ form_widget(form.pictures) }}
+    </div>
+</div>
+<div class="row pictures-container">
+    {% for picture in pictures %}
+        <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
+            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id ? flat_id : 0 }}" ><i class="fa-solid fa-x text-danger"></i></a>
+            <img
+                    src="{{ picture }}"
+                    class="shadow-1-strong rounded mb-4 float-left flat-picture"
+                    style="max-width: 100%;"
+            />
+        </div>
+    {% endfor %}
+</div>
+<div class="row mt-2">
+    <div class="col-2">
+        {{ form_label(form.picturesForTenant) }}
+    </div>
+    <div class="col-sm-3">
+        {{ form_widget(form.picturesForTenant) }}
+    </div>
+</div>
+<div class="row pictures-for-tenant-container">
+    {% for picture in pictures_for_tenant %}
+        <div class="col-sm-3 mb-4 mb-lg-0 mt-3 position-relative flat-picture-box">
+            <a class="delete-picture position-absolute" data-flat-id="{{ flat_id ? flat_id : 0 }}"><i class="fa-solid fa-x text-danger"></i></a>
+            <img
+                    src="{{ picture }}"
+                    class="shadow-1-strong rounded mb-4 float-left flat-picture"
+                    style="max-width: 100%;"
+            />
+        </div>
+    {% endfor %}
+</div>

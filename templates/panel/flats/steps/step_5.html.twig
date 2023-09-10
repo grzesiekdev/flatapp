@@ -1,0 +1,137 @@
+<div class="row">
+    <div class="col-sm-8">
+        <h4 class="text-muted">This is what your flat will look like, check if all the data is correct:</h4>
+        <div class="card mt-3">
+            {% if pictures %}
+                <div id="flatPicturesSlider" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        {% for picture in pictures %}
+                            <div class="carousel-item {{ (loop.index == 1) ? 'active' : '' }}">
+                                <img class="card-img-top d-block w-100" src="{{ picture }}" alt="{{ form_data.address }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#flatPicturesSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title text-secondary">{{ form_data.address }}</h5>
+                <p class="card-text">
+                <div class="row">
+                    <div class="">
+                        <table class="table table-striped table-flat-info">
+                            <tbody>
+                            <tr>
+                                <td><strong>Area</strong></td>
+                                <td>{{ form_data.area }} m<sup>2</sup></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>Number of rooms</strong></td>
+                                <td>{{ form_data.numberOfRooms }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rent</strong></td>
+                                <td>{{ form_data.rent }} zł</td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>Deposit</strong></td>
+                                <td>{{ form_data.deposit }} zł</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Floor</strong></td>
+                                <td>{{ form_data.floor }} / {{ form_data.maxFloor }}</td>
+                                <td></td>
+                                <td></td>
+                                {% if form_data.rentAgreement %}
+                                    <td><strong>Agreement</strong></td>
+                                    <td>
+                                        <a href="/uploads/flats/agreements/user{{ app.user.id }}/{{ rent_agreement }}" download>
+                                            {{ rent_agreement|length > 10 ? rent_agreement|slice(0, 10) ~ '...': rent_agreement}} <i class="fa-solid fa-download"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                            </tbody>
+                        </table>
+                        {% if form_data.fees %}
+                            <h5 class="text-secondary">Fees</h5>
+                            <table class="table table-fees">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for fee in form_data.fees %}
+                                    <tr>
+                                        <th scope="row">{{ loop.index }}</th>
+                                        <td>{{ fee.name }}</td>
+                                        <td>{{ fee.value }} zł</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                        {% if form_data.furnishing[0] or form_data.additionalFurnishing %}
+                            <h5 class="text-secondary">Furnishing</h5>
+                            <table class="table table-furnishing">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Furnishing</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% set counter = 0 %}
+                                {% for furnishing in form_data.furnishing[0] %}
+                                    {% set counter = loop.index %}
+                                    <tr>
+                                        <th scope="row">{{ counter }}</th>
+                                        <td>{{ furnishing | capitalize }}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th scope="row">{{ counter + 1 }}</th>
+                                    <td>{{ form_data.additionalFurnishing }}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if form_data.description %}
+                    <h5 class="text-secondary">Description</h5>
+                    <div class="flat-description">
+                        {{ form_data.description | raw }}
+                    </div>
+                {% endif %}
+                {% if pictures_for_tenant %}
+                    <h5 class="text-secondary">Pictures taken with tenant</h5>
+                    <!-- Gallery -->
+                    <div class="row pictures-for-tenant">
+                        {% for picture in pictures_for_tenant %}
+                            <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                                <img
+                                        src="{{ picture }}"
+                                        class="w-100 shadow-1-strong rounded mb-4"
+                                        alt="{{ form_data.address }}"
+                                />
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <!-- Gallery -->
+
+            </div>
+        </div>
+    </div>

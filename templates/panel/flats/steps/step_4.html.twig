@@ -1,0 +1,37 @@
+<div class="row mt-2">
+    <div class="col-sm-2">
+        {{ form_label(form.description) }}
+    </div>
+    <div class="col-sm-10 form-control" style="background: initial; border: 0;">
+        {{ form_widget(form.description) }}
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-2">
+        {{ form_label(form.rentAgreement) }}
+    </div>
+    <div class="col-sm-4">
+        {{ form_widget(form.rentAgreement) }}
+    </div>
+</div>
+<div class="row mt-2" id="new_flat_form_furnishing">
+    <div class="col-sm-2">
+        {{ form_label(form.furnishing) }}
+    </div>
+    <div class="col-sm-10 form-control" style="margin-left: 10px;">
+        {% for child in form.furnishing %}
+            <div>
+                {{ form_widget(child) }}
+                {{ form_label(child) }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-2">
+        {{ form_label(form.additionalFurnishing) }}
+    </div>
+    <div class="col-sm-4">
+        {{ form_widget(form.additionalFurnishing) }}
+    </div>
+</div>
