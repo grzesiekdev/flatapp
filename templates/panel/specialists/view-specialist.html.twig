@@ -13,14 +13,16 @@
                     </li>
                 {% endfor %}
                 </ul>
-                <div class="row">
-                    <div class="col-6" style="padding-right: 0;">
-                        <a class="btn btn-success w-100" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">Edit</a>
+                {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
+                    <div class="row">
+                        <div class="col-6" style="padding-right: 0;">
+                            <a class="btn btn-success w-100" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">Edit</a>
+                        </div>
+                        <div class="col-6" style="padding-left: 0;">
+                            <a class="btn btn-danger w-100" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">Delete</a>
+                        </div>
                     </div>
-                    <div class="col-6" style="padding-left: 0;">
-                        <a class="btn btn-danger w-100" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">Delete</a>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
