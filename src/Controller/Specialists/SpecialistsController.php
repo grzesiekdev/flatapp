@@ -40,6 +40,24 @@ class SpecialistsController extends AbstractController
         ]);
     }
 
+    #[Route('/panel/specialists/delete/{id}', name: 'app_specialists_delete')]
+    public function deleteSpecialist(int $id, SpecialistRepository $specialistRepository, EntityManagerInterface $entityManager): Response
+    {
+        $specialist = $specialistRepository->findOneBy(['id' => $id]);
+        $flats = $specialist->getFlats()->toArray();
+
+        foreach ($flats as $flat)
+        {
+            $flat->removeSpecialist($specialist);
+            $entityManager->persist($flat);
+        }
+
+        $entityManager->remove($specialist);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_specialists');
+    }
+
     #[Route('/panel/specialists/edit/{id}', name: 'app_specialists_edit')]
     public function editSpecialist(int $id, SpecialistRepository $specialistRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager): Response
     {
