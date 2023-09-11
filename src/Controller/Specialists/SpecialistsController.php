@@ -4,9 +4,12 @@ namespace App\Controller\Specialists;
 
 use App\Entity\Specialist;
 use App\Form\Specialists\NewSpecialistFormType;
+use App\Repository\LandlordRepository;
 use App\Repository\SpecialistRepository;
+use App\Repository\TenantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -16,10 +19,23 @@ use Symfony\Component\Routing\Annotation\Route;
 class SpecialistsController extends AbstractController
 {
     #[Route('/panel/specialists', name: 'app_specialists')]
-    public function specialists(): Response
+    public function specialists(Security $security, LandlordRepository $landlordRepository, TenantRepository $tenantRepository): Response
     {
-        return $this->render('panel/specialists/specialists.html.twig', [
+        $flats = array();
 
+        $user = $security->getUser();
+        if (in_array('ROLE_LANDLORD', $user->getRoles()))
+        {
+            $user = $landlordRepository->findOneBy(['email' => $user->getUserIdentifier()]);
+            $flats = $user->getFlats();
+        } else if (in_array('ROLE_TENANT', $user->getRoles()))
+        {
+            $user = $tenantRepository->findOneBy(['email' => $user->getUserIdentifier()]);
+            $flats[] = $user->getFlatId();
+        }
+
+        return $this->render('panel/specialists/specialists.html.twig', [
+            'flats' => $flats
         ]);
     }
 
@@ -42,6 +58,16 @@ class SpecialistsController extends AbstractController
                 $flat->addSpecialist($specialist);
 
                 $entityManager->persist($flat);
+            }
+
+            $gmb = $form->get('gmb')->getData();
+
+            $dom = new \DOMDocument();
+            $dom->loadHTML($gmb);
+            $iframe = $dom->getElementsByTagName('iframe');
+            if ($iframe->length > 0) {
+                $gmb = $iframe->item(0)->getAttribute('src');
+                $specialist->setGmb($gmb);
             }
 
             $entityManager->persist($specialist);

@@ -27,7 +27,7 @@ class Specialist
     #[ORM\Column(length: 12, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 500, nullable: true)]
     private ?string $gmb = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
