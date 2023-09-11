@@ -10,6 +10,7 @@ use App\Repository\TenantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -39,6 +40,46 @@ class SpecialistsController extends AbstractController
         ]);
     }
 
+    #[Route('/panel/specialists/edit/{id}', name: 'app_specialists_edit')]
+    public function editSpecialist(int $id, SpecialistRepository $specialistRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $specialist = $specialistRepository->findOneBy(['id' => $id]);
+        $form = $this->createForm(NewSpecialistFormType::class, $specialist, [
+            'session' => $session,
+            'specialist_flats' => $specialist->getFlats()->toArray()
+        ]);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $specialist = $form->getData();
+
+            $flats = $form->get('flats')->getData();
+            $flatsToRemove = array_udiff(
+                $specialist->getFlats()->toArray(),
+                $flats,
+                function ($a, $b) {
+                    return $a->getId() - $b->getId();
+                }
+            );
+
+            // removing flats with which specialist is no longer related
+            foreach ($flatsToRemove as $flat) {
+                $specialist->removeFlat($flat);
+                $flat->removeSpecialist($specialist);
+            }
+
+            $this->handleSpecialists($flats, $specialist, $entityManager, $form);
+
+            return $this->redirectToRoute('app_specialists_view', ['id' => $specialist->getId()]);
+        }
+
+        return $this->render('panel/specialists/new-specialist.html.twig', [
+            'specialist' => $specialist,
+            'form' => $form->createView()
+        ]);
+    }
+
     #[Route('/panel/specialists/new', name: 'app_specialists_new')]
     public function newSpecialist(SessionInterface $session, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -53,25 +94,7 @@ class SpecialistsController extends AbstractController
             $specialist = $form->getData();
 
             $flats = $form->get('flats')->getData();
-            foreach ($flats as $flat) {
-                $specialist->addFlat($flat);
-                $flat->addSpecialist($specialist);
-
-                $entityManager->persist($flat);
-            }
-
-            $gmb = $form->get('gmb')->getData();
-
-            $dom = new \DOMDocument();
-            $dom->loadHTML($gmb);
-            $iframe = $dom->getElementsByTagName('iframe');
-            if ($iframe->length > 0) {
-                $gmb = $iframe->item(0)->getAttribute('src');
-                $specialist->setGmb($gmb);
-            }
-
-            $entityManager->persist($specialist);
-            $entityManager->flush();
+            $this->handleSpecialists($flats, $specialist, $entityManager, $form);
 
             return $this->redirectToRoute('app_specialists_view', ['id' => $specialist->getId()]);
         }
@@ -90,5 +113,30 @@ class SpecialistsController extends AbstractController
         return $this->render('panel/specialists/view-specialist.html.twig', [
             'specialist' => $specialist,
         ]);
+    }
+
+    public function handleSpecialists(array $flats, Specialist $specialist, EntityManagerInterface $entityManager, FormInterface $form): void
+    {
+        foreach ($flats as $flat) {
+            $specialist->addFlat($flat);
+            $flat->addSpecialist($specialist);
+
+            $entityManager->persist($flat);
+        }
+
+        $gmb = $form->get('gmb')->getData();
+        if ($gmb)
+        {
+            $dom = new \DOMDocument();
+            $dom->loadHTML($gmb);
+            $iframe = $dom->getElementsByTagName('iframe');
+            if ($iframe->length > 0) {
+                $gmb = $iframe->item(0)->getAttribute('src');
+                $specialist->setGmb($gmb);
+            }
+        }
+
+        $entityManager->persist($specialist);
+        $entityManager->flush();
     }
 }

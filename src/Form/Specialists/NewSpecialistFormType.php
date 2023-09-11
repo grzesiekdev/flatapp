@@ -31,6 +31,8 @@ class NewSpecialistFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $session = $options['session'];
+        $specialistFlats = $options['specialist_flats'];
+
         $this->user = $this->landlordRepository->findOneBy(['email' => $this->userEmail]);
         $flats = $this->user->getFlats();
 
@@ -86,7 +88,8 @@ class NewSpecialistFormType extends AbstractType
                     return $flat ? $flat->getAddress() . ', ' . $flat->getArea() . 'm2' : '';
                 },
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
+                'data' => $specialistFlats
             ]);
     }
 
@@ -94,6 +97,7 @@ class NewSpecialistFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Specialist::class,
+            'specialist_flats' => null
         ]);
         $resolver->setRequired('session');
     }
