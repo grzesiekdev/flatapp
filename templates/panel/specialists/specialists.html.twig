@@ -22,35 +22,12 @@
             <div class="row">
                 {% for specialist in flat.specialists %}
                     <div class="card col-sm-3 m-3 p-0 border-0" id="specialist-{{ specialist.id }}">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary text-center">
-                                {{ specialist.name }}<br>
-                                <small style="font-weight: lighter;">{{ specialist.profession }}</small>
-                            </h5>
-                            <div class="specialist-contact">
-                                {% if specialist.phone %}
-                                    <a href="tel:{{ specialist.phone }}">{{ specialist.phone }}</a> <br>
-                                {% endif %}
-                                {% if specialist.email %}
-                                    <a href="mailto:{{ specialist.email }}">{{ specialist.email }}</a> <br>
-                                {% endif %}
-                                {% if specialist.address %}
-                                    {{ specialist.address }}
-                                {% endif %}
-                            </div>
-                            {% if specialist.note %}
-                                <hr>
-                                <p class="card-text">{{ specialist.note }}</p>
-                            {% endif %}
-                            {% if specialist.gmb %}
-                                <hr>
-                                <iframe src="{{ specialist.gmb }}" width="600" height="450" style="border:0; max-width: 100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            {% endif %}
-                        </div>
-                        <a class="btn btn-success" href="{{ path('app_specialists_view', {id: specialist.id}) }}">See more</a>
+                        {% include 'panel/specialists/_partials/_specialist-card.html.twig' %}
+                        <a class="btn btn-success" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">See more</a>
                     </div>
                 {% endfor %}
             </div>
+            <hr style="border-top: 1px solid #f7f7f7;">
         {% endfor %}
     </div>
 {% endblock %}
