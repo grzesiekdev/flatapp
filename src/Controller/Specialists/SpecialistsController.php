@@ -73,6 +73,12 @@ class SpecialistsController extends AbstractController
             $specialist = $form->getData();
 
             $flats = $form->get('flats')->getData();
+
+            if ($flats === []) {
+                $this->addFlash('error', 'You have to choose at least one flat');
+                return $this->redirectToRoute('app_specialists_edit', ['id' => $id]);
+            }
+
             $flatsToRemove = array_udiff(
                 $specialist->getFlats()->toArray(),
                 $flats,
@@ -112,6 +118,11 @@ class SpecialistsController extends AbstractController
             $specialist = $form->getData();
 
             $flats = $form->get('flats')->getData();
+            if ($flats === []) {
+                $this->addFlash('error', 'You have to choose at least one flat');
+                return $this->redirectToRoute('app_specialists_new');
+            }
+
             $this->handleSpecialists($flats, $specialist, $entityManager, $form);
 
             return $this->redirectToRoute('app_specialists_view', ['id' => $specialist->getId()]);
