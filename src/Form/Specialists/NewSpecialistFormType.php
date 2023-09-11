@@ -40,12 +40,14 @@ class NewSpecialistFormType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['class' => '
                         form-control',
-                ]
+                ],
+                'error_bubbling' => true,
             ])
             ->add('profession', TextType::class, [
                 'attr' => ['class' => '
                         form-control',
-                ]
+                ],
+                'error_bubbling' => true,
             ])
             ->add('email', TextType::class, [
                 'attr' => ['class' => '
