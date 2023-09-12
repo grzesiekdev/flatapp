@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\functional\Controller;
+namespace App\Tests\functional\Controller\Flats;
 
 use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;

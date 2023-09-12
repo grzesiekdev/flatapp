@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\functional\Controller;
+namespace App\Tests\functional\Controller\User;
 
 use App\Entity\User\Type\Landlord;
 use App\Repository\LandlordRepository;

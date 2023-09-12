@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\functional\Controller;
+namespace App\Tests\functional\Controller\Flats;
 
 use App\Entity\Flat;
 use App\Entity\User\Type\Landlord;
@@ -14,9 +14,6 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Constraints\Date;
 
 class UtilityMetersControllerTest extends WebTestCase
 {

@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Tests\functional\Controller;
+namespace App\Tests\functional\Controller\User;
 
 use App\Entity\Flat;
 use App\Repository\FlatRepository;
 use App\Repository\LandlordRepository;
 use App\Repository\TenantRepository;
-use App\Service\InvitationCodeHandler;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
