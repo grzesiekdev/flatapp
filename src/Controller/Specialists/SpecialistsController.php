@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
 class SpecialistsController extends AbstractController
@@ -41,7 +42,8 @@ class SpecialistsController extends AbstractController
     }
 
     #[Route('/panel/specialists/delete/{id}', name: 'app_specialists_delete')]
-    public function deleteSpecialist(int $id, SpecialistRepository $specialistRepository, EntityManagerInterface $entityManager): Response
+    #[IsGranted('delete', 'specialist', 'You don\'t have permissions to delete this specialist', 403)]
+    public function deleteSpecialist(int $id, SpecialistRepository $specialistRepository, EntityManagerInterface $entityManager, Specialist $specialist): Response
     {
         $specialist = $specialistRepository->findOneBy(['id' => $id]);
         $flats = $specialist->getFlats()->toArray();
@@ -59,7 +61,8 @@ class SpecialistsController extends AbstractController
     }
 
     #[Route('/panel/specialists/edit/{id}', name: 'app_specialists_edit')]
-    public function editSpecialist(int $id, SpecialistRepository $specialistRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager): Response
+    #[IsGranted('edit', 'specialist', 'You don\'t have permissions to edit this specialist', 403)]
+    public function editSpecialist(int $id, SpecialistRepository $specialistRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager, Specialist $specialist): Response
     {
         $specialist = $specialistRepository->findOneBy(['id' => $id]);
         $form = $this->createForm(NewSpecialistFormType::class, $specialist, [
@@ -137,7 +140,8 @@ class SpecialistsController extends AbstractController
     }
 
     #[Route('/panel/specialists/{id}', name: 'app_specialists_view')]
-    public function viewSpecialist(int $id, SpecialistRepository $specialistRepository): Response
+    #[IsGranted('view', 'specialist', 'You don\'t have permissions to view this specialist', 403)]
+    public function viewSpecialist(int $id, SpecialistRepository $specialistRepository, Specialist $specialist): Response
     {
         $specialist = $specialistRepository->findOneBy(['id' => $id]);
 

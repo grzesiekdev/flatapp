@@ -34,6 +34,7 @@ security:
     access_control:
          - { path: ^/panel/flats$, roles: ['ROLE_LANDLORD'] }
          - { path: ^/panel/flats/new$, roles: ['ROLE_LANDLORD'] }
+         - { path: ^/panel/specialists/new$, roles: ['ROLE_LANDLORD']}
          - { path: ^/panel, roles: IS_AUTHENTICATED_FULLY }
 
 
