@@ -100,7 +100,8 @@ class SpecialistsController extends AbstractController
 
         return $this->render('panel/specialists/new-specialist.html.twig', [
             'specialist' => $specialist,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'is_edit' => true
         ]);
     }
 
@@ -130,7 +131,8 @@ class SpecialistsController extends AbstractController
 
         return $this->render('panel/specialists/new-specialist.html.twig', [
             'specialist' => $specialist,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'is_edit' => false
         ]);
     }
 

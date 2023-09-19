@@ -99,7 +99,7 @@
                                     <small style="font-weight: lighter;">Check flats with which this specialist will be related</small>
                                 </h6>
                             </div>
-                            <div class="col-sm-9 text-secondary">
+                            <div class="col-sm-9 text-secondary flats-list">
                                 {% for choice in form.flats %}
                                     <div>
                                         {{ form_widget(choice) }}
@@ -110,7 +110,11 @@
                             </div>
                         </div>
                         <hr>
-                        <button type="submit" class="btn btn-primary mt-4">Add specialist</button>
+                        {% if is_edit %}
+                            <button type="submit" class="btn btn-primary mt-4">Edit specialist</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary mt-4">Add specialist</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
