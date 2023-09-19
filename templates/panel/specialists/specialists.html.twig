@@ -21,7 +21,7 @@
             </div>
             <div class="row">
                 {% for specialist in flat.specialists %}
-                    <div class="card col-sm-3 m-3 p-0 border-0" id="specialist-{{ specialist.id }}">
+                    <div class="specialist-card card col-sm-3 m-3 p-0 border-0" id="specialist-{{ specialist.id }}">
                         {% include 'panel/specialists/_partials/_specialist-card.html.twig' %}
                         <a class="btn btn-success" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">See more</a>
                     </div>
