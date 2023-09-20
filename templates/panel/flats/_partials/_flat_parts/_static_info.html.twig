@@ -17,8 +17,10 @@
                 <td>{{ flat.rent }} zł</td>
                 <td></td>
                 <td></td>
-                <td><strong>Deposit</strong></td>
-                <td>{{ flat.deposit }} zł</td>
+                {% if flat.deposit %}
+                    <td><strong>Deposit</strong></td>
+                    <td>{{ flat.deposit }} zł</td>
+                {% endif %}
             </tr>
             <tr>
                 <td><strong>Floor</strong></td>
