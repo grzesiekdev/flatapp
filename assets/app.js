@@ -161,9 +161,9 @@ import Lightbox from "bs5-lightbox";
             dayGridPlugin
             // any other plugins
         ],
-        height: '350px',
+        height: '550px',
         initialView: 'dayGridMonth',
-        weekends: false,
+        weekends: true,
     })
 
     calendar.render()

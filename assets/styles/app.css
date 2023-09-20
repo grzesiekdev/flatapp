@@ -609,3 +609,16 @@ td {
 form[name="new_specialist_form"] input[type="checkbox"] {
     margin-right: 5px;
 }
+
+.fc .fc-day-other .fc-daygrid-day-top {
+    opacity: 0.6 !important;
+}
+
+.fc .fc-daygrid-day-number {
+    font-weight: bolder;
+}
+
+.fc a:hover {
+    color: var(--primary-darker) !important;
+    cursor: pointer;
+}
