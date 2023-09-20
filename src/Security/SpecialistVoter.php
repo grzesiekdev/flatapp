@@ -63,10 +63,14 @@ class SpecialistVoter extends Voter
         {
             $tenant = $this->tenantRepository->findOneBy(['email' => $loggedInUser->getUserIdentifier()]);
             $flat = $tenant->getFlatId();
-            if (in_array($specialist, $flat->getSpecialists()->toArray()))
+            if (!is_null($flat))
             {
-                return true;
+                if (in_array($specialist, $flat->getSpecialists()->toArray()))
+                {
+                    return true;
+                }
             }
+
         }
         // If user is landlord, then check if he can delete specialist
         return $this->canDelete($specialist, $loggedInUser);
