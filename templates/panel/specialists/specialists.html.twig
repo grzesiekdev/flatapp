@@ -1,33 +1,37 @@
 {% extends '/panel/page.html.twig' %}
 {% block content %}
     <div class="m-4">
+        {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
         <div class="col-sm-4">
             <a href="{{ path('app_specialists_new') }}" class="btn btn-success my-2">Add new</a>
         </div>
+        {% endif %}
         <h1>Specialists</h1>
-        {% for flat in flats %}
-            <div class="row">
-                <div class="card col-sm-3 m-3 p-0 border-0" id="flat-{{ flat.id }}">
-                    <figure>
-                        {% if flat.pictures %}
-                            <img class="card-img-top" src="/uploads/flats/pictures/user{{ flat.landlord.id  }}/{{ flat.pictures|first }}" alt="{{ flat.address }}">
-                        {% endif %}
-                    </figure>
-                    <div class="card-body">
-                        <h5 class="card-title text-secondary">{{ flat.address }}, {{ flat.area }} m<sup>2</sup>, {{ flat.rent }}zł&nbsp;&nbsp;<a href="{{ path('app_flats_view', {id: flat.id}) }}"><i class="fa-solid fa-up-right-from-square"></i></a> </h5>
-                        <p class="card-text">{{ (flat.description|length > 100 ? flat.description|slice(0, 100) ~ '...': flat.description) | striptags}}</p>
+        {% if flat is defined %}
+            {% for flat in flats %}
+                <div class="row">
+                    <div class="card col-sm-3 m-3 p-0 border-0" id="flat-{{ flat.id }}">
+                        <figure>
+                            {% if flat.pictures %}
+                                <img class="card-img-top" src="/uploads/flats/pictures/user{{ flat.landlord.id  }}/{{ flat.pictures|first }}" alt="{{ flat.address }}">
+                            {% endif %}
+                        </figure>
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary">{{ flat.address }}, {{ flat.area }} m<sup>2</sup>, {{ flat.rent }}zł&nbsp;&nbsp;<a href="{{ path('app_flats_view', {id: flat.id}) }}"><i class="fa-solid fa-up-right-from-square"></i></a> </h5>
+                            <p class="card-text">{{ (flat.description|length > 100 ? flat.description|slice(0, 100) ~ '...': flat.description) | striptags}}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                {% for specialist in flat.specialists %}
-                    <div class="specialist-card card col-sm-3 m-3 p-0 border-0" id="specialist-{{ specialist.id }}">
-                        {% include 'panel/specialists/_partials/_specialist-card.html.twig' %}
-                        <a class="btn btn-success" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">See more</a>
-                    </div>
-                {% endfor %}
-            </div>
-            <hr style="border-top: 1px solid #f7f7f7;">
-        {% endfor %}
+                <div class="row">
+                    {% for specialist in flat.specialists %}
+                        <div class="specialist-card card col-sm-3 m-3 p-0 border-0" id="specialist-{{ specialist.id }}">
+                            {% include 'panel/specialists/_partials/_specialist-card.html.twig' %}
+                            <a class="btn btn-success" style="border-radius: 0;" href="{{ path('app_specialists_view', {id: specialist.id}) }}">See more</a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr style="border-top: 1px solid #f7f7f7;">
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
