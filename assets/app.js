@@ -33,6 +33,60 @@ import Lightbox from "bs5-lightbox";
     handle_fees();
     handle_floor_select();
 
+    const sortable = document.getElementById('sortable');
+    let draggingTask = null;
+
+    if (null !== sortable)
+    {
+        sortable.addEventListener('dragstart', (e) => {
+            const task = e.target;
+            draggingTask = task;
+            task.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', task.id);
+        });
+
+        sortable.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const taskBeingHovered = e.target;
+
+            if (!taskBeingHovered.classList.contains('task')) return;
+
+            const rect = taskBeingHovered.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+
+            const isDraggingDown = e.clientY > midY;
+
+            if (draggingTask !== taskBeingHovered) {
+                if (isDraggingDown) {
+                    sortable.insertBefore(draggingTask, taskBeingHovered.nextSibling);
+                } else {
+                    sortable.insertBefore(draggingTask, taskBeingHovered);
+                }
+            }
+        });
+
+        sortable.addEventListener('dragend', (e) => {
+            const taskId = e.dataTransfer.getData('text/plain');
+            const task = document.getElementById(taskId);
+            task.classList.remove('dragging');
+            draggingTask = null;
+        });
+
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('task')) {
+                e.target.classList.add('dragging');
+            }
+        });
+
+        document.addEventListener('dragend', (e) => {
+            const tasks = document.querySelectorAll('.task');
+            tasks.forEach((task) => {
+                task.classList.remove('dragging');
+            });
+        });
+    }
+
     document.querySelectorAll('.lightbox-toggle').forEach(el => el.addEventListener('click', Lightbox.initialize));
 
     if ($('#registration_form_roles_1').is(':checked')) {

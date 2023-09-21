@@ -622,3 +622,19 @@ form[name="new_specialist_form"] input[type="checkbox"] {
     color: var(--primary-darker) !important;
     cursor: pointer;
 }
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: rgba(25,135,84,0.45) !important;
+}
+
+.task {
+    background-color: var(--secondary);
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.dragging {
+    opacity: 0.5;
+    border: 0 !important;
+}
