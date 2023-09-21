@@ -61,7 +61,7 @@ class PanelController extends AbstractController
         ]);
     }
 
-    #[Route('/delete-task/{id}', name: 'app_task_delete')]
+    #[Route('/panel/tasks/delete-task/{id}', name: 'app_task_delete')]
     public function deleteTask(int $id, Security $security, UserRepository $userRepository, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
     {
         $user = $security->getUser();
@@ -76,6 +76,27 @@ class PanelController extends AbstractController
         $response = new Response();
         $response->setStatusCode(200);
         
+        return $response;
+    }
+
+    #[Route('/panel/tasks/mark-as-done/{id}', name: 'app_task_mark_as_done')]
+    public function markAsDone(int $id, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
+    {
+        $task = $taskRepository->findOneBy(['id' => $id]);
+        if ($task->isIsDone())
+        {
+            $task->setIsDone(false);
+        }
+        else
+        {
+            $task->setIsDone(true);
+        }
+        $entityManager->persist($task);
+        $entityManager->flush();
+
+        $response = new Response();
+        $response->setStatusCode(200);
+
         return $response;
     }
 }

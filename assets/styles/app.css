@@ -638,3 +638,12 @@ form[name="new_specialist_form"] input[type="checkbox"] {
     opacity: 0.5;
     border: 0 !important;
 }
+
+.delete-task i {
+    color: var(--primary);
+}
+
+.crossed-out {
+    text-decoration: line-through;
+    opacity: 0.8;
+}

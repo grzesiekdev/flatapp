@@ -2,7 +2,6 @@
     <div class="h-100 bg-secondary rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">To Do List</h6>
-            <a href="">Show All</a>
         </div>
         {{ form_start(form) }}
         {% for flash_error in app.flashes('error') %}
@@ -15,12 +14,12 @@
         {{ form_end(form) }}
         <div class="todo-list" id="sortable">
             {% for task in tasks %}
-            <div class="d-flex align-items-center border-bottom py-2 task" id="task-{{ task.id }}" draggable="true">
+            <div class="d-flex align-items-center border-bottom py-2 task {{ task.isDone ? 'crossed-out' : ''}}" id="task-{{ task.id }}" draggable="true">
                 <input class="form-check-input m-0" {{ task.isDone ? 'checked' : ''}} type="checkbox">
                 <div class="w-100 ms-3">
                     <div class="d-flex w-100 align-items-center justify-content-between">
                         <span>{{ task.description }}</span>
-                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
+                        <button class="btn btn-sm delete-task" data-task-id="{{ task.id }}"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
             </div>
