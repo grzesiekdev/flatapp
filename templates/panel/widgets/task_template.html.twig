@@ -1,0 +1,9 @@
+<div class="d-flex align-items-center border-bottom py-2 task {{ task.isDone ? 'crossed-out' : ''}}" id="task-{{ task.id }}" draggable="true">
+    <input class="form-check-input m-0" {{ task.isDone ? 'checked' : ''}} type="checkbox">
+    <div class="w-100 ms-3">
+        <div class="d-flex w-100 align-items-center justify-content-between">
+            <span>{{ task.description }}</span>
+            <button class="btn btn-sm delete-task" data-task-id="{{ task.id }}"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+</div>

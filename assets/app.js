@@ -87,8 +87,8 @@ import Lightbox from "bs5-lightbox";
         });
     }
 
-    $('.delete-task').click(function() {
-        let task = $(this).parent().parent().parent();
+    $('.todo-list').on('click', '.delete-task', function() {
+        let task = $(this).closest('.task'); // Use closest to find the parent .task element
         let taskId = $(this).attr('data-task-id');
         $.ajax({
             url: '/panel/tasks/delete-task/'+taskId,
@@ -102,18 +102,42 @@ import Lightbox from "bs5-lightbox";
         });
     });
 
-    $('.todo-list .form-check-input').change(function() {
+    $('.todo-list').on('change', '.form-check-input', function() {
         let taskId = $(this).next('div').find('button').attr('data-task-id');
         let check = $(this);
         $.ajax({
-            url: '/panel/tasks/mark-as-done/'+taskId,
+            url: '/panel/tasks/mark-as-done/' + taskId,
             method: 'POST',
             success: function(result) {
-                if (check.prop('checked')) { // Use prop('checked') instead of checked
+                console.log("A");
+                if (check.prop('checked')) {
                     check.closest('.task').addClass('crossed-out');
                 } else {
                     check.closest('.task').removeClass('crossed-out');
                 }
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+    $('#task-form').submit(function(e){
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#tasks_form_description').val('');
+                // Create a new task template for the task
+                let taskTemplate = $.parseHTML($('#task-template').html());
+
+                $(taskTemplate).attr('id', 'task-' + response.id);
+                $(taskTemplate).find('span').text(response.description);
+                $(taskTemplate).find('.delete-task').attr('data-task-id', response.id);
+                $('#task-template').before(taskTemplate);
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText);

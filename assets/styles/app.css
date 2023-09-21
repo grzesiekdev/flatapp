@@ -647,3 +647,8 @@ form[name="new_specialist_form"] input[type="checkbox"] {
     text-decoration: line-through;
     opacity: 0.8;
 }
+
+.todo-list {
+    max-height: 250px;
+    overflow-y: scroll;
+}

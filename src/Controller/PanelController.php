@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\Uid\Ulid;
 class PanelController extends AbstractController
 {
     #[Route('/panel', name: 'app_panel')]
-    public function index(Security $security, UserRepository $userRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Security $security, UserRepository $userRepository, SessionInterface $session): Response
     {
         $user = $security->getUser();
         $user = $userRepository->findOneBy(['email' => $user->getUserIdentifier()]);
@@ -32,19 +33,41 @@ class PanelController extends AbstractController
             'session' => $session,
         ]);
 
+        return $this->render('panel/index.html.twig', [
+            'tasks' => $tasks,
+            'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/panel/tasks/add-task', name: 'app_task_add')]
+    public function addTask(Security $security, UserRepository $userRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $security->getUser();
+        $user = $userRepository->findOneBy(['email' => $user->getUserIdentifier()]);
+
+        $tasks = $user->getTasks();
+        $responseData = array();
+
+        $task = new Task();
+        $form = $this->createForm(TasksFormType::class, $task, [
+            'session' => $session,
+        ]);
+
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
             $description = $form->get('description')->getData();
+            $position = $tasks->count() + 1;
+
             if ($description == '')
             {
                 $this->addFlash('error', 'Task cannot be empty');
-                return $this->redirectToRoute('app_panel');
+                $responseData[] = ['errors' => 'Task cannot be empty'];
             }
 
             $task->setIsDone(false);
             // set position to last
-            $task->setPosition($tasks->count() + 1);
+            $task->setPosition($position);
             $task->setDescription($description);
 
             $task->setUser($user);
@@ -53,13 +76,18 @@ class PanelController extends AbstractController
             $entityManager->persist($task);
             $entityManager->persist($user);
             $entityManager->flush();
+
+            $responseData = [
+                'id' => $task->getId(),
+                'description' => $description,
+                'position' => $position,
+            ];
         }
 
-        return $this->render('panel/index.html.twig', [
-            'tasks' => $tasks,
-            'form' => $form->createView()
-        ]);
+        return new JsonResponse($responseData);
     }
+
+
 
     #[Route('/panel/tasks/delete-task/{id}', name: 'app_task_delete')]
     public function deleteTask(int $id, Security $security, UserRepository $userRepository, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response

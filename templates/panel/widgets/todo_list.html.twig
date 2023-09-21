@@ -3,27 +3,32 @@
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">To Do List</h6>
         </div>
-        {{ form_start(form) }}
-        {% for flash_error in app.flashes('error') %}
-            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-        {% endfor %}
-        <div class="d-flex mb-2">
-            {{ form_widget(form.description) }}
-            <button type="submit" class="btn btn-primary ms-2">Add</button>
-        </div>
+        <form id="task-form" action="{{ path('app_task_add') }}" method="POST">
+            {% for flash_error in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+            {{ form_widget(form._token) }}
+            <div class="d-flex mb-2">
+                {{ form_widget(form.description) }}
+                <button type="submit" class="btn btn-primary ms-2">Add</button>
+            </div>
+        </form>
         {{ form_end(form) }}
-        <div class="todo-list" id="sortable">
+        <div class="todo-list h-100" id="sortable">
             {% for task in tasks %}
-            <div class="d-flex align-items-center border-bottom py-2 task {{ task.isDone ? 'crossed-out' : ''}}" id="task-{{ task.id }}" draggable="true">
-                <input class="form-check-input m-0" {{ task.isDone ? 'checked' : ''}} type="checkbox">
-                <div class="w-100 ms-3">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <span>{{ task.description }}</span>
-                        <button class="btn btn-sm delete-task" data-task-id="{{ task.id }}"><i class="fa fa-times"></i></button>
+                {% include '/panel/widgets/task_template.html.twig' %}
+            {% endfor %}
+            <div id="task-template" style="display: none;">
+                <div class="d-flex align-items-center border-bottom py-2 task" id="task-0" draggable="true">
+                    <input class="form-check-input m-0" type="checkbox">
+                    <div class="w-100 ms-3">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <span></span>
+                            <button class="btn btn-sm delete-task" data-task-id="0"><i class="fa fa-times"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
     </div>
 </div>
