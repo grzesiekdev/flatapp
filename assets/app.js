@@ -25,125 +25,20 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import {handle_fees} from "./js/fees";
 import {handle_floor_select} from "./js/floors";
+import {handle_tasks} from "./js/tasks";
 import Lightbox from "bs5-lightbox";
+import 'jquery-ui/themes/base/core.css';
+import 'jquery-ui/themes/base/theme.css';
+import 'jquery-ui/themes/base/selectable.css';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widgets/sortable';
 
 (function ($) {
     "use strict";
 
     handle_fees();
     handle_floor_select();
-
-    const sortable = document.getElementById('sortable');
-    let draggingTask = null;
-
-    if (null !== sortable)
-    {
-        sortable.addEventListener('dragstart', (e) => {
-            const task = e.target;
-            draggingTask = task;
-            task.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', task.id);
-        });
-
-        sortable.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const taskBeingHovered = e.target;
-
-            if (!taskBeingHovered.classList.contains('task')) return;
-
-            const rect = taskBeingHovered.getBoundingClientRect();
-            const midY = rect.top + rect.height / 2;
-
-            const isDraggingDown = e.clientY > midY;
-
-            if (draggingTask !== taskBeingHovered) {
-                if (isDraggingDown) {
-                    sortable.insertBefore(draggingTask, taskBeingHovered.nextSibling);
-                } else {
-                    sortable.insertBefore(draggingTask, taskBeingHovered);
-                }
-            }
-        });
-
-        sortable.addEventListener('dragend', (e) => {
-            const taskId = e.dataTransfer.getData('text/plain');
-            const task = document.getElementById(taskId);
-            task.classList.remove('dragging');
-            draggingTask = null;
-        });
-
-        document.addEventListener('dragstart', (e) => {
-            if (e.target.classList.contains('task')) {
-                e.target.classList.add('dragging');
-            }
-        });
-
-        document.addEventListener('dragend', (e) => {
-            const tasks = document.querySelectorAll('.task');
-            tasks.forEach((task) => {
-                task.classList.remove('dragging');
-            });
-        });
-    }
-
-    $('.todo-list').on('click', '.delete-task', function() {
-        let task = $(this).closest('.task'); // Use closest to find the parent .task element
-        let taskId = $(this).attr('data-task-id');
-        $.ajax({
-            url: '/panel/tasks/delete-task/'+taskId,
-            method: 'POST',
-            success: function(result) {
-                task.remove();
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-
-    $('.todo-list').on('change', '.form-check-input', function() {
-        let taskId = $(this).next('div').find('button').attr('data-task-id');
-        let check = $(this);
-        $.ajax({
-            url: '/panel/tasks/mark-as-done/' + taskId,
-            method: 'POST',
-            success: function(result) {
-                console.log("A");
-                if (check.prop('checked')) {
-                    check.closest('.task').addClass('crossed-out');
-                } else {
-                    check.closest('.task').removeClass('crossed-out');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-
-    $('#task-form').submit(function(e){
-        e.preventDefault();
-
-        $.ajax({
-            url: $(this).attr('action'),
-            method: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#tasks_form_description').val('');
-                // Create a new task template for the task
-                let taskTemplate = $.parseHTML($('#task-template').html());
-
-                $(taskTemplate).attr('id', 'task-' + response.id);
-                $(taskTemplate).find('span').text(response.description);
-                $(taskTemplate).find('.delete-task').attr('data-task-id', response.id);
-                $('#task-template').before(taskTemplate);
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
+    handle_tasks();
 
     document.querySelectorAll('.lightbox-toggle').forEach(el => el.addEventListener('click', Lightbox.initialize));
 

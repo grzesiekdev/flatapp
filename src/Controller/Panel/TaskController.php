@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Panel;
 
 use App\Entity\Task;
 use App\Form\User\TasksFormType;
@@ -9,36 +9,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Uid\Ulid;
 
-class PanelController extends AbstractController
+class TaskController extends AbstractController
 {
-    #[Route('/panel', name: 'app_panel')]
-    public function index(Security $security, UserRepository $userRepository, SessionInterface $session): Response
-    {
-        $user = $security->getUser();
-        $user = $userRepository->findOneBy(['email' => $user->getUserIdentifier()]);
-
-        $tasks = $user->getTasks();
-
-        $task = new Task();
-        $form = $this->createForm(TasksFormType::class, $task, [
-            'session' => $session,
-        ]);
-
-        return $this->render('panel/index.html.twig', [
-            'tasks' => $tasks,
-            'form' => $form->createView()
-        ]);
-    }
-
     #[Route('/panel/tasks/add-task', name: 'app_task_add')]
     public function addTask(Security $security, UserRepository $userRepository, SessionInterface $session, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -87,8 +65,6 @@ class PanelController extends AbstractController
         return new JsonResponse($responseData);
     }
 
-
-
     #[Route('/panel/tasks/delete-task/{id}', name: 'app_task_delete')]
     public function deleteTask(int $id, Security $security, UserRepository $userRepository, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
     {
@@ -126,5 +102,31 @@ class PanelController extends AbstractController
         $response->setStatusCode(200);
 
         return $response;
+    }
+
+    #[Route('/panel/tasks/update-task-order', name: 'app_task_update_task_order')]
+    public function updateTaskOrder(Request $request, EntityManagerInterface $entityManager, TaskRepository $taskRepository)
+    {
+        $jsonData = $request->getContent();
+        $requestData = json_decode($jsonData, true);
+        if (isset($requestData['newOrder'])) {
+            $newOrder = $requestData['newOrder'];
+
+            foreach ($newOrder as $taskData) {
+                $taskId = $taskData['id'];
+                $newPosition = $taskData['position'];
+
+                $task = $taskRepository->findOneBy(['id' => $taskId]);
+
+                if ($task) {
+                    $task->setPosition($newPosition);
+                    $entityManager->persist($task);
+                }
+            }
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Success']);
     }
 }
