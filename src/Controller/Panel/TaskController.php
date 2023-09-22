@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TaskController extends AbstractController
 {
@@ -66,7 +67,8 @@ class TaskController extends AbstractController
     }
 
     #[Route('/panel/tasks/delete-task/{id}', name: 'app_task_delete')]
-    public function deleteTask(int $id, Security $security, UserRepository $userRepository, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
+    #[IsGranted('delete', 'task', 'You don\'t have permissions to delete this task', 403)]
+    public function deleteTask(int $id, Security $security, UserRepository $userRepository, TaskRepository $taskRepository, EntityManagerInterface $entityManager, Task $task): Response
     {
         $user = $security->getUser();
         $user = $userRepository->findOneBy(['email' => $user->getUserIdentifier()]);
@@ -84,7 +86,8 @@ class TaskController extends AbstractController
     }
 
     #[Route('/panel/tasks/mark-as-done/{id}', name: 'app_task_mark_as_done')]
-    public function markAsDone(int $id, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
+    #[IsGranted('check', 'task', 'You don\'t have permissions to check this task', 403)]
+    public function markAsDone(int $id, TaskRepository $taskRepository, EntityManagerInterface $entityManager, Task $task): Response
     {
         $task = $taskRepository->findOneBy(['id' => $id]);
         if ($task->isIsDone())
