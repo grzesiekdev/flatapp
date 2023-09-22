@@ -72,7 +72,7 @@ function handle_tasks() {
     });
 
     $('.todo-list').on('change', '.form-check-input', function () {
-        let taskId = $(this).next('div').find('button').attr('data-task-id');
+        let taskId = $(this).next('div').find('a').attr('data-task-id');
         let check = $(this);
         $.ajax({
             url: '/panel/tasks/mark-as-done/' + taskId,

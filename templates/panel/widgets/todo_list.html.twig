@@ -3,7 +3,7 @@
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">To Do List</h6>
         </div>
-        <form id="task-form" action="{{ path('app_task_add') }}" method="POST">
+        <form id="task-form" action="{{ path('app_task_add') }}" name="task_form" method="POST">
             {% for flash_error in app.flashes('error') %}
                 <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
             {% endfor %}
@@ -24,7 +24,7 @@
                     <div class="w-100 ms-3">
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <span></span>
-                            <button class="btn btn-sm delete-task" data-task-id="0"><i class="fa fa-times"></i></button>
+                            <a class="btn btn-sm delete-task" data-task-id="0"><i class="fa fa-times"></i></a>
                         </div>
                     </div>
                 </div>

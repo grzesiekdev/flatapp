@@ -32,15 +32,6 @@ class NewFlatFormHandlerTest extends PantherTestCase
     // testing whole form for being filled with correct data
     public function testAddNewFlatFlow()
     {
-        // authenticating user
-        $crawler = $this->client->request('GET', '/login');
-        $this->client->waitForInvisibility('#spinner');
-
-        $crawler = $this->client->submitForm('Login', [
-            '_username' => 'test_env_user@test.pl',
-            '_password' => 'test12'
-        ]);
-
         // check if user was logged in correctly and have access to /panel/flats/new
         $crawler = $this->client->request('GET', '/panel/flats/new');
         $this->client->waitForInvisibility('#spinner');

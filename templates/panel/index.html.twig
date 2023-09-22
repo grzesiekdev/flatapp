@@ -14,8 +14,8 @@
                     <h4>Currently you are not assigned to any flat — you can enter invitation code in your profile</h4>
                 {% endif %}
                 {% include './panel/widgets/messages.html.twig' %}
-                {% include './panel/widgets/todo_list.html.twig' %}
                 {% include './panel/widgets/calendar.html.twig' %}
+                {% include './panel/widgets/todo_list.html.twig' %}
             </div>
         {% endif %}
         {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
