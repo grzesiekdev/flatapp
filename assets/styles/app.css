@@ -653,6 +653,10 @@ form[name="new_specialist_form"] input[type="checkbox"] {
     overflow-y: auto;
 }
 
+.tenant-todo-list {
+    max-height: 500px;
+}
+
 *::-webkit-scrollbar {
     width: 8px;
     background-color: black;

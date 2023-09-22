@@ -14,7 +14,7 @@
             </div>
         </form>
         {{ form_end(form) }}
-        <div class="todo-list h-100" id="sortable">
+        <div class="todo-list h-100 {{ app.user.roles[0] == 'ROLE_TENANT' ? 'tenant-todo-list' : '' }}" id="sortable">
             {% for task in tasks %}
                 {% include '/panel/widgets/task_template.html.twig' %}
             {% endfor %}
