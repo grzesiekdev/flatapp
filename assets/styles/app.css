@@ -650,5 +650,5 @@ form[name="new_specialist_form"] input[type="checkbox"] {
 
 .todo-list {
     max-height: 250px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
