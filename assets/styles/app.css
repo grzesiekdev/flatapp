@@ -684,3 +684,44 @@ body::-webkit-scrollbar-thumb,
 html::-webkit-scrollbar-thumb {
     display: none;
 }
+
+#chat-input-box {
+    border: #303030 1px solid;
+}
+
+.chat-window {
+    padding: 30px;
+    border: 1px solid #303030;
+    border-radius: 10px;
+    background-color: var(--secondary) !important;
+}
+
+.sender-message .card-header {
+    background: var(--secondary);
+    border: 1px solid var(--dark);
+}
+
+.sender-message .card-body {
+    background: var(--dark);
+}
+
+.sender-message .card {
+    border: none;
+    background: var(--secondary);
+    padding: 15px;
+}
+
+.receiver-message .card-header {
+    background: var(--dark);
+}
+
+.receiver-message .card-body {
+    background: var(--secondary);
+    border: 1px solid var(--dark);
+}
+
+.receiver-message .card {
+    border: none;
+    background: var(--secondary);
+    padding: 15px;
+}
