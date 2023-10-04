@@ -18,6 +18,15 @@ function handle_chat() {
                     conn.onopen = function(e) {
                         console.log("Connection established!");
                     };
+
+                    $('#chat-input-box').on('keydown', function(event) {
+                        if (event.keyCode === 13 && !event.shiftKey) {
+                            event.preventDefault();
+
+                            $('.send-message').click();
+                        }
+                    });
+
                     $('.send-message').on('click', function() {
                         const message = $('#chat-input-box').val();
                         const sender = data.userId;
@@ -28,6 +37,7 @@ function handle_chat() {
                                 message: message
                             };
                             conn.send(JSON.stringify(messageData));
+                            $('#chat-input-box').val('');
                         }
                     });
 
