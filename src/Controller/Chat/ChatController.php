@@ -50,46 +50,13 @@ class ChatController extends AbstractController
     }
 
     #[Route('/panel/chat/get-data', name: 'app_chat_authenticate')]
-    public function chatGetData(LandlordRepository $landlordRepository, TenantRepository $tenantRepository, Security $security): JsonResponse
+    public function chatGetData(): JsonResponse
     {
-        $user = $security->getUser();
-        $userEmail = $user->getUserIdentifier();
-        $related = array();
-        if (in_array('ROLE_LANDLORD', $user->getRoles())) {
-            $user = $landlordRepository->findOneBy(['email' => $userEmail]);
-
-            $flats = $user->getFlats()->toArray();
-            foreach ($flats as $flat)
-            {
-                foreach ($flat->getTenants()->toArray() as $tenant)
-                {
-                    $related[] = $tenant->getId();
-                }
-            }
-            $status = true;
-        }
-        elseif (in_array('ROLE_TENANT', $user->getRoles()))
-        {
-            $user = $tenantRepository->findOneBy(['email' => $userEmail]);
-            $flat = $user->getFlatId();
-
-            $related[] = $flat->getLandlord()->getId();
-            foreach ($flat->getTenants()->toArray() as $tenant)
-            {
-                if ($user !== $tenant) {
-                    $related[] = $tenant->getId();
-                }
-            }
-            $status = true;
-        }
-        else {
-            $status = false;
-        }
+        $date = new \DateTime('now');
+        $date = $date->modify('+ 2 hours')->format('d-m-Y H:i:s');
 
         $responseData = [
-            'userId' => $user->getId(),
-            'related' => $related,
-            'status' => $status
+            'date' => $date
         ];
 
         return new JsonResponse($responseData);
