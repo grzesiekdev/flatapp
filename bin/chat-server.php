@@ -3,7 +3,7 @@
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
-use App\Service\ChatInterface;
+use App\Service\Chat;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -11,7 +11,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
-            new ChatInterface()
+            new Chat()
         )
     ),
     8080

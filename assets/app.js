@@ -32,6 +32,7 @@ import 'jquery-ui/themes/base/theme.css';
 import 'jquery-ui/themes/base/selectable.css';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widgets/sortable';
+import {handle_chat} from "./js/chat";
 
 (function ($) {
     "use strict";
@@ -39,6 +40,7 @@ import 'jquery-ui/ui/widgets/sortable';
     handle_fees();
     handle_floor_select();
     handle_tasks();
+    handle_chat();
 
     document.querySelectorAll('.lightbox-toggle').forEach(el => el.addEventListener('click', Lightbox.initialize));
 

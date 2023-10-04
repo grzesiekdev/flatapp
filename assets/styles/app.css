@@ -725,3 +725,9 @@ html::-webkit-scrollbar-thumb {
     background: var(--secondary);
     padding: 15px;
 }
+
+.contact-list .card {
+    background: var(--secondary);
+    border: 1px solid #303030;
+    border-radius: 10px;
+}
