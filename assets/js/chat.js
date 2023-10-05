@@ -20,6 +20,18 @@ function createMessageTemplate(message, isSender) {
                     `;
 }
 
+function fetchMessages(receiverId, senderId) {
+    return new Promise(function(resolve, reject) {
+        $.ajax({
+            type: "GET",
+            url: "/panel/chat/get-conversation/" + receiverId,
+            contentType: "application/json",
+            success: resolve,
+            error: reject
+        });
+    });
+}
+
 function handle_chat() {
     if (window.location.pathname === '/panel/chat') {
         fetch('/panel/chat/get-data')
@@ -29,28 +41,44 @@ function handle_chat() {
                 let receiverId = chat.data('receiver-id');
                 const senderId = chat.data('sender-id');
 
-                    $.ajax({
-                        type: "GET",
-                        url: "/panel/chat/get-conversation/" + receiverId,
-                        contentType: "application/json",
-                        success: function(response) {
+                fetchMessages(receiverId, senderId)
+                    .then(function(response) {
+                        let messages = response;
+                        let messageContainer = $('.message-container');
+
+                        messages.forEach(function(message) {
+                            let isSender = message.senderId === senderId;
+                            let messageTemplate = createMessageTemplate(message, isSender);
+                            messageContainer.prepend(messageTemplate);
+                        });
+                        messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                    })
+                    .catch(function(error) {
+                        console.error("Error while getting messages:", error);
+                    });
+
+                $('.contact-list a').on('click', function(event) {
+                    event.preventDefault();
+                    receiverId = $(this).attr('id');
+                    chat.attr('data-receiver-id', receiverId);
+
+                    fetchMessages(receiverId, senderId)
+                        .then(function(response) {
                             let messages = response;
                             let messageContainer = $('.message-container');
 
+                            messageContainer.empty();
                             messages.forEach(function(message) {
                                 let isSender = message.senderId === senderId;
                                 let messageTemplate = createMessageTemplate(message, isSender);
                                 messageContainer.prepend(messageTemplate);
                             });
-                        },
-                        error: function(error) {
+                            messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                        })
+                        .catch(function(error) {
                             console.error("Error while getting messages:", error);
-                        }
-                    });
-                $('.contact-list a').on('click', function(event) {
-                    event.preventDefault(); // Prevent the default link behavior
-                    receiverId = $(this).attr('id');
-                    chat.attr('data-receiver-id', receiverId);
+                        });
+
                 });
                 const conn = new WebSocket(`ws://localhost:8080?receiverId=${receiverId}&senderId=${senderId}`);
                 conn.onopen = function(e) {
