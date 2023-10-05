@@ -34,14 +34,32 @@ function handle_chat() {
                             message: message,
                             date: data.date
                         };
-                        conn.send(JSON.stringify(messageData));
+
                         $('#chat-input-box').val('');
+                        $.ajax({
+                            type: "POST",
+                            url: "/panel/chat/save-into-db",
+                            data: JSON.stringify(messageData),
+                            contentType: "application/json",
+                            success: function(response) {
+                                console.log("Message saving status:", response);
+                                if (response.status  === "success") {
+                                    messageData.status = "success";
+                                    conn.send(JSON.stringify(messageData));
+                                }
+                            },
+                            error: function(error) {
+                                console.error("Error saving message:", error);
+                            }
+                        });
                     }
                 });
 
                 conn.onmessage = function(e) {
                     const receivedData = JSON.parse(e.data);
-                    console.log('Received message:', receivedData);
+                    if (receivedData.status === "success") {
+                        console.log('Received message:', receivedData);
+                    }
                 };
             })
             .catch(error => {

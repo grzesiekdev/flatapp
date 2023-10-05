@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-7 col-xl-7 chat-window" data-receiver-id="{{ related[0] ? related[0].id : ''}}" data-sender-id="{{ app.user.id }}">
+        <div class="col-lg-7 col-xl-7 chat-window" data-receiver-id="{{ related|first ? related[0].id : ''}}" data-sender-id="{{ app.user.id }}">
             <ul class="list-unstyled">
                 <li class="d-flex justify-content-between mb-4 receiver-message">
                     <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"

@@ -1,48 +1,39 @@
 <?php
 
 namespace App\Controller\Chat;
+use App\Entity\Message;
 use App\Repository\LandlordRepository;
 use App\Repository\TenantRepository;
+use App\Repository\UserRepository;
+use App\Service\ChatHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ChatController extends AbstractController
 {
-    #[Route('/panel/chat', name: 'app_chat')]
-    public function chat(LandlordRepository $landlordRepository, TenantRepository $tenantRepository, Security $security): Response
+    public LandlordRepository $landlordRepository;
+    public TenantRepository $tenantRepository;
+    public UserRepository $userRepository;
+    public EntityManagerInterface $entityManager;
+
+    public function __construct(LandlordRepository $landlordRepository, TenantRepository $tenantRepository, UserRepository $userRepository, EntityManagerInterface $entityManager)
     {
-        $user = $security->getUser();
-        $userEmail = $user->getUserIdentifier();
-        $related = array();
+        $this->tenantRepository = $tenantRepository;
+        $this->landlordRepository = $landlordRepository;
+        $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
+    }
 
-        if (in_array('ROLE_LANDLORD', $user->getRoles())) {
-            $user = $landlordRepository->findOneBy(['email' => $userEmail]);
-
-            $flats = $user->getFlats()->toArray();
-            foreach ($flats as $flat)
-            {
-                foreach ($flat->getTenants()->toArray() as $tenant)
-                {
-                    $related[] = $tenant;
-                }
-            }
-        }
-        elseif (in_array('ROLE_TENANT', $user->getRoles()))
-        {
-            $user = $tenantRepository->findOneBy(['email' => $userEmail]);
-            $flat = $user->getFlatId();
-
-            $related[] = $flat->getLandlord();
-            foreach ($flat->getTenants()->toArray() as $tenant)
-            {
-                if ($user !== $tenant) {
-                    $related[] = $tenant;
-                }
-            }
-        }
+    #[Route('/panel/chat', name: 'app_chat')]
+    public function chat(ChatHelper $chatHelper): Response
+    {
+        $related = $chatHelper->getRelatedUsersOfSender();
 
         return $this->render('panel/chat/chat.html.twig', [
             'related' => $related
@@ -60,5 +51,43 @@ class ChatController extends AbstractController
         ];
 
         return new JsonResponse($responseData);
+    }
+    #[Route('/panel/chat/save-into-db', name: 'app_chat_save_into_db')]
+    public function saveMessageIntoDatabase(Request $request, ChatHelper $chatHelper, Security $security) : JsonResponse
+    {
+        $loggedInUser = $security->getUser();
+        $jsonContent = $request->getContent();
+
+        $data = json_decode($jsonContent, true);
+        $receiverId = $data['receiver'];
+        $senderId = $data['sender'];
+        $content = $data['message'];
+        $date = new \DateTime($data['date']);
+
+        $receiver = $this->userRepository->findOneBy(['id' => $receiverId]);
+        $sender = $this->userRepository->findOneBy(['id' => $senderId]);
+
+        $related = $chatHelper->getRelatedUsersOfSender();
+        if (in_array($receiver, $related) && $sender === $loggedInUser)
+        {
+            $message = new Message();
+            $message->setMessage($content);
+            $message->setDate($date);
+            $message->setReceiver($receiver);
+            $message->setSender($sender);
+
+            $sender->addSentMessage($message);
+            $receiver->addReceivedMessage($message);
+
+            $this->entityManager->persist($message);
+            $this->entityManager->persist($receiver);
+            $this->entityManager->persist($sender);
+            $this->entityManager->flush();
+
+            return new JsonResponse(['status' => 'success'], 200);
+        }
+        else {
+            return new JsonResponse(['status' => 'error', 'message' => 'Failed to save the message.'], 403);
+        }
     }
 }
