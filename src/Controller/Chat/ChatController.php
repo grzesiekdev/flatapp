@@ -21,13 +21,15 @@ class ChatController extends AbstractController
     public TenantRepository $tenantRepository;
     public UserRepository $userRepository;
     public EntityManagerInterface $entityManager;
+    public Security $security;
 
-    public function __construct(LandlordRepository $landlordRepository, TenantRepository $tenantRepository, UserRepository $userRepository, EntityManagerInterface $entityManager)
+    public function __construct(LandlordRepository $landlordRepository, TenantRepository $tenantRepository, UserRepository $userRepository, EntityManagerInterface $entityManager, Security $security)
     {
         $this->tenantRepository = $tenantRepository;
         $this->landlordRepository = $landlordRepository;
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     #[Route('/panel/chat', name: 'app_chat')]
@@ -88,6 +90,44 @@ class ChatController extends AbstractController
         }
         else {
             return new JsonResponse(['status' => 'error', 'message' => 'Failed to save the message.'], 403);
+        }
+    }
+
+    #[Route('/panel/chat/get-conversation/{receiverId}', name: 'app_chat_get_conversation')]
+    public function getConversation(int $receiverId, ChatHelper $chatHelper): JsonResponse
+    {
+        $loggedInUserEmail = $this->security->getUser()->getUserIdentifier();
+        $sender = $this->userRepository->findOneBy(['email' => $loggedInUserEmail]);
+        $receiver = $this->userRepository->findOneBy(['id' => $receiverId]);
+
+        $related = $chatHelper->getRelatedUsersOfSender();
+        if(in_array($receiver, $related))
+        {
+            $conversations = array();
+            $responseData = array();
+
+            $userMessages = $chatHelper->getUserMessages($sender, $receiver);
+            $sortedMessages = $chatHelper->sortMessagesByDate($userMessages);
+            $sortedMessages = array_reverse($sortedMessages);
+            $conversations[$receiver->getId()] = $sortedMessages;
+
+
+            foreach ($conversations[$receiver->getId()] as $message)
+            {
+                $data = [
+                    'message' => $message->getMessage(),
+                    'date' => $message->getDate()->format('d-m-Y H:i:s'),
+                    'sender' => $message->getSender()->getName(),
+                    'senderId' => $message->getSender()->getId(),
+                    'profilePicture' => $message->getSender()->getImage()
+                ];
+                $responseData[] = $data;
+            }
+
+            return new JsonResponse(json_encode($responseData), 200, [], true);
+        }
+        else {
+            return new JsonResponse('failure', 500);
         }
     }
 }

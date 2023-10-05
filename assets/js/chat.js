@@ -1,4 +1,24 @@
-import Cookies from 'js-cookie';
+function createMessageTemplate(message, isSender) {
+    let messageType = isSender ? 'sender' : 'receiver';
+
+    return `
+                        <li class="d-flex justify-content-between mb-4 ${messageType}-message">
+                            ${isSender ? '' : `<img src="/uploads/profile_pictures/${message.profilePicture}" alt="avatar" class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60" height="60">`}
+                            <div class="card ${isSender ? 'w-100' : ''}">
+                                <div class="card-header d-flex justify-content-between">
+                                    <p class="fw-bold mb-0">${message.sender}</p>
+                                    <p class="text-muted small mb-0"><i class="far fa-clock"></i> ${message.date}</p>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-0">
+                                        ${message.message}
+                                    </p>
+                                </div>
+                            </div>
+                            ${isSender ? `<img src="/uploads/profile_pictures/${message.profilePicture}" alt="avatar" class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60" height="60">` : ''}
+                        </li>
+                    `;
+}
 
 function handle_chat() {
     if (window.location.pathname === '/panel/chat') {
@@ -8,6 +28,25 @@ function handle_chat() {
                 const chat = $('.chat-window');
                 let receiverId = chat.data('receiver-id');
                 const senderId = chat.data('sender-id');
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/panel/chat/get-conversation/" + receiverId,
+                        contentType: "application/json",
+                        success: function(response) {
+                            let messages = response;
+                            let messageContainer = $('.message-container');
+
+                            messages.forEach(function(message) {
+                                let isSender = message.senderId === senderId;
+                                let messageTemplate = createMessageTemplate(message, isSender);
+                                messageContainer.prepend(messageTemplate);
+                            });
+                        },
+                        error: function(error) {
+                            console.error("Error while getting messages:", error);
+                        }
+                    });
                 $('.contact-list a').on('click', function(event) {
                     event.preventDefault(); // Prevent the default link behavior
                     receiverId = $(this).attr('id');

@@ -67,4 +67,24 @@ class ChatHelper
         return $related;
     }
 
+    function getUserMessages($sender, $receiver) {
+        $userSent = $sender->getSentMessages()->filter(function ($message) use ($receiver) {
+            return $message->getReceiver() == $receiver;
+        })->toArray();
+
+        $userReceived = $sender->getReceivedMessages()->filter(function ($message) use ($receiver) {
+            return $message->getSender() == $receiver;
+        })->toArray();
+
+        return array_merge($userSent, $userReceived);
+    }
+
+    function sortMessagesByDate($messages) {
+        usort($messages, function ($a, $b) {
+            return $a->getDate() <=> $b->getDate();
+        });
+
+        return $messages;
+    }
+
 }
