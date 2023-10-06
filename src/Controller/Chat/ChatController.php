@@ -42,18 +42,6 @@ class ChatController extends AbstractController
         ]);
     }
 
-    #[Route('/panel/chat/get-data', name: 'app_chat_authenticate')]
-    public function chatGetData(): JsonResponse
-    {
-        $date = new \DateTime('now');
-        $date = $date->modify('+ 2 hours')->format('d-m-Y H:i:s');
-
-        $responseData = [
-            'date' => $date
-        ];
-
-        return new JsonResponse($responseData);
-    }
     #[Route('/panel/chat/save-into-db', name: 'app_chat_save_into_db')]
     public function saveMessageIntoDatabase(Request $request, ChatHelper $chatHelper, Security $security) : JsonResponse
     {
@@ -64,7 +52,8 @@ class ChatController extends AbstractController
         $receiverId = $data['receiver'];
         $senderId = $data['sender'];
         $content = $data['message'];
-        $date = new \DateTime($data['date']);
+        $date = new \DateTime('now');
+        $date = $date->modify('+ 2 hours');
 
         $receiver = $this->userRepository->findOneBy(['id' => $receiverId]);
         $sender = $this->userRepository->findOneBy(['id' => $senderId]);
@@ -86,7 +75,8 @@ class ChatController extends AbstractController
             $this->entityManager->persist($sender);
             $this->entityManager->flush();
 
-            return new JsonResponse(['status' => 'success'], 200);
+            $date = $date->format('d-m-Y H:i:s');
+            return new JsonResponse(['status' => 'success', 'date' => $date], 200);
         }
         else {
             return new JsonResponse(['status' => 'error', 'message' => 'Failed to save the message.'], 403);
