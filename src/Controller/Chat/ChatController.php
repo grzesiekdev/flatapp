@@ -117,7 +117,7 @@ class ChatController extends AbstractController
                 $data = [
                     'message' => $message->getMessage(),
                     'date' => $message->getDate()->format('d-m-Y H:i:s'),
-                    'sender' => $message->getSender()->getName(),
+                    'senderName' => $message->getSender()->getName(),
                     'senderId' => $message->getSender()->getId(),
                     'profilePicture' => $message->getSender()->getImage()
                 ];

@@ -742,3 +742,7 @@ html::-webkit-scrollbar-thumb {
 .message-container .receiver-message .card {
     min-width: 90%;
 }
+
+.contact-list .active {
+    background: #202124;
+}
