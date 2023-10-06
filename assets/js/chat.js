@@ -55,10 +55,12 @@ function handle_chat() {
         $('.contact-list li.p-2').each(function() {
             let receiverId = $(this).find('a').attr('id');
             let lastMessageElement = $(this).find('.last-message');
+            let lastMessageTimeElement = $(this).find('.last-message-time');
 
             fetchLastMessages(receiverId)
             .then(function(response){
                 lastMessageElement.text(response.lastMessage);
+                lastMessageTimeElement.text(response.time);
             })
             .catch(function(error) {
                 console.error("Error while getting messages:", error);

@@ -7,6 +7,7 @@ use App\Entity\User\User;
 use App\Repository\LandlordRepository;
 use App\Repository\TenantRepository;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -110,4 +111,27 @@ class ChatHelper
         }
     }
 
+    function timeElapsedString($datetime) : string {
+        $now = new DateTime;
+        $now = $now->modify('+ 2 hours');
+        $ago = new DateTime($datetime);
+        $diff = $now->diff($ago);
+
+        if ($diff->y > 0) {
+            return $diff->y . ' year' . ($diff->y > 1 ? 's' : '') . ' ago';
+        }
+        if ($diff->m > 0) {
+            return $diff->m . ' month' . ($diff->m > 1 ? 's' : '') . ' ago';
+        }
+        if ($diff->d > 0) {
+            return $diff->d . ' day' . ($diff->d > 1 ? 's' : '') . ' ago';
+        }
+        if ($diff->h > 0) {
+            return $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') . ' ago';
+        }
+        if ($diff->i > 0) {
+            return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '') . ' ago';
+        }
+        return 'just now';
+    }
 }

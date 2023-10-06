@@ -112,12 +112,14 @@ class ChatController extends AbstractController
         $conversation = $conversations[$receiverId];
 
         $lastMessage = array_shift($conversation);
+        $time = '';
 
         if (!is_null($lastMessage))
         {
+            $time = $chatHelper->timeElapsedString($lastMessage->getDate()->format('Y-m-d H:i:s'));
             $lastMessage = $lastMessage->getMessage();
         }
 
-        return new JsonResponse(['lastMessage' => $lastMessage], 200);
+        return new JsonResponse(['lastMessage' => $lastMessage, 'time' => $time], 200);
     }
 }
