@@ -18,11 +18,23 @@ function createMessageTemplate(message, isSender) {
                     `;
 }
 
-function fetchMessages(receiverId, senderId) {
+function fetchMessages(receiverId) {
     return new Promise(function(resolve, reject) {
         $.ajax({
             type: "GET",
             url: "/panel/chat/get-conversation/" + receiverId,
+            contentType: "application/json",
+            success: resolve,
+            error: reject
+        });
+    });
+}
+
+function fetchLastMessages(receiverId) {
+    return new Promise(function(resolve, reject) {
+        $.ajax({
+            type: "GET",
+            url: `/panel/chat/get-last-message/${receiverId}`,
             contentType: "application/json",
             success: resolve,
             error: reject
@@ -40,11 +52,25 @@ function handle_chat() {
         let messageContainer = $('.message-container');
         const firstContact = $('.contact-list li:first');
 
+        $('.contact-list li.p-2').each(function() {
+            let receiverId = $(this).find('a').attr('id');
+            let lastMessageElement = $(this).find('.last-message');
+
+            fetchLastMessages(receiverId)
+            .then(function(response){
+                lastMessageElement.text(response.lastMessage);
+            })
+            .catch(function(error) {
+                console.error("Error while getting messages:", error);
+            });
+        });
+
+
         const senderProfilePicture = $('.profile-picture-nav').attr('src');
         let receiverProfilePicture = firstContact.find('img').attr('src');
         firstContact.addClass('active');
 
-        fetchMessages(receiverId, senderId)
+        fetchMessages(receiverId)
             .then(function(response) {
                 response.forEach(function(message) {
                     let isSender = message.senderId === senderId;
@@ -67,7 +93,7 @@ function handle_chat() {
             $(this).parent().addClass('active');
             chat.attr('data-receiver-id', receiverId);
 
-            fetchMessages(receiverId, senderId)
+            fetchMessages(receiverId)
                 .then(function(response) {
                     let messages = response;
                     let messageContainer = $('.message-container');

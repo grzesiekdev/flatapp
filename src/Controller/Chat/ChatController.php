@@ -86,24 +86,9 @@ class ChatController extends AbstractController
     #[Route('/panel/chat/get-conversation/{receiverId}', name: 'app_chat_get_conversation')]
     public function getConversation(int $receiverId, ChatHelper $chatHelper): JsonResponse
     {
-        $loggedInUserEmail = $this->security->getUser()->getUserIdentifier();
-        $sender = $this->userRepository->findOneBy(['email' => $loggedInUserEmail]);
-        $receiver = $this->userRepository->findOneBy(['id' => $receiverId]);
-
-        $related = $chatHelper->getRelatedUsersOfSender();
-        if(in_array($receiver, $related))
-        {
-            $conversations = array();
-            $responseData = array();
-
-            $userMessages = $chatHelper->getUserMessages($sender, $receiver);
-            $sortedMessages = $chatHelper->sortMessagesByDate($userMessages);
-            $sortedMessages = array_reverse($sortedMessages);
-            $conversations[$receiver->getId()] = $sortedMessages;
-
-
-            foreach ($conversations[$receiver->getId()] as $message)
-            {
+        $conversations = $chatHelper->getConversations($receiverId);
+        if($conversations !== 500) {
+            foreach ($conversations[$receiverId] as $message) {
                 $data = [
                     'message' => $message->getMessage(),
                     'date' => $message->getDate()->format('d-m-Y H:i:s'),
@@ -113,11 +98,26 @@ class ChatController extends AbstractController
                 ];
                 $responseData[] = $data;
             }
-
             return new JsonResponse(json_encode($responseData), 200, [], true);
         }
         else {
             return new JsonResponse('failure', 500);
         }
+    }
+
+    #[Route('/panel/chat/get-last-message/{receiverId}', name: 'app_chat_get_last_messages')]
+    public function getLastMessages(int $receiverId, ChatHelper $chatHelper) : JsonResponse
+    {
+        $conversations = $chatHelper->getConversations($receiverId);
+        $conversation = $conversations[$receiverId];
+
+        $lastMessage = array_shift($conversation);
+
+        if (!is_null($lastMessage))
+        {
+            $lastMessage = $lastMessage->getMessage();
+        }
+
+        return new JsonResponse(['lastMessage' => $lastMessage], 200);
     }
 }

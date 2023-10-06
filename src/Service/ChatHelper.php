@@ -80,11 +80,34 @@ class ChatHelper
     }
 
     function sortMessagesByDate($messages) {
-        usort($messages, function ($a, $b) {
-            return $a->getDate() <=> $b->getDate();
-        });
-
+        if (!empty($messages))
+        {
+            usort($messages, function ($a, $b) {
+                return $a->getDate() <=> $b->getDate();
+            });
+        }
         return $messages;
+    }
+
+    function getConversations(int $receiverId)
+    {
+        $loggedInUserEmail = $this->security->getUser()->getUserIdentifier();
+        $sender = $this->userRepository->findOneBy(['email' => $loggedInUserEmail]);
+        $receiver = $this->userRepository->findOneBy(['id' => $receiverId]);
+
+        $related = $this->getRelatedUsersOfSender();
+        if (in_array($receiver, $related)) {
+            $conversations = array();
+
+            $userMessages = $this->getUserMessages($sender, $receiver);
+            $sortedMessages = $this->sortMessagesByDate($userMessages);
+            $sortedMessages = array_reverse($sortedMessages);
+            $conversations[$receiver->getId()] = $sortedMessages;
+
+            return $conversations;
+        } else {
+            return 500;
+        }
     }
 
 }
