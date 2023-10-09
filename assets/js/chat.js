@@ -1,3 +1,39 @@
+function updateTimestamps() {
+    $('.last-message-time').each(function() {
+        const $this = $(this);
+        const timestampText = $this.text().trim();
+
+        if (timestampText === 'just now') {
+            let elapsedMinutes = 1;
+
+            const updateInterval = setInterval(function() {
+                elapsedMinutes++;
+                if (elapsedMinutes === 1) {
+                    $this.text('1 minute ago');
+                } else {
+                    $this.text(elapsedMinutes + ' minutes ago');
+                }
+            }, 60000);
+
+            $this.data('update-interval', updateInterval);
+        } else if (timestampText.includes('minute')) {
+            const minutesAgo = parseInt(timestampText);
+            const newTimestamp = (minutesAgo + 1) + ' minutes ago';
+            $this.text(newTimestamp);
+        } else if (timestampText.includes('hour')) {
+            const hoursAgo = parseInt(timestampText);
+            const newTimestamp = (hoursAgo + 1) + ' hours ago';
+            $this.text(newTimestamp);
+        }
+    });
+}
+
+// Call the updateTimestamps function initially
+updateTimestamps();
+
+// Call the updateTimestamps function periodically (e.g., every minute)
+setInterval(updateTimestamps, 60000); // 60000 milliseconds = 1 minute
+
 function createMessageTemplate(message, isSender) {
     let messageType = isSender ? 'sender' : 'receiver';
     return `
@@ -42,6 +78,19 @@ function fetchLastMessages(receiverId) {
     });
 }
 
+let newMessagesCounter = {};
+
+function updateBadge(chatId) {
+    const badge =$(`.contact-list a#${chatId} .new-messages-counter`);
+    const count = newMessagesCounter[chatId] || 0;
+
+    if (count > 0) {
+        badge.text(count).show();
+    } else {
+        badge.text(count).hide();
+    }
+}
+
 function handle_chat() {
     if (window.location.pathname === '/panel/chat') {
         const chat = $('.chat-window');
@@ -59,7 +108,7 @@ function handle_chat() {
 
             fetchLastMessages(receiverId)
             .then(function(response){
-                lastMessageElement.text(response.lastMessage);
+                lastMessageElement.text(response.sender + ": " + response.lastMessage);
                 lastMessageTimeElement.text(response.time);
             })
             .catch(function(error) {
@@ -94,6 +143,8 @@ function handle_chat() {
             $('.active').removeClass('active');
             $(this).parent().addClass('active');
             chat.attr('data-receiver-id', receiverId);
+            newMessagesCounter[receiverId] = 0;
+            updateBadge(receiverId);
 
             fetchMessages(receiverId)
                 .then(function(response) {
@@ -153,6 +204,10 @@ function handle_chat() {
                             messageContainer.append(messageTemplate);
                             messageContainer.scrollTop(messageContainer[0].scrollHeight);
                             conn.send(JSON.stringify(messageData));
+                            let lastMessageElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message');
+                            let lastMessageTimeElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message-time');
+                            lastMessageElement.text(messageData.senderName + ": " + messageData.message);
+                            lastMessageTimeElement.text('just now');
                         }
                     },
                     error: function(error) {
@@ -169,6 +224,18 @@ function handle_chat() {
                 let messageTemplate = createMessageTemplate(receivedData, false);
                 messageContainer.append(messageTemplate);
                 messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                let lastMessageElement = $(`.contact-list a#${receivedData.sender}`).find('.last-message');
+                lastMessageElement.text(receivedData.senderName + ": " + receivedData.message);
+                let lastMessageTimeElement = $(`.contact-list a#${receivedData.sender}`).find('.last-message-time');
+                lastMessageTimeElement.text('just now');
+
+                if (!newMessagesCounter[receivedData.sender]) {
+                    newMessagesCounter[receivedData.sender] = 1;
+                } else {
+                    newMessagesCounter[receivedData.sender]++;
+                }
+
+                updateBadge(receivedData.sender);
             }
         };
     }
