@@ -59,7 +59,7 @@ class ChatController extends AbstractController
         $sender = $this->userRepository->findOneBy(['id' => $senderId]);
 
         $related = $chatHelper->getRelatedUsersOfSender();
-        if (in_array($receiver, $related) && $sender === $loggedInUser && !empty($content))
+        if (in_array($receiver, $related) && $sender === $loggedInUser && !empty($content) && strlen($content) <= 20000)
         {
             $message = new Message();
             $message->setMessage($content);

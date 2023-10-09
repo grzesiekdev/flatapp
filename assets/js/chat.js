@@ -192,7 +192,7 @@ function handle_chat() {
 
         $('.send-message').on('click', function() {
             const message = $('#chat-input-box').val();
-            if (message !== '') {
+            if (message !== '' && message.length <= 20000) {
                 if (conn.readyState === WebSocket.OPEN) {
                     const messageData = {
                         sender: senderId,
