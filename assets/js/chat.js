@@ -1,3 +1,15 @@
+function cropText() {
+    $('.last-message').each(function() {
+        const $this = $(this);
+        const text = $this.text().trim();
+
+        if (text.length > 50) {
+            const croppedText = text.substring(0, 50) + '...';
+            $this.text(croppedText);
+        }
+    });
+}
+
 function updateTimestamps() {
     $('.last-message-time').each(function() {
         const $this = $(this);
@@ -37,21 +49,21 @@ setInterval(updateTimestamps, 60000); // 60000 milliseconds = 1 minute
 function createMessageTemplate(message, isSender) {
     let messageType = isSender ? 'sender' : 'receiver';
     return `
-                        <li class="d-flex justify-content-between mb-4 ${messageType}-message">
-                            <img src="${message.profilePicture}" alt="avatar" class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60" height="60">
-                            <div class="card ${isSender ? 'w-100' : ''}">
-                                <div class="card-header d-flex justify-content-between">
-                                    <p class="fw-bold mb-0">${message.senderName}</p>
-                                    <p class="text-muted small mb-0"><i class="far fa-clock"></i> ${message.date}</p>
-                                </div>
-                                <div class="card-body">
-                                    <p class="mb-0">
-                                        ${message.message}
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                    `;
+        <li class="d-flex justify-content-between mb-4 ${messageType}-message">
+            <img src="${message.profilePicture}" alt="avatar" class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60" height="60">
+            <div class="card ${isSender ? 'w-100' : ''}">
+                <div class="card-header d-flex justify-content-between">
+                    <p class="fw-bold mb-0">${message.senderName}</p>
+                    <p class="text-muted small mb-0"><i class="far fa-clock"></i> ${message.date}</p>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        ${message.message}
+                    </p>
+                </div>
+            </div>
+        </li>
+    `;
 }
 
 function fetchMessages(receiverId) {
@@ -130,6 +142,7 @@ function handle_chat() {
                     messageContainer.prepend(messageTemplate);
                 });
                 messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                cropText();
             })
             .catch(function(error) {
                 console.error("Error while getting messages:", error);
@@ -208,6 +221,7 @@ function handle_chat() {
                             let lastMessageTimeElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message-time');
                             lastMessageElement.text(messageData.senderName + ": " + messageData.message);
                             lastMessageTimeElement.text('just now');
+                            cropText();
                         }
                     },
                     error: function(error) {
@@ -228,7 +242,7 @@ function handle_chat() {
                 lastMessageElement.text(receivedData.senderName + ": " + receivedData.message);
                 let lastMessageTimeElement = $(`.contact-list a#${receivedData.sender}`).find('.last-message-time');
                 lastMessageTimeElement.text('just now');
-
+                cropText();
                 if (!newMessagesCounter[receivedData.sender]) {
                     newMessagesCounter[receivedData.sender] = 1;
                 } else {
