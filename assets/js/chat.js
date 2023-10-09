@@ -192,42 +192,44 @@ function handle_chat() {
 
         $('.send-message').on('click', function() {
             const message = $('#chat-input-box').val();
-            if (conn.readyState === WebSocket.OPEN) {
-                const messageData = {
-                    sender: senderId,
-                    receiver: receiverId,
-                    message: message,
-                    senderName: senderName,
-                    receiverName: receiverName,
-                    profilePicture: senderProfilePicture,
-                };
+            if (message !== '') {
+                if (conn.readyState === WebSocket.OPEN) {
+                    const messageData = {
+                        sender: senderId,
+                        receiver: receiverId,
+                        message: message,
+                        senderName: senderName,
+                        receiverName: receiverName,
+                        profilePicture: senderProfilePicture,
+                    };
 
-                $('#chat-input-box').val('');
-                $.ajax({
-                    type: "POST",
-                    url: "/panel/chat/save-into-db",
-                    data: JSON.stringify(messageData),
-                    contentType: "application/json",
-                    success: function(response) {
-                        console.log("Message saving status:", response);
-                        if (response.status  === "success") {
-                            messageData.status = "success";
-                            messageData.date = response.date;
-                            let messageTemplate = createMessageTemplate(messageData, true);
-                            messageContainer.append(messageTemplate);
-                            messageContainer.scrollTop(messageContainer[0].scrollHeight);
-                            conn.send(JSON.stringify(messageData));
-                            let lastMessageElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message');
-                            let lastMessageTimeElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message-time');
-                            lastMessageElement.text(messageData.senderName + ": " + messageData.message);
-                            lastMessageTimeElement.text('just now');
-                            cropText();
+                    $('#chat-input-box').val('');
+                    $.ajax({
+                        type: "POST",
+                        url: "/panel/chat/save-into-db",
+                        data: JSON.stringify(messageData),
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log("Message saving status:", response);
+                            if (response.status === "success") {
+                                messageData.status = "success";
+                                messageData.date = response.date;
+                                let messageTemplate = createMessageTemplate(messageData, true);
+                                messageContainer.append(messageTemplate);
+                                messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                                conn.send(JSON.stringify(messageData));
+                                let lastMessageElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message');
+                                let lastMessageTimeElement = $(`.contact-list a#${messageData.receiver}`).find('.last-message-time');
+                                lastMessageElement.text(messageData.senderName + ": " + messageData.message);
+                                lastMessageTimeElement.text('just now');
+                                cropText();
+                            }
+                        },
+                        error: function (error) {
+                            console.error("Error saving message:", error);
                         }
-                    },
-                    error: function(error) {
-                        console.error("Error saving message:", error);
-                    }
-                });
+                    });
+                }
             }
         });
 
