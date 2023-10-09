@@ -112,7 +112,7 @@ function handle_chat() {
         let receiverName = chat.data('receiver-name');
         let messageContainer = $('.message-container');
         const firstContact = $('.contact-list li:first');
-
+        $('#chat-input-box').focus();
         $('.contact-list li.p-2').each(function() {
             let receiverId = $(this).find('a').attr('id');
             let lastMessageElement = $(this).find('.last-message');
@@ -158,7 +158,6 @@ function handle_chat() {
             chat.attr('data-receiver-id', receiverId);
             newMessagesCounter[receiverId] = 0;
             updateBadge(receiverId);
-
             fetchMessages(receiverId)
                 .then(function(response) {
                     let messages = response;
@@ -172,6 +171,7 @@ function handle_chat() {
                         messageContainer.prepend(messageTemplate);
                     });
                     messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                    $('#chat-input-box').focus();
                 })
                 .catch(function(error) {
                     console.error("Error while getting messages:", error);
@@ -236,8 +236,12 @@ function handle_chat() {
             if (receivedData.status === "success") {
                 console.log('Received message:', receivedData);
                 let messageTemplate = createMessageTemplate(receivedData, false);
-                messageContainer.append(messageTemplate);
-                messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                console.log("Not yet!", receivedData.sender, receiverId);
+                if (receivedData.sender == receiverId) {
+                    console.log("MESSAGE!", receivedData.sender, receiverId);
+                    messageContainer.append(messageTemplate);
+                    messageContainer.scrollTop(messageContainer[0].scrollHeight);
+                }
                 let lastMessageElement = $(`.contact-list a#${receivedData.sender}`).find('.last-message');
                 lastMessageElement.text(receivedData.senderName + ": " + receivedData.message);
                 let lastMessageTimeElement = $(`.contact-list a#${receivedData.sender}`).find('.last-message-time');
