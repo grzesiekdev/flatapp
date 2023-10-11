@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  network:
+    driver: bridge
+
 services:
   database:
     container_name: database
@@ -13,6 +17,8 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql:/var/lib/mysql
+    networks:
+      - network
   php:
     container_name: php
     tty: true
@@ -24,6 +30,8 @@ services:
       - ./:/var/www/docker
     depends_on:
       - database
+    networks:
+      - network
   nginx:
     container_name: nginx
     image: nginx
@@ -36,3 +44,17 @@ services:
     depends_on:
       - php
       - database
+      - chat-server
+    networks:
+      - network
+  chat-server:
+    image: php:8.2-fpm
+    command: php bin/chat-server.php
+    ports:
+      - '8282:8282'
+    networks:
+      - network
+    volumes:
+      - ./:/var/www/docker
+    build:
+      context: ./php
