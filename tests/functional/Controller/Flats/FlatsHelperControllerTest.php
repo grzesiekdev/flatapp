@@ -124,7 +124,7 @@ class FlatsHelperControllerTest extends WebTestCase
     public function testDeleteTenantFromFlat(): void
     {
         $user = new Tenant();
-        $user->setEmail('test_env_tenant@test.pl');
+        $user->setEmail('test_env_tenant_2@test.pl');
         $user->setName('Test tenant');
         $user->setPassword(
             $this->userPasswordHasher->hashPassword(
@@ -153,7 +153,7 @@ class FlatsHelperControllerTest extends WebTestCase
     public function testDeleteTenantFromFlatWithCrawler(): void
     {
         $user = new Tenant();
-        $user->setEmail('test_env_tenant@test.pl');
+        $user->setEmail('test_env_tenant_2@test.pl');
         $user->setName('Test tenant');
         $user->setPassword(
             $this->userPasswordHasher->hashPassword(

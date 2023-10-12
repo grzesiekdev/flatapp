@@ -32,6 +32,17 @@ class NewFlatFormHandlerTest extends PantherTestCase
     // testing whole form for being filled with correct data
     public function testAddNewFlatFlow()
     {
+        $crawler = $this->client->request('GET', '/logout');
+
+        // authenticating user
+        $crawler = $this->client->request('GET', '/login');
+        $this->client->waitForInvisibility('#spinner');
+
+        $crawler = $this->client->submitForm('Login', [
+            '_username' => 'test_env_user@test.pl',
+            '_password' => 'test12'
+        ]);
+
         // check if user was logged in correctly and have access to /panel/flats/new
         $crawler = $this->client->request('GET', '/panel/flats/new');
         $this->client->waitForInvisibility('#spinner');
@@ -299,7 +310,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // after successfully creating new flat, it is worth to check if the object was persisted into DB
         $flats = $this->entityManager->getRepository(Flat::class)->findAll();
-        $flat = $flats[1];
+        $flat = $flats[1] ?? $flats[0];
 
         $this->assertEquals(33, $flat->getArea());
         $this->assertEquals(2, $flat->getNumberOfRooms());
@@ -661,12 +672,12 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
 
-        $crawler->filter('#flat-3 .card-body a[href="/panel/flats/3"]')->click();
+        $crawler->filter('#flat-4 .card-body a[href="/panel/flats/4"]')->click();
         $crawler = $this->client->refreshCrawler();
-        $this->client->waitFor('a[href="/panel/flats/edit/3"]');
+        $this->client->waitFor('a[href="/panel/flats/edit/4"]');
 
         // check if user was redirected to /panel/flats/3
-        $this->assertSame(self::$baseUri . '/panel/flats/3', $crawler->getUri());
+        $this->assertSame(self::$baseUri . '/panel/flats/4', $crawler->getUri());
 
         // check if data on the card is correct
         $address            = $crawler->filter('.card-title:nth-child(1)')->text();
@@ -749,12 +760,12 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $crawler = $this->client->submit($form);
         $this->client->waitForInvisibility('#spinner');
 
-        $crawler->filter('#flat-3 .card-body a[href="/panel/flats/3"]')->click();
+        $crawler->filter('#flat-4 .card-body a[href="/panel/flats/4"]')->click();
         $crawler = $this->client->refreshCrawler();
-        $this->client->waitFor('a[href="/panel/flats/edit/3"]');
+        $this->client->waitFor('a[href="/panel/flats/edit/4"]');
 
         // check if user was redirected to /panel/flats/3
-        $this->assertSame(self::$baseUri . '/panel/flats/3', $crawler->getUri());
+        $this->assertSame(self::$baseUri . '/panel/flats/4', $crawler->getUri());
 
         // check if data was successfully updated
         $area               = $crawler->filter('.table-flat-info tr:nth-child(1) td:nth-child(2)')->text();
@@ -769,7 +780,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         // delete flat, check if user was redirected
         $this->client->waitForInvisibility('#spinner');
-        $crawler->filter('a[href="/panel/flats/delete/3"]')->click();
+        $crawler->filter('a[href="/panel/flats/delete/4"]')->click();
         $crawler = $this->client->refreshCrawler();
         $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
 

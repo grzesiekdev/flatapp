@@ -30,7 +30,7 @@ class RegistrationControllerTest extends WebTestCase
         $this->flatRepository = $container->get(FlatRepository::class);
         $this->tenantRepository = $container->get(TenantRepository::class);
         $this->landlordRepository = $container->get(LandlordRepository::class);
-        $this->flat = $this->flatRepository->findAll()[0];
+        $this->flat = $this->flatRepository->findAll()[1];
     }
 
     public function testRegistrationControllerForLandlord(): void
