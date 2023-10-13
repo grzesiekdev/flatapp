@@ -110,6 +110,8 @@ class ProfileSecurityControllerTest extends WebTestCase
         $this->flat->addTenant($this->tenant);
         $this->flat->addTenant($this->tenantThree);
 
+        $this->landlord->addFlat($this->flat);
+
         $this->entityManager->persist($this->flat);
         $this->entityManager->persist($this->landlord);
         $this->entityManager->persist($this->landlordTwo);
@@ -299,5 +301,92 @@ class ProfileSecurityControllerTest extends WebTestCase
         $this->assertEquals('http://localhost/panel/profile/' . $this->tenant->getId() . '/edit', $crawler->getUri());
         $this->assertResponseStatusCodeSame(403);
     }
+
+    public function testIfLandlordCannotDeleteOwnProfileWhenStillAssignedToFlats(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlord->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->landlord->getId() . '/delete', $crawler->getUri());
+        $crawler = $this->client->followRedirect();
+
+        $alert = $crawler->filter('.alert-danger')->text();
+        $this->assertEquals('You still have some flats! Remove them before deleting your account', $alert);
+    }
+
+    public function testIfLandlordCannotDeleteOtherLandlordProfile(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlordTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->landlordTwo->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCannotDeleteOtherTenantProfile(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenant->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->tenant->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfLandlordCanDeleteOwnProfile(): void
+    {
+        $this->client->loginUser($this->landlordTwo);
+        $id = $this->landlordTwo->getId();
+
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlordTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $id . '/delete', $crawler->getUri());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertEquals('http://localhost/', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+    public function testIfTenantCannotDeleteOwnProfileWhenStillAssignedToFlat(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenant->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->tenant->getId() . '/delete', $crawler->getUri());
+        $crawler = $this->client->followRedirect();
+
+        $alert = $crawler->filter('.alert-danger')->text();
+        $this->assertEquals('You are still assigned to flat! Remove yourself from it before deleting your account', $alert);
+    }
+
+    public function testIfTenantCannotDeleteOtherLandlordProfile(): void
+    {
+        $this->client->loginUser($this->tenant);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->landlordTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->landlordTwo->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCannotDeleteOtherTenantProfile(): void
+    {
+        $this->client->loginUser($this->landlord);
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenantTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $this->tenantTwo->getId() . '/delete', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testIfTenantCanDeleteOwnProfile(): void
+    {
+        $this->client->loginUser($this->tenantTwo);
+        $id = $this->tenantTwo->getId();
+        $crawler = $this->client->request('GET', '/panel/profile/' . $this->tenantTwo->getId() . '/delete');
+
+        $this->assertEquals('http://localhost/panel/profile/' . $id . '/delete', $crawler->getUri());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertEquals('http://localhost/', $crawler->getUri());
+        $this->assertResponseStatusCodeSame(200);
+    }
+
 
 }
