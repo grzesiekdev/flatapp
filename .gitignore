@@ -11,6 +11,7 @@
 /var/
 /vendor/
 /screen.png
+/screen1.png
 /drivers/
 /config/secrets/
 ###< symfony/framework-bundle ###

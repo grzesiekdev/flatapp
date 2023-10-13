@@ -62,14 +62,41 @@ class ChatControllerTest extends PantherTestCase
             '_password' => 'test12'
         ]);
 
-        // check if user was logged in correctly and have access to /panel
+        // check if user was logged in correctly and have access to /panel/chat
         $crawler = $this->client->request('GET', '/panel/chat');
         $this->client->waitForInvisibility('#spinner');
 
         $this->assertSame(self::$baseUri . '/panel/chat', $crawler->getUri());
 
+        $dataReceiverId = $crawler->filter('.chat-window')->attr('data-receiver-id');
+        $dataSenderId = $crawler->filter('.chat-window')->attr('data-sender-id');
+        $dataReceiverName = $crawler->filter('.chat-window')->attr('data-receiver-name');
+        $dataSenderName = $crawler->filter('.chat-window')->attr('data-sender-name');
+        $contactName = $crawler->filter('.contact-name')->text();
 
-        // TODO: SCREEN
-        $this->client->takeScreenshot('screen6.png');
+        $this->assertEquals(2, $dataReceiverId);
+        $this->assertEquals(3, $dataSenderId);
+        $this->assertEquals('Landlord user', $dataReceiverName);
+        $this->assertEquals('Tenant user', $dataSenderName);
+        $this->assertEquals('Landlord user', $contactName);
+
+        $date = new \DateTime('now');
+        $this->client->executeScript('document.getElementById("chat-input-box").value = "First test message";');
+        $this->client->executeScript('document.querySelector(".send-message").click()');
+        // TODO: Doesn't work currently - problem with retrieving panther's console logs
+//        $consoleLogs = $this->client->getWebDriver()->manage()->getLog('browser');
+
+//        dd($consoleLogs);
+
+//        $this->client->takeScreenshot('screen1.png');
+//        $messageSender = $crawler->filter('.sender-message .card-header .fw-bold')->text();
+//        $messageDate = $crawler->filter('.sender-message .card-header .text-muted')->text();
+//        $messageText = $crawler->filter('.sender-message .card-body .mb-0')->text();
+//
+//        $this->assertEquals('Tenant user', $messageSender);
+//        $this->assertEquals($date->format('d-m-Y H:i:s'), $messageDate);
+//        $this->assertEquals('First test message', $messageText);
+
+
     }
 }

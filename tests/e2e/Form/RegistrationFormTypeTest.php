@@ -54,7 +54,7 @@ class RegistrationFormTypeTest extends PantherTestCase
 
         $this->client->executeScript('document.getElementById("registration_form_dateOfBirth").value = "2000-05-22";');
         $crawler = $this->client->submit($form, [
-            'registration_form[name]' => 'Test Test',
+            'registration_form[name]' => 'Landlord user',
             'registration_form[email]' => 'test_env_landlord@test.pl',
             'registration_form[plainPassword][first]' => 'test12',
             'registration_form[plainPassword][second]' => 'test12',
@@ -108,7 +108,7 @@ class RegistrationFormTypeTest extends PantherTestCase
         $form = $crawler->selectButton('Register')->form();
         $this->client->executeScript('document.getElementById("registration_form_dateOfBirth").value = "2000-05-22";');
         $crawler = $this->client->submit($form, [
-            'registration_form[name]' => 'Test Test',
+            'registration_form[name]' => 'Tenant user',
             'registration_form[email]' => 'test_env_tenant@test.pl',
             'registration_form[plainPassword][first]' => 'test12',
             'registration_form[plainPassword][second]' => 'test12',
