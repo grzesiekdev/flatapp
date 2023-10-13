@@ -24,7 +24,7 @@
                             <p class="text-secondary mb-1 profile-role">{{ (user.roles[0] == 'ROLE_LANDLORD') ? 'Landlord' : 'Tenant' }}</p>
                             <p class="text-muted font-size-sm profile-address">{{ user.address }}</p>
                             {% if not current_user %}
-                                <button class="btn btn-outline-success">Message</button>
+                                <a href="{{ path('app_chat') }}" class="btn btn-outline-success">Message</a>
                             {% endif %}
                         </div>
                     </div>

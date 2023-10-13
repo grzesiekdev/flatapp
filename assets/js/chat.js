@@ -53,7 +53,7 @@ function createMessageTemplate(message, isSender) {
             <img src="${message.profilePicture}" alt="avatar" class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60" height="60">
             <div class="card ${isSender ? 'w-100' : ''}">
                 <div class="card-header d-flex justify-content-between">
-                    <p class="fw-bold mb-0">${message.senderName}</p>
+                    <a href="/panel/profile/${message.senderId}" class="fw-bold mb-0">${message.senderName}</a>
                     <p class="text-muted small mb-0"><i class="far fa-clock"></i> ${message.date}</p>
                 </div>
                 <div class="card-body">
