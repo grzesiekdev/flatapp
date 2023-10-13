@@ -171,6 +171,9 @@ class SpecialistsController extends AbstractController
             if ($iframe->length > 0) {
                 $gmb = $iframe->item(0)->getAttribute('src');
                 $specialist->setGmb($gmb);
+            } else
+            {
+                $specialist->setGmb('');
             }
         }
 
