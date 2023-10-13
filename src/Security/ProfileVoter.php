@@ -64,10 +64,14 @@ class ProfileVoter extends Voter
         {
             $landlord = $this->landlordRepository->findOneBy(['id' => $user->getId()]);
             if (!is_null($landlord)) {
-                $flat = $this->flatRepository->findOneBy(['landlord' => $landlord]);
-                if (!is_null($flat))
+                $flats = $this->flatRepository->findBy(['landlord' => $user]);
+                foreach ($flats as $flat)
                 {
                     $allowed = $flat->getTenants()->contains($loggedInUser) && $flat->getLandlord() === $user;
+                    if ($allowed)
+                    {
+                        break;
+                    }
                 }
             }
         } elseif (in_array('ROLE_LANDLORD', $loggedInUser->getRoles()))
@@ -75,10 +79,14 @@ class ProfileVoter extends Voter
             $tenant = $this->tenantRepository->findOneBy(['id' => $user->getId()]);
             if (!is_null($tenant))
             {
-                $flat = $this->flatRepository->findOneBy(['landlord' => $loggedInUser]);
-                if (!is_null($flat))
+                $flats = $this->flatRepository->findBy(['landlord' => $loggedInUser]);
+                foreach ($flats as $flat)
                 {
                     $allowed = $flat->getTenants()->contains($user);
+                    if ($allowed)
+                    {
+                        break;
+                    }
                 }
             }
         }
