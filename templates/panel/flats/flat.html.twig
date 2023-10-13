@@ -13,8 +13,8 @@
                     {% if flat.picturesForTenant %}
                         {% include 'panel/flats/_partials/_flat_parts/_pictures_for_tenant.html.twig' %}
                     {% endif %}
-                    {% include 'panel/flats/_partials/_flat_parts/_role_buttons.html.twig' %}
                 </div>
+                {% include 'panel/flats/_partials/_flat_parts/_role_buttons.html.twig' %}
             </div>
             <div class="card col-md-3 m-3 p-3 border-0">
             {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
@@ -22,11 +22,10 @@
             {% elseif app.user.roles[0] == 'ROLE_TENANT' %}
                 {% include 'panel/flats/_partials/_flat_parts/_tenant_sidebar.html.twig' %}
             {% endif %}
-                <h2 class="text-black text-center">Specialists</h2>
+                <h2 class="text-black text-center my-2">Specialists</h2>
                 {% if flat.specialists is empty %}
                     There are no specialists associated with this flat
                 {% else %}
-                    Specialists: <br>
                     {% for specialist in flat.specialists %}
                         <div class="row border py-2 m-1">
                             <div class="col-sm-12">
@@ -38,6 +37,26 @@
                             </div>
                         </div>
                     {% endfor %}
+                {% endif %}
+                <hr>
+                {% if app.user.roles[0] == 'ROLE_LANDLORD' %}
+                    <div class="row my-4">
+                        <div class="col-lg-6 my-2">
+                            <a href="{{ path('app_flats_generate_invitation_code', {id: flat.id}) }}" class="btn btn-warning">Generate invitation code</a>
+                        </div>
+                        <div class="col-lg-6 my-2">
+                            <a href="{{ path('app_flats_utility_meters', {id: flat.id}) }}" class="btn btn-primary">Check state of utility meters</a>
+                        </div>
+                    </div>
+                {% elseif app.user.roles[0] == 'ROLE_TENANT' %}
+                    <div class="row my-4">
+                        <div class="col-lg-6 my-2">
+                            <a href="{{ path('app_flats_utility_meters', {id: flat.id}) }}" class="btn btn-primary">Check state of utility meters</a>
+                        </div>
+                        <div class="col-lg-6 my-2">
+                            <a href="{{ path('app_flats_remove_tenant', {flatId: flat.id, tenantId: app.user.Id}) }}" class="btn btn-danger">Remove me from this apartment</a>
+                        </div>
+                    </div>
                 {% endif %}
             </div>
         </div>

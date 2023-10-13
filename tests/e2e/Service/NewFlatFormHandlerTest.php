@@ -672,7 +672,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
 
         $this->assertSame(self::$baseUri . '/panel/flats', $crawler->getUri());
 
-        $crawler->filter('#flat-4 .card-body a[href="/panel/flats/4"]')->click();
+        $crawler->filter('#flat-4 a[href="/panel/flats/4"]')->click();
         $crawler = $this->client->refreshCrawler();
         $this->client->waitFor('a[href="/panel/flats/edit/4"]');
 
@@ -760,7 +760,7 @@ class NewFlatFormHandlerTest extends PantherTestCase
         $crawler = $this->client->submit($form);
         $this->client->waitForInvisibility('#spinner');
 
-        $crawler->filter('#flat-4 .card-body a[href="/panel/flats/4"]')->click();
+        $crawler->filter('#flat-4 a[href="/panel/flats/4"]')->click();
         $crawler = $this->client->refreshCrawler();
         $this->client->waitFor('a[href="/panel/flats/edit/4"]');
 

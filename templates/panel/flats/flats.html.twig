@@ -16,9 +16,8 @@
                     <div class="card-body">
                         <h5 class="card-title text-secondary">{{ flat.address }}, {{ flat.area }} m<sup>2</sup>, {{ flat.rent }}zł</h5>
                         <p class="card-text">{{ (flat.description|length > 100 ? flat.description|slice(0, 100) ~ '...': flat.description) | striptags}}</p>
-                        <a href="{{ path('app_flats_view', {id: flat.id}) }}" class="btn btn-primary">See more</a>
-                        <a href="{{ path('app_flats_delete', {id: flat.id}) }}" class="btn btn-danger">Delete</a>
                     </div>
+                    <a href="{{ path('app_flats_view', {id: flat.id}) }}" class="btn btn-primary" style="border-radius: 0;">See more</a>
                 </div>
             {% endfor %}
             </div>
