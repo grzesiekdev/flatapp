@@ -42,6 +42,12 @@ class FlatsController extends AbstractController
     public function deleteFlat(FlatRepository $flatRepository, int $id, EntityManagerInterface $entityManager, Flat $flat = null): Response
     {
         $flat = $flatRepository->findOneBy(['id' => $id]);
+        if (!empty($flat->getTenants()->toArray()))
+        {
+            $this->addFlash('error', 'You have to remove all tenants from this flat before you delete it');
+            return $this->redirectToRoute('app_flats_view', ['id' => $id]);
+        }
+
         $entityManager->remove($flat);
         $entityManager->flush();
 
