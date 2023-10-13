@@ -6,6 +6,16 @@
             <a href="{{ path('app_specialists_new') }}" class="btn btn-success my-2">Add new</a>
         </div>
         {% endif %}
+
+        <div class="col-md-8">
+            {% for flash_error in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+            {% for flash_success in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+            {% endfor %}
+        </div>
+
         <h1>Specialists</h1>
         {% if flats is defined %}
             {% for flat in flats %}

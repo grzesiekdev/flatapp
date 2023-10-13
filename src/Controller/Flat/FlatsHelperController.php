@@ -52,8 +52,9 @@ class FlatsHelperController extends AbstractController
 
         $flat->setInvitationCode($invitationCode);
         $entityManager->persist($flat);
-        $entityManager->flush();
 
+        $entityManager->flush();
+        $this->addFlash('success', 'Invitation code generated! Here it is: ' . $invitationCode->toBase32());
         return $this->redirectToRoute('app_flats_view', ['id' => $id]);
     }
 
@@ -66,6 +67,7 @@ class FlatsHelperController extends AbstractController
         $entityManager->persist($flat);
         $entityManager->flush();
 
+        $this->addFlash('success', 'Invitation code removed');
         return $this->redirectToRoute('app_flats_view', ['id' => $id]);
     }
 
@@ -99,6 +101,7 @@ class FlatsHelperController extends AbstractController
             $entityManager->persist($flat);
             $entityManager->persist($tenant);
             $entityManager->flush();
+            $this->addFlash('success', 'Tenant removed');
         }
 
         if ($currentUser->getRoles()[0] == 'ROLE_TENANT') return $this->redirectToRoute('app_panel');

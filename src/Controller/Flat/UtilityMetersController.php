@@ -64,6 +64,7 @@ class UtilityMetersController extends AbstractController
             $entityManager->persist($flat);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Utility meter reading added successfully');
             return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
         }
 
@@ -126,6 +127,7 @@ class UtilityMetersController extends AbstractController
             $entityManager->persist($utilityMeterReading);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Utility meter reading edited successfully');
             return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
         }
 
@@ -157,6 +159,7 @@ class UtilityMetersController extends AbstractController
         $entityManager->persist($flat);
         $entityManager->flush();
 
+        $this->addFlash('success', 'Utility meter reading deleted successfully');
         return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);
     }
 
@@ -181,6 +184,8 @@ class UtilityMetersController extends AbstractController
 
             $entityManager->persist($utilityMeterReading);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Utility meter invoice deleted successfully');
         }
 
         return $this->redirectToRoute('app_flats_utility_meters', ['id' => $id]);

@@ -2,6 +2,14 @@
 {% block content %}
     <div class="m-4">
         <div class="row">
+            <div class="col-md-8">
+                {% for flash_error in app.flashes('error') %}
+                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                {% endfor %}
+                {% for flash_success in app.flashes('success') %}
+                    <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+                {% endfor %}
+            </div>
             <div class="card col-sm-8 m-3 p-0 border-0" id="specialist-{{ specialist.id }}">
                 {% include 'panel/specialists/_partials/_specialist-card.html.twig' %}
                 {% if app.user.roles[0] == 'ROLE_LANDLORD' %}

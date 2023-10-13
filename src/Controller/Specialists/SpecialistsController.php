@@ -57,6 +57,7 @@ class SpecialistsController extends AbstractController
         $entityManager->remove($specialist);
         $entityManager->flush();
 
+        $this->addFlash('success', 'Specialist deleted successfully');
         return $this->redirectToRoute('app_specialists');
     }
 
@@ -98,6 +99,7 @@ class SpecialistsController extends AbstractController
 
             $this->handleSpecialists($flats, $specialist, $entityManager, $form);
 
+            $this->addFlash('success', 'Specialist edited successfully');
             return $this->redirectToRoute('app_specialists_view', ['id' => $specialist->getId()]);
         }
 
@@ -129,6 +131,7 @@ class SpecialistsController extends AbstractController
 
             $this->handleSpecialists($flats, $specialist, $entityManager, $form);
 
+            $this->addFlash('success', 'Specialist added successfully');
             return $this->redirectToRoute('app_specialists_view', ['id' => $specialist->getId()]);
         }
 

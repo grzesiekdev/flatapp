@@ -1,6 +1,16 @@
 {% extends '/panel/page.html.twig' %}
 
 {% block content %}
+    <div class="row my-3 mx-3 p-0">
+        <div class="col-md-8">
+            {% for flash_error in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+            {% for flash_success in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+            {% endfor %}
+        </div>
+    </div>
     <div class="bg-secondary rounded m-4 p-3 row">
         <span style="font-size: 19px; padding: 0;">Utility meter readings</span> <br>
         <table class="table-primary mt-2">
@@ -24,7 +34,6 @@
                             <a href="{{ path('app_flats_utility_meters_delete', {id: flat.id, readingId: reading.id}) }}" style="color:#dc3545;" title="Remove this reading"><i class="fa-solid fa-circle-minus"></i></a>
                         {% endif %}
                         {{ reading.date | date('d-m-Y') }}
-                        {# TODO: przerobić faktury w formie listy wyświetlanej w tym miejscu? uprościłoby tabelę #}
                     </th>
                     <td>{{ reading.water.amount }} m<sup>3</sup>, {{ reading.water.cost }} zł</td>
                     <td>{{ reading.gas.amount }} m<sup>3</sup>, {{ reading.gas.cost }} zł</td>
