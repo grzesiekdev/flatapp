@@ -5,6 +5,8 @@ namespace App\Controller\Authentication;
 use App\Entity\User\User;
 use App\Form\User\EditProfileFormType;
 use App\Form\User\InvitationCodeFormType;
+use App\Repository\LandlordRepository;
+use App\Repository\TenantRepository;
 use App\Repository\UserRepository;
 use App\Service\FilesUploader;
 use App\Service\InvitationCodeHandler;
@@ -14,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Ulid;
 
@@ -90,6 +94,43 @@ class ProfileController extends AbstractController
             'user' => $user,
             'form' => $form->createView()
         ]);
+    }
+
+    #[Route('/panel/profile/{id}/delete', name: 'app_profile_delete')]
+    #[IsGranted('delete', 'profile', 'You don\'t have permissions to delete this profile', 403)]
+    public function profileDelete(UserRepository $userRepository, int $id, TenantRepository $tenantRepository, LandlordRepository $landlordRepository, EntityManagerInterface $entityManager, Request $request, TokenStorageInterface $tokenStorage, User $profile = null): Response
+    {
+        // TODO: Implement confirming account delete by email
+        $user = $userRepository->findOneBy(['id' => $id]);
+        if (in_array('ROLE_TENANT', $user->getRoles()))
+        {
+            $tenant = $tenantRepository->findOneBy(['id' => $id]);
+            if (is_null($tenant->getFlatId()))
+            {
+                $entityManager->remove($tenant);
+            } else
+            {
+                $this->addFlash('error', 'You are still assigned to flat! Remove yourself from it before deleting your account');
+                return $this->redirectToRoute('app_profile', ['id' => $user->getId()]);
+            }
+        } else
+        {
+            $landlord = $landlordRepository->findOneBy(['id' => $id]);
+            if (empty(($landlord->getFlats()->toArray())))
+            {
+                $entityManager->remove($landlord);
+            } else
+            {
+                $this->addFlash('error', 'You still have some flats! Remove them before deleting your account');
+                return $this->redirectToRoute('app_profile', ['id' => $user->getId()]);
+            }
+        }
+        $entityManager->flush();
+
+        $request->getSession()->invalidate();
+        $tokenStorage->setToken();
+
+        return $this->redirectToRoute('app_home');
     }
 
     #[Route('/panel/profile/{id}/delete-picture', name: 'app_profile_delete_picture')]

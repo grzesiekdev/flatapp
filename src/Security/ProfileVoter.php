@@ -13,6 +13,7 @@ class ProfileVoter extends Voter
 {
     const VIEW = 'view';
     const EDIT = 'edit';
+    const DELETE = 'delete';
 
     private FlatRepository $flatRepository;
     private TenantRepository $tenantRepository;
@@ -26,7 +27,7 @@ class ProfileVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])) {
             return false;
         }
 
@@ -52,6 +53,7 @@ class ProfileVoter extends Voter
         return match($attribute) {
             self::VIEW => $this->canView($profile, $user),
             self::EDIT => $this->canEdit($profile, $user),
+            self::DELETE => $this->canDelete($profile, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -94,6 +96,11 @@ class ProfileVoter extends Voter
     }
 
     private function canEdit(User $user, User $loggedInUser): bool
+    {
+        return $loggedInUser === $user;
+    }
+
+    private function canDelete(User $user, User $loggedInUser): bool
     {
         return $loggedInUser === $user;
     }
