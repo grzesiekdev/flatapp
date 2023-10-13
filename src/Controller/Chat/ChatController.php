@@ -88,6 +88,7 @@ class ChatController extends AbstractController
     {
         $conversations = $chatHelper->getConversations($receiverId);
         if($conversations !== 500) {
+            $responseData = [];
             foreach ($conversations[$receiverId] as $message) {
                 $data = [
                     'message' => $message->getMessage(),
