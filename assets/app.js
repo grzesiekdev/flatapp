@@ -144,7 +144,7 @@ import {handle_chat} from "./js/chat";
         }
     });
     $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+        $('html, body').animate({ scrollTop: 0 }, 0, 'swing'); // 'swing' is a default easing function
         return false;
     });
 
