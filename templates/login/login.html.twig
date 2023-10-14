@@ -9,13 +9,15 @@
             </div>
         </div>
         <!-- Spinner End -->
-        {% for flash_error in app.flashes('verify_email_error') %}
-            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-        {% endfor %}
-
         <!-- Content Start -->
         <div class="content m-0 w-100">
             <div class="registration-form-box col-sm-12 col-xl-6 m-auto mt-5">
+                {% for flash_error in app.flashes('verify_email_error') %}
+                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                {% endfor %}
+                {% for flash_success in app.flashes('success') %}
+                    <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+                {% endfor %}
                 <div class="bg-secondary rounded h-100 p-4">
                     <h1 class="mb-4">Log in</h1>
                     {% if error %}

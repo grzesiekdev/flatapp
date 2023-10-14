@@ -4,7 +4,9 @@ namespace App\Form\User;
 
 use App\Entity\User\User;
 use App\Form\DataTransformer\Base32CodeTransformer;
+use App\Form\DataTransformer\EmailTransformer;
 use App\Form\DataTransformer\EmptyStringToNullTransformer;
+use App\Form\DataTransformer\PhoneNumberTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -16,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -39,11 +42,23 @@ class RegistrationFormType extends AbstractType
                 'attr' => ['class' => '
                 form-control',
                 ],
+                'constraints' => [
+                    new Length([
+                        'max' => 50,
+                        'maxMessage' => 'Name too long',
+                    ]),
+                ],
                 'error_bubbling' => true,
             ])
             ->add('email', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
+                ],
+                'constraints' => [
+                    new Length([
+                        'max' => 70,
+                        'maxMessage' => 'Email too long',
+                    ]),
                 ],
                 'error_bubbling' => true,
             ])
@@ -74,12 +89,20 @@ class RegistrationFormType extends AbstractType
                 ],
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
-                'years' => range(date('Y')-80, date('Y')),
+                'years' =>  range((int)date('Y') - 80, (int)date('Y')),
+                'months' => range(1, 12),
+                'days' => range(1, 31),
                 'error_bubbling' => true,
             ])
             ->add('address', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
+                ],
+                'constraints' => [
+                    new Length([
+                        'max' => 255,
+                        'maxMessage' => 'Address too long',
+                    ]),
                 ],
                 'required' => false,
                 'error_bubbling' => true,
@@ -88,6 +111,15 @@ class RegistrationFormType extends AbstractType
                 'attr' => ['class' => '
                 form-control',
                 ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/*',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid image',
+                    ])
+                ],
                 'required' => false,
                 'label' => 'Profile image',
                 'error_bubbling' => true,
@@ -95,6 +127,12 @@ class RegistrationFormType extends AbstractType
             ->add('phone', TextType::class, [
                 'attr' => ['class' => '
                 form-control',
+                ],
+                'constraints' => [
+                    new Length([
+                        'max' => 15,
+                        'maxMessage' => 'Phone too long',
+                    ]),
                 ],
                 'required' => false,
                 'error_bubbling' => true,
@@ -136,6 +174,10 @@ class RegistrationFormType extends AbstractType
 
         $builder->get('code')
             ->addModelTransformer(new Base32CodeTransformer($this->validator, $this->session));
+        $builder->get('phone')
+            ->addModelTransformer(new PhoneNumberTransformer($this->validator, $this->session));
+        $builder->get('email')
+            ->addModelTransformer(new EmailTransformer($this->validator, $this->session));
         $builder->get('dateOfBirth')
             ->addModelTransformer(new EmptyStringToNullTransformer($this->session));
 

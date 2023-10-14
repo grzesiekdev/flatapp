@@ -101,6 +101,7 @@ class RegistrationController extends AbstractController
                 }
             }
 
+            $this->addFlash('success', 'Account created! You can now log in');
             $entityManager->persist($user);
             $entityManager->flush();
 
