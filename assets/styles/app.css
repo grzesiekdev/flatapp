@@ -746,3 +746,8 @@ html::-webkit-scrollbar-thumb {
 .contact-list .active {
     background: #202124;
 }
+
+.alert ul {
+    list-style: none;
+    padding: 0;
+}
