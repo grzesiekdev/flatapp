@@ -242,9 +242,7 @@ function handle_chat() {
             if (receivedData.status === "success") {
                 console.log('Received message:', receivedData);
                 let messageTemplate = createMessageTemplate(receivedData, false);
-                console.log("Not yet!", receivedData.sender, receiverId);
                 if (receivedData.sender == receiverId) {
-                    console.log("MESSAGE!", receivedData.sender, receiverId);
                     messageContainer.append(messageTemplate);
                     messageContainer.scrollTop(messageContainer[0].scrollHeight);
                 }
