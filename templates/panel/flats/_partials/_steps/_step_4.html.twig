@@ -1,6 +1,7 @@
 <div class="row mt-2">
     <div class="col-sm-2">
-        {{ form_label(form.description) }}
+        {{ form_label(form.description) }} <br>
+        <small>4,000 characters limit</small>
     </div>
     <div class="col-sm-10 form-control" style="background: initial; border: 0;">
         {{ form_widget(form.description) }}
@@ -8,7 +9,8 @@
 </div>
 <div class="row mt-2">
     <div class="col-2">
-        {{ form_label(form.rentAgreement) }}
+        {{ form_label(form.rentAgreement) }}<br>
+        <small>Only pdf</small>
     </div>
     <div class="col-sm-4">
         {{ form_widget(form.rentAgreement) }}

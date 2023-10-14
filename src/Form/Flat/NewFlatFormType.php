@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Length;
 
 class NewFlatFormType extends AbstractType
 {
@@ -146,6 +147,12 @@ class NewFlatFormType extends AbstractType
                             'height' => '300px',
                             'toolbar' => 'flat_toolbar'
                         ],
+                        'constraints' => [
+                            new Length([
+                                'max' => 4000,
+                                'maxMessage' => 'Description too long',
+                            ]),
+                        ],
                         'required' => false,
                         'sanitize_html' => true
                     ])
@@ -183,6 +190,12 @@ class NewFlatFormType extends AbstractType
                         form-control',
                         ],
                         'label_html' => true,
+                        'constraints' => [
+                            new Length([
+                                'max' => 255,
+                                'maxMessage' => 'Additional furnishing too long',
+                            ]),
+                        ],
                         'label' => 'Additional furniture <small>(add here anything that isn\'t listed above)</small>',
                         'required' => false
                     ]);

@@ -41,7 +41,7 @@ class Flat
     #[ORM\Column(nullable: true)]
     private array $picturesForTenant = [];
 
-    #[ORM\Column(length: 1000, nullable: true)]
+    #[ORM\Column(length: 4000, nullable: true)]
     private ?string $description = null;
 
     #[Assert\NotBlank]
