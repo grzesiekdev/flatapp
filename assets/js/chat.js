@@ -48,6 +48,10 @@ setInterval(updateTimestamps, 60000); // 60000 milliseconds = 1 minute
 
 function createMessageTemplate(message, isSender) {
     let messageType = isSender ? 'sender' : 'receiver';
+    if (message.senderId === undefined)
+    {
+        message.senderId = message.sender;
+    }
     return `
         <li class="d-flex justify-content-between mb-4 ${messageType}-message">
             <img src="${message.profilePicture}" alt="avatar" class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60" height="60">
