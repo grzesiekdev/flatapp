@@ -29,7 +29,7 @@ class PhoneNumberTransformer implements DataTransformerInterface
     {
         $constraint = new Regex([
             'pattern' => self::PHONE_REGEX,
-            'message' => 'The phone is not in a valid format.',
+            'message' => 'The phone number is not in a valid format.',
         ]);
 
         $violations = $this->validator->validate($value, $constraint);

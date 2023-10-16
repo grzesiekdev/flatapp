@@ -9,6 +9,7 @@ use App\Repository\TenantRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Uid\Ulid;
 
 class RegistrationControllerTest extends WebTestCase
@@ -17,6 +18,7 @@ class RegistrationControllerTest extends WebTestCase
     private EntityManager $entityManager;
     private FlatRepository $flatRepository;
     private TenantRepository $tenantRepository;
+    private KernelInterface $appKernel;
     private LandlordRepository $landlordRepository;
     private Ulid $code;
     private Flat $flat;
@@ -25,6 +27,7 @@ class RegistrationControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $container = static::getContainer();
+        $this->appKernel = $container->get(KernelInterface::class);
 
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->flatRepository = $container->get(FlatRepository::class);
@@ -264,4 +267,142 @@ class RegistrationControllerTest extends WebTestCase
         $error = $crawler->filter('.alert.alert-danger')->text();
         $this->assertEquals('Invalid invitation code.', $error);
     }
+
+    public function testRegistrationControllerForTooLongName(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'TestTestTestTestTestTestTestTestTestTestTestTestTest',
+            'registration_form[email]' => 'example@tenant.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Name too long', $error);
+    }
+
+    public function testRegistrationControllerForTooLongEmail(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Test',
+            'registration_form[email]' => 'TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest@tenant.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Email too long', $error);
+    }
+
+    public function testRegistrationControllerForIncorrectEmailFormat(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Test',
+            'registration_form[email]' => 'test@tenantpl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('The email is not in a valid format.', $error);
+    }
+
+    public function testRegistrationControllerForTooLongAddress(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Test',
+            'registration_form[email]' => 'test@test.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[address]' => 'TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Address too long', $error);
+    }
+
+    public function testRegistrationControllerForTooLongPhoneNumber(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Test',
+            'registration_form[email]' => 'test@test.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[phone]' => '123123123123123123123123',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Phone number too long', $error);
+    }
+
+    public function testRegistrationControllerForIncorrectPhoneFormat(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Test',
+            'registration_form[email]' => 'test@test.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[phone]' => '1234 456 678',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('The phone number is not in a valid format.', $error);
+    }
+
+    public function testRegistrationControllerForIncorrectPictureFormat(): void
+    {
+        $crawler = $this->client->request('GET', '/register');
+        $this->assertCount(1, $crawler->filter('form[name="registration_form"]'));
+
+        $form = $crawler->filter('form[name="registration_form"]')->form([
+            'registration_form[name]' => 'Test',
+            'registration_form[email]' => 'test@test.pl',
+            'registration_form[plainPassword][first]' => 'test12',
+            'registration_form[plainPassword][second]' => 'test12',
+            'registration_form[dateOfBirth]' => '2000-05-22',
+            'registration_form[image]' => $this->appKernel->getProjectDir() . '/tests/e2e/fixtures/agreement.pdf',
+            'registration_form[roles]' => 'ROLE_LANDLORD',
+        ]);
+        $crawler = $this->client->submit($form);
+
+        $error = $crawler->filter('.alert.alert-danger')->text();
+        $this->assertEquals('Please upload a valid image', $error);
+    }
+
 }

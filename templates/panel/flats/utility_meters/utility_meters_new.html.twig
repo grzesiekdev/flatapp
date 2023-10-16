@@ -1,6 +1,19 @@
 {% extends '/panel/page.html.twig' %}
 
 {% block content %}
+    <div class="row my-3 mx-4 p-0">
+        <div class="col-md-12">
+            {% for flash_error in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+            {% for flash_success in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+            {% endfor %}
+            {% if form_errors(form) %}
+                <div class="alert alert-danger" role="alert">{{ form_errors(form) }}</div>
+            {% endif %}
+        </div>
+    </div>
     <div class="bg-secondary rounded m-4 p-3 row">
         {{ form_start(form) }}
         {{ form_errors(form) }}

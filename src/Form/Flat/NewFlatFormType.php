@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 
 class NewFlatFormType extends AbstractType
@@ -160,6 +161,13 @@ class NewFlatFormType extends AbstractType
                         'attr' => [
                             'class' => 'form-control',
                             'accept' => 'pdf/*'
+                        ],
+                        'constraints' => [
+                            new File([
+                                'maxSize' => '20M',
+                                'mimeTypes' => ['application/pdf', 'application/x-pdf'],
+                                'mimeTypesMessage' => 'Please upload a valid PDF document',
+                            ]),
                         ],
                         'required' => false,
                         'data_class' => null

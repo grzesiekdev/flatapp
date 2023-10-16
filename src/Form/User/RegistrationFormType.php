@@ -131,7 +131,7 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new Length([
                         'max' => 15,
-                        'maxMessage' => 'Phone too long',
+                        'maxMessage' => 'Phone number too long',
                     ]),
                 ],
                 'required' => false,
